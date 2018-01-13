@@ -1,0 +1,93 @@
+<resources>
+    <string name="app_name">Intex Mixer v.2</string>
+    <string name="copyright_intex_ltd">(C)Intex, Ltd.</string>
+
+
+    <!-- Идентификатор устройства в системе -->
+    <string name="CONFIG_DEVICE_ID">smesitel001</string>
+    <string name="CONFIG_PROTOCOL">1.2</string>
+    <string name="CONFIG_PASSWORD">qwerty</string>
+
+    <!-- Паттерны для парсера команд -->
+    <string name="pattern_Cmd_Value">[\\w\\s\\@.:;%#/\\^\\?\\(\\)\\[\\]\\|\\/\\+\\-\\*]+</string>
+    <string name="pattern_EndOfLine">\n</string>
+    <string name="pattern_Cmd_Name">\\w+</string>
+
+    <string name="CONFIG_CONTROL_SERVER_ADRR"></string>
+    <string name="CONFIG_CONTROL_SERVER_PORT">qwerty</string>
+
+    <!-- Статусы задач и операций -->
+    <string name="STATUS_UNDEF">undef</string>
+    <string name="STATUS_BEGIN">begin</string>
+    <string name="STATUS_END">end</string>
+    <string name="STATUS_SUSPEND">suspend</string>
+    <string name="STATUS_RESUME">resume</string>
+    <string name="STATUS_CANCEL">cancel</string>
+
+    <!-- Подстановки строк команд -->
+    <string name="MESSAGE_CMD_REPORT_OPER">oper</string>
+    <string name="MESSAGE_CMD_REPORT_TASK">task</string>
+    <string name="MESSAGE_CMD_GET_TASK">gettask</string>
+    <string name="MESSAGE_CMD_GET_OPER">getops</string>
+    <string name="MESSAGE_COMMAND_NAME">cmdn</string>
+    <string name="MESSAGE_COMMAND_TYPE">cmd</string>
+    <string name="MESSAGE_VERSION">ver</string>
+    <string name="MESSAGE_DEVICE">dev</string>
+    <string name="MESSAGE_PASSWORD">pwd</string>
+    <string name="MESSAGE_PARAM_TASKID">task</string>
+    <string name="MESSAGE_PARAM_OPERID">oper</string>
+    <string name="MESSAGE_PARAM_STATUS">status</string>
+    <string name="MESSAGE_PARAM_BEGIN">begin</string>
+    <string name="MESSAGE_PARAM_END">end</string>
+    <string name="MESSAGE_PARAM_SUSPEND">suspend</string>
+    <string name="MESSAGE_PARAM_RESUME">resume</string>
+    <string name="MESSAGE_PARAM_CANCEL">cancel</string>
+    <string name="MESSAGE_PARAM_LOAD">load</string>
+    <string name="MESSAGE_PARAM_DEPLOY">deploy</string>
+    <string name="MESSAGE_STATUS_BEGIN">begin</string>
+    <string name="MESSAGE_STATUS_END">end</string>
+    <string name="MESSAGE_STATUS_SUSPEND">suspend</string>
+    <string name="MESSAGE_STATUS_RESUME">resume</string>
+    <string name="MESSAGE_STATUS_CANCEL">cancel</string>
+    <string name="MESSAGE_STATUS_LOAD">load</string>
+    <string name="MESSAGE_STATUS_DEPLOY">deploy</string>
+
+    <!-- ======================================================== -->
+    <!-- Параметры (ключевые слова, команды) сообщений управления -->
+    <!-- ======================================================== -->
+    <!-- "КОМАНДА"="" -->
+    <string name="MSG_COMMAND_KEYWORD">cmd</string>
+    <string name="MSG_COMMAND_IS_LOADING">load</string>
+    <string name="MSG_ACTION_IS_STOP">stop</string>
+    <string name="MSG_ACTION_IS_BEGIN">begin</string>
+
+    <string name="MSG_WEIGHT_KEYWORD">weight</string>
+
+    <string name="MSG_ACCEPT_KEYWORD">accept</string>
+    <string name="ANSWER_YES">yes</string>
+    <string name="ANSWER_NO">no</string>
+
+
+    <!-- Ответ сервера на запрос об обслуживании -->
+    <string name="MSG_REQUEST_ACCEPT_KEYWORD">accept</string>
+    <string name="MSG_REQUEST_ACCEPT_IS_YES">yes</string>
+    <string name="MSG_REQUEST_ACCEPT_IS_NO">no</string>
+
+    <!-- Ключевое слово параметра "Компонент" -->
+    <string name="MESSAGE_FEED_ID_KEYWORD">feed</string>
+    <string name="MESSAGE_FEED_NAME_KEYWORD">feedn</string>
+
+    <!-- Ключевое слово параметра "Вес компонента" -->
+    <string name="MESSAGE_VALUE_KEYWORD">value</string>
+    <string name="MESSAGE_WEIGHT_KEYWORD">weight</string>
+
+    <!-- СТАТУС загузки -->
+    <string name="MSG_STATUS_KEYWORD">status</string>
+    <string name="MSG_STATUS_IS_BEGIN">begin</string>
+    <string name="MSG_STATUS_IS_STOP">stop</string>
+
+    <string name="MESSAGE_SERVER_ID_KEYWORD">serverid</string>
+    <string name="MESSAGE_SERVER_NAME_KEYWORD">servername</string>
+
+
+</resources>
