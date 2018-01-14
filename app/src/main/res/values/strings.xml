@@ -2,6 +2,8 @@
     <string name="app_name">Intex Mixer v.2</string>
     <string name="copyright_intex_ltd">(C)Intex, Ltd.</string>
 
+    <string name="NUMBER_OF_LAYOUTS">10</string>
+    <string name="STATUS_LINE_TEXT_INITIAL">Терминал оператора v 1.0</string>
 
     <!-- Идентификатор устройства в системе -->
     <string name="CONFIG_DEVICE_ID">smesitel001</string>
@@ -88,6 +90,34 @@
 
     <string name="MESSAGE_SERVER_ID_KEYWORD">serverid</string>
     <string name="MESSAGE_SERVER_NAME_KEYWORD">servername</string>
+    <string name="no_current_task">no_current_task</string>
 
+    <!-- СТАТУС загузки -->
+    <string name="MSG_SERVER_ID_KEYWORD">server</string>
+    <string name="MSG_SERVER_NAME_KEYWORD">servern</string>
+    <string name="MSG_SERVER_ADDR_KEYWORD">servera</string>
+
+    <string name="MESSAGE_USER_ID_KEYWORD">username</string>
+    <string name="MESSAGE_DEVICE_ID_KEYWORD">dev</string>
+    <string name="MESSAGE_DEVICE_NAME_KEYWORD">devicename</string>
+    <string name="MESSAGE_PASSWORD_KEYWORD">pwd</string>
+
+    <string name="MESSAGE_TASK_ID_KEYWORD">task</string>
+    <string name="MESSAGE_TASK_NAME_KEYWORD">taskn</string>
+    <string name="MESSAGE_OPER_ID_KEYWORD">oper</string>
+    <string name="MESSAGE_OPER_COMMENT_KEYWORD">cmdn</string>
+    <string name="MESSAGE_OPER_TYPE_KEYWORD">cmd</string>
+    <string name="_0">0</string>
+    <string name="clear_db">clear db</string>
+    <string name="goto_db">goto db</string>
+    <string name="oper">oper</string>
+    <string name="task">task</string>
+    <string name="task_is_complete">Задача выполнена</string>
+    <string name="service_request">Запрос обслуживания</string>
+
+    <!-- Процент отклонения веса при загрузке БОЛЬШЕ -->
+    <string name="LOADING_PERCENT_WEIGHT_TOLERANCE_UP">5</string>
+    <!-- Процент отклонения веса при загрузке МЕНЬШЕ -->
+    <string name="LOADING_PERCENT_WEIGHT_TOLERANCE_DN">5</string>
 
 </resources>

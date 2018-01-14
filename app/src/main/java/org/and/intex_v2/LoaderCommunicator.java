@@ -12,6 +12,9 @@ import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.and.intex_v2.LoaderCommunicator.DeviceWaitAnswerStatus.LOAD;
+import static org.and.intex_v2.LoaderCommunicator.DeviceWaitAnswerStatus.REJECT;
+
 /**
  * Created by Андрей on 06.08.2017.
  */

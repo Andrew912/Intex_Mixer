@@ -50,8 +50,8 @@ public class Storer {
     int
             currentTaskNumber = 0;
 
-    public Storer(MainActivity activity) {
-        this.activity = activity;
+    public Storer(MainActivity mainActivity) {
+        activity = mainActivity;
 //        dbHelper = new DBHelper(activity.context);
 //        db = dbHelper.getWritableDatabase();
 //
@@ -655,6 +655,14 @@ public class Storer {
             weightLoaded = weightCurrent - weightStart;
         }
         Log.i("Storer", "weightIndicatorS =" + weightIndicatorS);
+    }
+
+    void clearDB() {
+        activity.db.execSQL("drop table if exists mail");
+        activity.db.execSQL("drop table if exists task");
+        activity.db.execSQL("drop table if exists operation");
+        activity.db.execSQL("drop table if exists oper_param");
+        activity.dbHelper.onCreate(activity.db);
     }
 
 

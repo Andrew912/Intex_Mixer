@@ -14,15 +14,15 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.example.and.dterminal.DBHelper.KEY_MAIL_COMPLETE;
-import static com.example.and.dterminal.DBHelper.KEY_MAIL_MESSAGE;
-import static com.example.and.dterminal.DBHelper.KEY_TASK_COMMENT;
-import static com.example.and.dterminal.DBHelper.KEY_TASK_COMPLETE;
-import static com.example.and.dterminal.DBHelper.KEY_TASK_ID;
-import static com.example.and.dterminal.DBHelper.KEY_TASK_IS_CURRENT;
-import static com.example.and.dterminal.DBHelper.KEY_TASK_STATUS;
-import static com.example.and.dterminal.DBHelper.KEY_TASK_TO_DELETE;
-import static com.example.and.dterminal.DBHelper.TABLE_MAIL;
+import static org.and.intex_v2.DBHelper.KEY_MAIL_COMPLETE;
+import static org.and.intex_v2.DBHelper.KEY_MAIL_MESSAGE;
+import static org.and.intex_v2.DBHelper.KEY_TASK_COMMENT;
+import static org.and.intex_v2.DBHelper.KEY_TASK_COMPLETE;
+import static org.and.intex_v2.DBHelper.KEY_TASK_ID;
+import static org.and.intex_v2.DBHelper.KEY_TASK_IS_CURRENT;
+import static org.and.intex_v2.DBHelper.KEY_TASK_STATUS;
+import static org.and.intex_v2.DBHelper.KEY_TASK_TO_DELETE;
+import static org.and.intex_v2.DBHelper.TABLE_MAIL;
 
 
 /**
@@ -83,7 +83,7 @@ public class ServerCommincator {
             InputStream is;
             OutputStream os;
             // Формирование запроса на список операций
-            String o = new MessageMakerClass(a).request_OperList(params[0]);
+            String o = new MessageMaker(a).request_OperList(params[0]);
             try {
                 InetAddress serverAddr = InetAddress.getByName(socketAddr);
                 socket = new Socket(serverAddr, socketPort);
@@ -147,7 +147,7 @@ public class ServerCommincator {
             Socket socket;
             InputStream is;
             OutputStream os;
-            String o = new MessageMakerClass(a).request_TaskLisk();
+            String o = new MessageMaker(a).request_TaskLisk();
             try {
                 InetAddress serverAddr = InetAddress.getByName(socketAddr);
                 socket = new Socket(serverAddr, socketPort);
@@ -583,15 +583,15 @@ public class ServerCommincator {
         SQLiteDatabase db = dbh.getWritableDatabase();
 
         ContentValues newValues = new ContentValues();
-        newValues.put(KEY_MAIL_MESSAGE, new MessageMakerClass(a).report_OperBegin("101"));
+        newValues.put(KEY_MAIL_MESSAGE, new MessageMaker(a).report_OperBegin("101"));
         db.insert(TABLE_MAIL, null, newValues);
 
         newValues = new ContentValues();
-        newValues.put(KEY_MAIL_MESSAGE, new MessageMakerClass(a).report_OperBegin("102"));
+        newValues.put(KEY_MAIL_MESSAGE, new MessageMaker(a).report_OperBegin("102"));
         db.insert(TABLE_MAIL, null, newValues);
 
         newValues = new ContentValues();
-        newValues.put(KEY_MAIL_MESSAGE, new MessageMakerClass(a).report_OperBegin("103"));
+        newValues.put(KEY_MAIL_MESSAGE, new MessageMaker(a).report_OperBegin("103"));
         db.insert(TABLE_MAIL, null, newValues);
         db.close();
         dbh.close();

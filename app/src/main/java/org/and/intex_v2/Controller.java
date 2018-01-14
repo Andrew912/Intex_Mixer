@@ -13,11 +13,36 @@ import static org.and.intex_v2.MainActivity.L0_BUTTON_TASK;
 import static org.and.intex_v2.MainActivity.L0_BUTTON_TASK1;
 import static org.and.intex_v2.MainActivity.L1_BUTTON_BEGIN_JOB;
 import static org.and.intex_v2.MainActivity.L1_BUTTON_TO_DB;
+import static org.and.intex_v2.MainActivity.L2_BUTTON_CANCEL;
+import static org.and.intex_v2.MainActivity.L2_BUTTON_TASK_SELECT;
+import static org.and.intex_v2.MainActivity.L3_BUTTON_CANCEL;
+import static org.and.intex_v2.MainActivity.L3_BUTTON_TASK_CONTINUE;
+import static org.and.intex_v2.MainActivity.L4_BUTTON_ACCEPT;
+import static org.and.intex_v2.MainActivity.L4_BUTTON_CANCEL;
+import static org.and.intex_v2.MainActivity.L4_LIST_TASK_SELECT;
+import static org.and.intex_v2.MainActivity.L5_BUTTON_ACCEPT;
+import static org.and.intex_v2.MainActivity.L5_BUTTON_CANCEL;
+import static org.and.intex_v2.MainActivity.L5_LIST_OPER_SELECT;
+import static org.and.intex_v2.MainActivity.L6_BUTTON_CANCEL;
+import static org.and.intex_v2.MainActivity.L6_BUTTON_COMPLETE;
+import static org.and.intex_v2.MainActivity.L7_BUTTON_CANCEL;
+import static org.and.intex_v2.MainActivity.L7_BUTTON_COMPLETE;
+import static org.and.intex_v2.MainActivity.L7_BUTTON_START;
+import static org.and.intex_v2.MainActivity.L8_BUTTON_OK;
+import static org.and.intex_v2.MainActivity.L9_BUTTON_ACCEPT;
+import static org.and.intex_v2.MainActivity.L9_BUTTON_CANCEL;
+import static org.and.intex_v2.MainActivity.L9_BUTTON_REFRESH;
+import static org.and.intex_v2.MainActivity.L9_BUTTON_REJECT;
 import static org.and.intex_v2.MainActivity.LAYOUT_0_DB;
 import static org.and.intex_v2.MainActivity.LAYOUT_1_BEGIN;
 import static org.and.intex_v2.MainActivity.LAYOUT_2_NO_TASK;
 import static org.and.intex_v2.MainActivity.LAYOUT_3_DO_TASK;
+import static org.and.intex_v2.MainActivity.LAYOUT_4_TASK_SELECT;
+import static org.and.intex_v2.MainActivity.LAYOUT_5_OPER_SELECT;
 import static org.and.intex_v2.MainActivity.LAYOUT_6_SIMPLE_OPER;
+import static org.and.intex_v2.MainActivity.LAYOUT_7_COMPLEX_OPER;
+import static org.and.intex_v2.MainActivity.LAYOUT_8_TASK_COMPLETE;
+import static org.and.intex_v2.MainActivity.LAYOUT_9_SERV_REQUEST;
 import static org.and.intex_v2.MainActivity.L__BUTTON_START;
 
 
@@ -291,9 +316,7 @@ public class Controller {
             case L9_BUTTON_REFRESH:                      // Обновить экран
 
                 break;
-
         }
-
     }
 
     // Id задачи из строки

@@ -1,18 +1,29 @@
 package org.and.intex_v2;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
@@ -26,19 +37,24 @@ import static org.and.intex_v2.DBHelper.KEY_OPPA_TO_DELETE;
 
 public class MainActivity extends AppCompatActivity {
 
-    /******************************************************************************
-     * Разные переменные
-     ******************************************************************************/
-    String
-            logTAG = "MAIN";
+    String logTAG;
+    String logMessage;
 
-    /******************************************************************************
-     * Объявление классов
-     ******************************************************************************/
+    Context context;
+
+    public DBHelper
+            dbHelper;
+    public SQLiteDatabase
+            db;
+
+    Controller
+            controller;
     Configurator
             configurator;
-    Messenger
-            messenger;
+//    TestDataLoader
+//            testDataLoader;
+    StatusLine
+            statusLine;
     DBFunctions
             dbFunctions;
     CurrentTask
@@ -47,157 +63,507 @@ public class MainActivity extends AppCompatActivity {
             currentOper;
     Storer
             storer;
-    DBHelper
-            dbHelper;
-    SQLiteDatabase
-            db;
+    Messenger
+            messenger;
+    ServerCommincator
+            server;
     LoaderCommunicator
             loader;
 
+    // Лайауты
+    LinearLayout layout[];
+    LayoutStatusClass layoutStatus;
 
-    /******************************************************************************
-     * Константы
-     ******************************************************************************/
+    // Блок кнопок (L4.1)
+    LinearLayout layout_4_1;
 
-    /**
-     * События нажатия клавиш, списков и пр. **************************************
-     */
-    static final int L__BUTTON_START
-            = 0;
-    static final int L0_BUTTON_SENDMAIL
-            = 1001;
-    static final int L0_BUTTON_BACK
-            = 1;
-    static final int L0_BUTTON_TASK
-            = 2;
-    static final int L0_BUTTON_TASK1
-            = 3;
-    static final int L0_BUTTON_OPER
-            = 4;
-    static final int L1_BUTTON_TO_DB
-            = 100;
-    static final int L1_BUTTON_BEGIN_JOB
-            = 101;
-    static final int L2_BUTTON_TASK_SELECT
-            = 200;
-    static final int L2_BUTTON_CANCEL
-            = 201;
-    static final int L3_BUTTON_TASK_CONTINUE
-            = 300;
-    static final int L3_BUTTON_CANCEL
-            = 301;
-    static final int L4_BUTTON_CANCEL
-            = 400;
-    static final int L4_BUTTON_ACCEPT
-            = 401;
-    static final int L4_LIST_TASK_SELECT
-            = 402;
-    static final int L5_BUTTON_CANCEL
-            = 500;
-    static final int L5_BUTTON_ACCEPT
-            = 501;
-    static final int L5_LIST_OPER_SELECT
-            = 502;
-    static final int L6_BUTTON_COMPLETE
-            = 600;
-    static final int L6_BUTTON_CANCEL
-            = 601;
-    static final int L7_BUTTON_COMPLETE
-            = 701;
-    static final int L7_BUTTON_CANCEL
-            = 702;
-    static final int L7_BUTTON_START
-            = 703;
-    static final int L8_BUTTON_OK
-            = 801;
-    static final int L9_BUTTON_CANCEL
-            = 901;
-    static final int L9_BUTTON_ACCEPT
-            = 902;
-    static final int L9_BUTTON_REJECT
-            = 903;
-    static final int L9_BUTTON_REFRESH
-            = 904;
+    // ListView: Выбор задачи из списка: Task Select
+    ListView taskSelect_ListView;
+    String[] taskSelect_ListItems;
+    ArrayAdapter<String> taskSelect_ListAdapter;
+    String taskSelect_SelectedValue;                                    // Значение списка при выборе
+    TextView textView1;
 
-    /**
-     * Ссылки на лайауты для выборки из массива ***********************************
-     */
-    static final int LAYOUT_0_DB
-            = 0;
-    static final int LAYOUT_1_BEGIN
-            = 1;
-    static final int LAYOUT_2_NO_TASK
-            = 2;
-    static final int LAYOUT_3_DO_TASK
-            = 3;
-    static final int LAYOUT_4_TASK_SELECT
-            = 4;
-    static final int LAYOUT_5_OPER_SELECT
-            = 5;
-    static final int LAYOUT_6_SIMPLE_OPER
-            = 6;
-    static final int LAYOUT_7_COMPLEX_OPER
-            = 7;
-    static final int LAYOUT_8_TASK_COMPLETE
-            = 8;
-    static final int LAYOUT_9_SERV_REQUEST
-            = 9;
+    // ListView: Выбор задачи из списка: CurrentOper Select
+    ListView operSelect_ListView;
+    String[] operSelect_ListItems;
+    ArrayAdapter<String> operSelect_ListAdapter;
+    String operSelect_SelectedValue;                                    // Значение списка при выборе
+    TextView textView2;
+
+    // Кнопки
+    Button btn_1_Done, btn_ClearDB, btn_ToDB;
+    Button btn_0_Back, btn_0_Task, btn_0_Task1, btn_0_Oper, btn_0_SendMail,
+            btn_1_Begin,
+            btn_2_TaskGet, btn_2_Cancel,
+            btn_3_Cancel, btn_3_Continue,
+            btn_4_Cancel, btn_4_Accept,
+            btn_5_Cancel, btn_5_Accept,
+            btn_6_Cancel, btn_6_Complete,
+            btn_7_Cancel, btn_7_Complete, btn_7_Start,
+            btn_8_OK,
+            btn_9_Cancel, btn_9_Accept, btn_9_Refresh, btn_9_Reject;
+
+    // Какие-то параметры кнопок
+    boolean[] buttonStatus;
+    static final int NUMBER_OF_BUTTONS = 4;
+
+    // События нажатия клавиш, списков и пр.
+    static final int L__BUTTON_START = 0;
+    static final int L0_BUTTON_SENDMAIL = 1001;
+    static final int L0_BUTTON_BACK = 1;
+    static final int L0_BUTTON_TASK = 2;
+    static final int L0_BUTTON_TASK1 = 3;
+    static final int L0_BUTTON_OPER = 4;
+    static final int L1_BUTTON_TO_DB = 100;
+    static final int L1_BUTTON_BEGIN_JOB = 101;
+    static final int L2_BUTTON_TASK_SELECT = 200;
+    static final int L2_BUTTON_CANCEL = 201;
+    static final int L3_BUTTON_TASK_CONTINUE = 300;
+    static final int L3_BUTTON_CANCEL = 301;
+    static final int L4_BUTTON_CANCEL = 400;
+    static final int L4_BUTTON_ACCEPT = 401;
+    static final int L4_LIST_TASK_SELECT = 402;
+    static final int L5_BUTTON_CANCEL = 500;
+    static final int L5_BUTTON_ACCEPT = 501;
+    static final int L5_LIST_OPER_SELECT = 502;
+    static final int L6_BUTTON_COMPLETE = 600;
+    static final int L6_BUTTON_CANCEL = 601;
+    static final int L7_BUTTON_COMPLETE = 701;
+    static final int L7_BUTTON_CANCEL = 702;
+    static final int L7_BUTTON_START = 703;
+    static final int L8_BUTTON_OK = 801;
+    static final int L9_BUTTON_CANCEL = 901;
+    static final int L9_BUTTON_ACCEPT = 902;
+    static final int L9_BUTTON_REJECT = 903;
+    static final int L9_BUTTON_REFRESH = 904;
+
+    // Ссылки на лайауты для выборки из массива
+    static final int LAYOUT_0_DB = 0;
+    static final int LAYOUT_1_BEGIN = 1;
+    static final int LAYOUT_2_NO_TASK = 2;
+    static final int LAYOUT_3_DO_TASK = 3;
+    static final int LAYOUT_4_TASK_SELECT = 4;
+    static final int LAYOUT_5_OPER_SELECT = 5;
+    static final int LAYOUT_6_SIMPLE_OPER = 6;
+    static final int LAYOUT_7_COMPLEX_OPER = 7;
+    static final int LAYOUT_8_TASK_COMPLETE = 8;
+    static final int LAYOUT_9_SERV_REQUEST = 9;
+
+    // Текст экрана в лайауте
+    TextView textView[];
+
+    // Текст статусной строки
+    TextView
+            statusLineText;
+
+    // Дополнительный текст
+    TextView
+            text_7_target;
+
+    // Таймеры
+    private Timer
+            deviceReadTimer;        // Таймер опроса весового терминала
+    private MyTimerTask
+            myTimerTask;            // Задача для опроса весового терминала
 
 
+    // Конструктор
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        context = MainActivity.this;
+        logTAG = "MAIN: ";
+        logMessage = "";
+        statusLine = new StatusLine();
+        configurator = new Configurator(this);
+        messenger = new Messenger(this);
+        dbHelper = new DBHelper(this.context);
+        db = dbHelper.getWritableDatabase();
+        controller = new Controller(this);
+//        testDataLoader = new TestDataLoader();
+        storer = new Storer(this);
+        currentTask = new CurrentTask(this);
+        currentOper = new CurrentOper(this);
+        dbFunctions = new DBFunctions(this);
+        server = new ServerCommincator(this);
+        loader = new LoaderCommunicator(this);
 
-        /**
-         * Создание классов
-         */
-        configurator =
-                new Configurator(this);
-        messenger =
-                new Messenger(this);
-        storer =
-                new Storer(this);
-        currentTask =
-                new CurrentTask(this);
-        currentOper =
-                new CurrentOper(this);
-        dbFunctions =
-                new DBFunctions(this);
-        dbHelper =
-                new DBHelper(this);
-        loader=
-                new LoaderCommunicator(this);
-//        db =
-//                dbHelper.getWritableDatabase();
+        // Лайауты (экраны)
+        layoutStatus = new LayoutStatusClass(Integer.valueOf(getString(R.string.NUMBER_OF_LAYOUTS)));
+        layout = new LinearLayout[layoutStatus.numberOfLayouts];
+        layout[0] = (LinearLayout) findViewById(R.id.LL0_Dialog);
+        layout[1] = (LinearLayout) findViewById(R.id.LL1_Begin);
+        layout[2] = (LinearLayout) findViewById(R.id.LL2_No_Task);
+        layout[3] = (LinearLayout) findViewById(R.id.LL3_Do_Task);
+        layout[4] = (LinearLayout) findViewById(R.id.LL4_Task_Select);
+        layout[5] = (LinearLayout) findViewById(R.id.LL5_Oper_select);
+        layout[6] = (LinearLayout) findViewById(R.id.LL6_Simple_Task);
+        layout[LAYOUT_7_COMPLEX_OPER] = (LinearLayout) findViewById(R.id.LL7_Complex_Task);
+        layout[8] = (LinearLayout) findViewById(R.id.LL8_Task_Complete);
+        layout[9] = (LinearLayout) findViewById(R.id.LL9_ServiceRequest);
 
+        layout_4_1 = (LinearLayout) findViewById(R.id.LL4_1_Buttons);
 
+        // ListView: Task select
+        taskSelect_ListView = (ListView) findViewById(R.id.list_Task_Select);
+        taskSelect_SelectedValue = "";
+        taskSelect_ListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                textView1 = (TextView) view;
+                taskSelect_SelectedValue = textView1.getText().toString();
+                statusLine.set(taskSelect_SelectedValue);
+                setTextInLayout(LAYOUT_4_TASK_SELECT, taskSelect_SelectedValue);
+                controller.controller(L4_LIST_TASK_SELECT);
+            }
+        });
+
+        // ListView: CurrentOper select
+        operSelect_ListView = (ListView) findViewById(R.id.list_Oper_Select);
+        operSelect_SelectedValue = "";
+        operSelect_ListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                textView2 = (TextView) view;
+                operSelect_SelectedValue = textView2.getText().toString();
+                statusLine.set(operSelect_SelectedValue);
+                setTextInLayout(LAYOUT_5_OPER_SELECT, operSelect_SelectedValue);
+                controller.controller(L5_LIST_OPER_SELECT);
+            }
+        });
+
+        // TextView
+        textView = new TextView[layoutStatus.numberOfLayouts];
+        textView[0] = (TextView) findViewById(R.id.text_0_Info);
+        textView[1] = (TextView) findViewById(R.id.text_1_Info);
+        textView[2] = (TextView) findViewById(R.id.text_2_info);
+        textView[3] = (TextView) findViewById(R.id.text_3_Info);
+        textView[4] = (TextView) findViewById(R.id.text_4_Info);
+        textView[5] = (TextView) findViewById(R.id.text_5_Info);
+        textView[6] = (TextView) findViewById(R.id.text_6_info);
+        textView[LAYOUT_7_COMPLEX_OPER] = (TextView) findViewById(R.id.text_7_info);
+        textView[8] = (TextView) findViewById(R.id.text_8_info);
+        textView[9] = (TextView) findViewById(R.id.text_9_info);
+
+        text_7_target = (TextView) findViewById(R.id.text_7_target);
+
+        // Кнопки ВСЕ
+        buttonStatus = new boolean[NUMBER_OF_BUTTONS];
+        buttonStatusDrop();
+
+        // btn_0_SendMail
+        btn_0_SendMail = (Button) findViewById(R.id.button_0_SendMail);
+        btn_0_SendMail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                server.sendMail();
+            }
+        });
+
+        // Кнопка btn_ToDB
+        btn_ToDB = (Button) findViewById(R.id.button_LoadDB);
+        btn_ToDB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controller.controller(L1_BUTTON_TO_DB);
+            }
+        });
+
+        // Кнопка btn_ClearDB
+        btn_ClearDB = (Button) findViewById(R.id.button_Clear_DB);
+        btn_ClearDB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                storer.clearDB();
+//              storer.loadDB();
+
+                controller.controller(L__BUTTON_START);
+            }
+        });
+
+        // Кнопка button_Done (LL1)
+        btn_1_Done = (Button) findViewById(R.id.button_Done);
+        btn_1_Done.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                layoutsVisiblityRestore();
+                MainActivity.this.finish();
+            }
+        });
+
+        // Кнопка btn_0_Back (LL0)
+        btn_0_Back = (Button) findViewById(R.id.button_0_Back);         // Response Yes
+        btn_0_Back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controller.controller(L0_BUTTON_BACK);
+            }
+        });
+
+        // Кнопка "Печать таблицы TASK"
+        btn_0_Task = (Button) findViewById(R.id.button_0_Task);           // Response No
+        btn_0_Task.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controller.controller(L0_BUTTON_TASK);
+            }
+        });
+
+        // Кнопка "Печать таблицы TASK"
+        btn_0_Task1 = (Button) findViewById(R.id.button_0_Task1);           // Response No
+        btn_0_Task1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controller.controller(L0_BUTTON_TASK1);
+            }
+        });
+
+        // Кнопка "Печать таблицы CurrentOper"
+        btn_0_Oper = (Button) findViewById(R.id.button_0_Oper);
+        btn_0_Oper.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controller.controller(L0_BUTTON_OPER);
+            }
+        });
+
+        // Кнопка btn_1_Begin (LL1)
+        btn_1_Begin = (Button) findViewById(R.id.button_1_BeginJob);
+        btn_1_Begin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controller.controller(L1_BUTTON_BEGIN_JOB);
+            }
+        });
+
+        // Кнопка btn_2_TaskGet
+        btn_2_TaskGet = (Button) findViewById(R.id.button_2_TaskGet);
+        btn_2_TaskGet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controller.controller(L2_BUTTON_TASK_SELECT);
+            }
+        });
+
+        // Кнопка btn_2_Cancel
+        btn_2_Cancel = (Button) findViewById(R.id.button_2_Cancel);
+        btn_2_Cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controller.controller(L2_BUTTON_CANCEL);
+            }
+        });
+
+        // Btn_3_Continue
+        btn_3_Continue = (Button) findViewById(R.id.button_3_TaskContinue);
+        btn_3_Continue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controller.controller(L3_BUTTON_TASK_CONTINUE);
+            }
+        });
+
+        // Btn_3_Cancel
+        btn_3_Cancel = (Button) findViewById(R.id.button_3_Cancel);
+        btn_3_Cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controller.controller(L3_BUTTON_CANCEL);
+            }
+        });
+
+        // Кнопка Accept (LL4)
+        btn_4_Accept = (Button) findViewById(R.id.button_4_Accept);
+        btn_4_Accept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controller.controller(L4_BUTTON_ACCEPT);
+            }
+        });
+
+        // Кнопка Cancel (LL4)
+        btn_4_Cancel = (Button) findViewById(R.id.button_4_Cancel);
+        btn_4_Cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controller.controller(L4_BUTTON_CANCEL);
+            }
+        });
+
+        // Кнопка Accept (LL5)
+        btn_5_Accept = (Button) findViewById(R.id.button_5_Accept);
+        btn_5_Accept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controller.controller(L5_BUTTON_ACCEPT);
+            }
+        });
+
+        // Кнопка Cancel (LL5)
+        btn_5_Cancel = (Button) findViewById(R.id.button_5_Cancel);
+        btn_5_Cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controller.controller(L5_BUTTON_CANCEL);
+            }
+        });
+
+        // Кнопка Cancel (LL6)
+        btn_6_Cancel = (Button) findViewById(R.id.button_6_Cancel);
+        btn_6_Cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controller.controller(L6_BUTTON_CANCEL);
+            }
+        });
+
+        // Кнопка Accept (LL6)
+        btn_6_Complete = (Button) findViewById(R.id.button_6_Complete);
+        btn_6_Complete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controller.controller(L6_BUTTON_COMPLETE);
+            }
+        });
+
+        // btn_7_Complete
+        btn_7_Complete = (Button) findViewById(R.id.button_7_Complete);
+        btn_7_Complete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controller.controller(L7_BUTTON_COMPLETE);
+            }
+        });
+
+        // btn_7_Start
+        btn_7_Start = (Button) findViewById(R.id.button_7_Start);
+        btn_7_Start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controller.controller(L7_BUTTON_START);
+            }
+        });
+
+        // btn_8_OK
+        btn_8_OK = (Button) findViewById(R.id.button_8_ok);
+        btn_8_OK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controller.controller(L8_BUTTON_OK);
+            }
+        });
+
+        // btn_9_Cancel
+        btn_9_Cancel = (Button) findViewById(R.id.button_9_Cancel);
+        btn_9_Cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controller.controller(L9_BUTTON_CANCEL);
+            }
+        });
+
+        // btn_9_Accept
+        btn_9_Accept = (Button) findViewById(R.id.button_9_Accept);
+        btn_9_Accept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controller.controller(L9_BUTTON_ACCEPT);
+            }
+        });
+
+        // btn_9_Reject
+        btn_9_Reject = (Button) findViewById(R.id.button_9_Reject);
+        btn_9_Reject.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controller.controller(L9_BUTTON_REJECT);
+            }
+        });
+
+        // btn_9_Refresh
+        btn_9_Refresh = (Button) findViewById(R.id.button_9_Refresh);
+        btn_9_Refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controller.controller(L9_BUTTON_REFRESH);
+            }
+        });
+
+        currentTask.setTaskData();
+        controller.controller(L__BUTTON_START);
+
+    }// end of onCreate
+
+    // Сброс статуса кнопок
+    void buttonStatusDrop() {
+        for (int i = 0; i < buttonStatus.length; i++) {
+            buttonStatus[i] = false;
+        }
     }
 
-    /**
-     * Параметры текущей задачи
-     */
+    // Сохраняет текущее состояние видимости в массив объекта
+    void layoutsVisiblitySave() {
+        for (int i = 0; i < layoutStatus.numberOfLayouts; i++) {
+            layoutStatus.status[i] = layout[i].getVisibility() == VISIBLE;
+        }
+    }
+
+    // Устанавливает состояние видимости в соответствии с массивом
+    void layoutsVisiblityRestore() {
+        for (int i = 0; i < layoutStatus.numberOfLayouts; i++) {
+            if (layoutStatus.getStatus(i) != true) {
+                layout[i].setVisibility(View.INVISIBLE);
+            } else {
+                layout[i].setVisibility(VISIBLE);
+            }
+        }
+    }
+
+    // Устанавливает видимость экрана по номеру
+    void layoutVisiblitySet(int layoutToSet) {
+        layoutsVisiblitySave();
+        for (int i = 0; i < layoutStatus.numberOfLayouts; i++) {
+            if (i == layoutToSet) {
+                layout[i].setVisibility(View.VISIBLE);
+            } else {
+                layout[i].setVisibility(View.INVISIBLE);
+            }
+        }
+    }
+
+    // Лог
+    public void log(String s) {
+        Log.i("MAIN.LOG: ", s);
+    }
+
+    void setTextInLayout(int n, String s) {
+        textView[n].setText(s);
+    }
+
+    // Вычисление значения при выборе ListView Task select
+    String getTaskSelect_SelectedValue() {
+        return taskSelect_SelectedValue;
+    }
+
+    // Параметры текущей задачи
     public class CurrentTask {
-        MainActivity
-                mainActivity;
-        String
-                logTAG;
-        boolean
-                now = false;                // Имеется текущая активная задача
-        String
-                taskId;                     // Идентификатор задачи
-        String
-                taskComment;
-        String
-                taskStatus;
+        MainActivity a;
+        String logTAG;
+        boolean now = false;                // Имеется текущая активная задача
+        String taskId;                     // Идентификатор задачи
+        String taskComment;
+        String taskStatus;
 
         /**
          * При вызове конструктора надо бы загрузить данные из БД о текущей задаче
          */
         public CurrentTask(MainActivity activity) {
-            this.mainActivity = activity;
-            logTAG = mainActivity.logTAG + "CurrentTask: Start";
-            taskStatus = mainActivity.getString(R.string.STATUS_UNDEF);
+            this.a = activity;
+            logTAG = a.logTAG + "CurrentTask: Start";
+            taskStatus = a.getString(R.string.STATUS_UNDEF);
             setTaskData();
 //            operId = storer.getCurrentTask();
 //            if (operId != null) {
@@ -232,7 +598,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Текущая задача начинает/продолжает выполняться
         public void setToActive() {
-            String logTAG = mainActivity.currentTask.logTAG + "setToActive";
+            String logTAG = a.currentTask.logTAG + "setToActive";
             switch (taskStatus) {
                 case "undef":
                     taskStatus = "begin";
@@ -266,7 +632,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Текущая задача прерывается/останавливается
         public void setToUnactive() {
-            String logTAG = mainActivity.currentTask.logTAG + "setToUnActive";
+            String logTAG = a.currentTask.logTAG + "setToUnActive";
             switch (taskStatus) {
                 case "undef":
                     taskStatus = "undef";
@@ -298,7 +664,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Текущая задача завершена
         public void setToComplete() {
-            String logTAG = mainActivity.currentTask.logTAG + "setToUnActive";
+            String logTAG = a.currentTask.logTAG + "setToUnActive";
             switch (taskStatus) {
                 case "undef":
                     taskStatus = "undef";
@@ -325,8 +691,8 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
             storer.setTaskProperty_Status(taskId, taskStatus);
-            storer.setTaskProperty_Complete(mainActivity.currentTask.taskId);
-            storer.setTaskProperty_Current(mainActivity.currentTask.taskId, 0);
+            storer.setTaskProperty_Complete(a.currentTask.taskId);
+            storer.setTaskProperty_Current(a.currentTask.taskId, 0);
 
         }
     }
@@ -568,6 +934,12 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     }
                 }
+//                for (OperationParameter p0 : op) {
+//                    if (p0.name.equals(pName)) {
+//                        retVar = p0.value;
+//                        break;
+//                    }
+//                }
             }
             return retVar;
         }
@@ -603,7 +975,7 @@ public class MainActivity extends AppCompatActivity {
         public ArrayList<OperationParameter> getOperationParameter(String pId) {
             ArrayList<OperationParameter> retVar = new ArrayList<>();
             Cursor c = db.query(
-                    dbHelper.TABLE_OPER_PARAM,
+                    DBHelper.TABLE_OPER_PARAM,
                     new String[]{
                             KEY_OPPA_OPER_ID,
                             KEY_OPPA_PARAM_NAME,
@@ -627,13 +999,28 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // Установка текущей операции
+    public void setCurrentOper(String operId) {
+        Log.i(logTAG, "setCurrentOper: start: " + operId);
+        currentOper.setParamInClass();
+    }
+
+    // Текущее значение времени
+    public Date getCurrentTime() {
+        Date cal = Calendar.getInstance().getTime();
+        return cal;
+    }
+
     public void makeOperation_Load() {
+
 //        weightDataFromDeviceReader_Start(); // Получение показаний весов от терминала
         weightDataToLoaderSender_Start();   // Передача показаний весов на терминал погрузчика
     }
 
     public void weightDataToLoaderSender_Start() {
         Log.i(logTAG + ": weightData: ", "start");
+
+
     }
 
     public void weightDataToLoaderSender_Stop() {
@@ -659,13 +1046,135 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Лог (обратная совместимость)
-     *
-     * @param s - строка для вывода
-     */
-    public void log(String s) {
-        Log.i("MAIN.LOG: ", s);
+    // Вывод данных в статусную строку
+    public class StatusLine {
+        private String statusLine;
+
+        public StatusLine() {
+            statusLineText = (TextView) findViewById(R.id.text_StatusLine);
+            statusLine = getString(R.string.STATUS_LINE_TEXT_INITIAL);
+            statusLineText.setText(statusLine);
+        }
+
+        public void set(String pS) {
+            statusLineText.setText(pS);
+        }
+    }
+
+    private class LayoutStatusClass {
+        public boolean[] status;
+        public int numberOfLayouts;
+
+        public LayoutStatusClass(int LayoutNumberParameter) {
+
+            // Задали количество Л
+            numberOfLayouts = LayoutNumberParameter;
+
+            // Объявили массив статусов
+            status = new boolean[numberOfLayouts];
+
+            // Установка видимости для всех layout
+            for (int i = 0; i < LayoutNumberParameter; i++) {
+                status[i] = false;
+            }
+
+            // При старте фидим всегда первый Л
+            status[1] = true;
+
+        }
+
+        public boolean getStatus(int p) {
+            return status[p];
+        }
+    }
+
+    // Задача для опроса весового терминала
+    class MyTimerTask extends TimerTask {
+        @Override
+        public void run() {
+            Socket socket;
+            String socketAddr = "192.168.1.113";
+            int socketPort = 18080;
+            InputStream is;
+            OutputStream os;
+            String o = "ping\n";
+            String res = null;
+            try {
+                InetAddress serverAddr = InetAddress.getByName(socketAddr);
+                socket = new Socket(serverAddr, socketPort);
+                if (socket.isConnected() == true) {
+                    is = socket.getInputStream();
+                    os = socket.getOutputStream();
+                    byte[] buffer = o.getBytes();
+                    os.write(buffer);
+                    os.flush();
+                    buffer = new byte[256];
+                    int read = is.read(buffer, 0, 256);
+                    res = new String(buffer).substring(0, read);
+                    Log.i(logTAG, "FROM DEVICE=" + res);
+                    res = extractDigits(res);
+                    socket.close();
+//                    storer.setWeightIndicatorData(res);
+                }
+            } catch (Exception e) {
+                Log.i(logTAG, "Not connected: " + e);
+            }
+            storer.setWeightIndicatorData(res);
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // Обновить данные о загрузке на экране
+                    displayWeightParameters();
+                }
+            });
+
+        }
+    }
+
+    public String extractDigits(String srcString) {
+        String r = "0";
+        Pattern pattern = Pattern.compile("\\d+");
+        Matcher matcher = pattern.matcher(srcString);
+        if (matcher.find()) {
+            r = (matcher.group());
+            Log.i(logTAG, "!!!! matcher.find()=" + r);
+        }
+        return r;
+    }
+
+    void displayWeightParameters() {
+
+        // Вычислить отставщийся вес
+        storer.weightRemain = storer.weightTarget - storer.weightCurrent;
+
+        // ПОказания весов
+        text_7_target.setText(String.valueOf(storer.weightCurrent));
+        // Остаток для погрузки
+        textView[LAYOUT_7_COMPLEX_OPER].setText(String.valueOf(storer.weightRemain));
+    }
+
+    void setTextView(int layout, String text) {
+    }
+
+    public void log(boolean needLog, String toLog) {
+        if (needLog) {
+            logMessage += toLog + "\n";
+            Log.i(logTAG, toLog);
+        }
+    }
+
+    void Beep() {
+        /**
+         * Звуковой сигнал о запросе на погрузку
+         */
+        try {
+            Uri notify = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notify);
+            r.play();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /*********************
@@ -738,73 +1247,8 @@ public class MainActivity extends AppCompatActivity {
                 loader.serverServiceRequest();
 //                messenger.msg_ToLoader_ServiceRequest();
                 break;
-        }
-    }
-
-    /**
-     * Задача для опроса весового терминала
-     */
-    class MyTimerTask extends TimerTask {
-        @Override
-        public void run() {
-            Socket socket;
-            String socketAddr = "192.168.1.113";
-            int socketPort = 18080;
-            InputStream is;
-            OutputStream os;
-            String o = "ping\n";
-            String res = null;
-            try {
-                InetAddress serverAddr = InetAddress.getByName(socketAddr);
-                socket = new Socket(serverAddr, socketPort);
-                if (socket.isConnected() == true) {
-                    is = socket.getInputStream();
-                    os = socket.getOutputStream();
-                    byte[] buffer = o.getBytes();
-                    os.write(buffer);
-                    os.flush();
-                    buffer = new byte[256];
-                    int read = is.read(buffer, 0, 256);
-                    res = new String(buffer).substring(0, read);
-                    Log.i(logTAG, "FROM DEVICE=" + res);
-                    res = extractDigits(res);
-                    socket.close();
-//                    storer.setWeightIndicatorData(res);
-                }
-            } catch (Exception e) {
-                Log.i(logTAG, "Not connected: " + e);
-            }
-            storer.setWeightIndicatorData(res);
-
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    // Обновить данные о загрузке на экране
-                    displayWeightParameters();
-                }
-            });
 
         }
+        setTextInLayout(newLayout, textToInfo);     // Сообщение в поле инфо
     }
-
-    public String extractDigits(String srcString) {
-        String r = "0";
-        Pattern pattern = Pattern.compile("\\d+");
-        Matcher matcher = pattern.matcher(srcString);
-        if (matcher.find()) {
-            r = (matcher.group());
-            Log.i(logTAG, "!!!! matcher.find()=" + r);
-        }
-        return r;
-    }
-    void displayWeightParameters() {
-        // Вычислить отставщийся вес
-        storer.weightRemain = storer.weightTarget - storer.weightCurrent;
-
-        // ПОказания весов
-        text_7_target.setText(String.valueOf(storer.weightCurrent));
-        // Остаток для погрузки
-        textView[LAYOUT_7_COMPLEX_OPER].setText(String.valueOf(storer.weightRemain));
-    }
-
 }

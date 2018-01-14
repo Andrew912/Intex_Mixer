@@ -10,84 +10,569 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="org.and.intex_v2.MainActivity">
 
+
     <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:id="@+id/Main"
-        android:weightSum="1"
-        android:foregroundGravity="top"
-        android:gravity="top"
-        tools:ignore="UselessParent">
+        android:layout_width="304dp"
+        android:layout_height="493dp"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="8dp"
+        tools:ignore="MissingConstraints,UselessParent">
 
         <FrameLayout
+            android:id="@+id/FrameMain"
             android:layout_width="match_parent"
-            android:layout_height="455dp"
-            android:id="@+id/FrameMain">
+            android:layout_height="472dp">
 
             <LinearLayout
-                android:orientation="vertical"
+                android:id="@+id/LL0_Dialog"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/L00"
+                android:gravity="bottom"
+                android:orientation="vertical"
+                android:visibility="invisible"
+                android:weightSum="1">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="167dp"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/button_Clear_DB"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="clear_db"
+                        tools:ignore="InefficientWeight" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/text_0_Info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="TextView"
+                    android:textSize="14sp"
+                    tools:ignore="HardcodedText" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/button_0_SendMail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="SendMail"
+                        tools:ignore="HardcodedText,InefficientWeight" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.01"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/button_0_Back"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="back "
+                        tools:ignore="ButtonStyle,HardcodedText,NestedWeights" />
+
+                    <Button
+                        android:id="@+id/button_0_Task"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="task"
+                        tools:ignore="ButtonStyle" />
+
+                    <Button
+                        android:id="@+id/button_0_Task1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Task1"
+                        tools:ignore="ButtonStyle,HardcodedText" />
+
+                    <Button
+                        android:id="@+id/button_0_Oper"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="oper"
+                        tools:ignore="ButtonStyle" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/LL1_Begin"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:elevation="1dp"
+                android:gravity="bottom"
+                android:orientation="vertical"
+                android:visibility="visible"
+                android:weightSum="1">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.00"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/button_LoadDB"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="goto_db"
+                        tools:ignore="InefficientWeight,NestedWeights" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/text_1_Info"
+                    android:layout_width="match_parent"
+                    android:layout_height="235dp"
+                    android:text="Терминал оператора миксера"
+                    android:textAlignment="center"
+                    android:textSize="30sp"
+                    tools:ignore="HardcodedText" />
+
+                <Button
+                    android:id="@+id/button_1_BeginJob"
+                    android:layout_width="match_parent"
+                    android:layout_height="95dp"
+                    android:text="начать работу"
+                    android:textSize="30sp"
+                    tools:ignore="HardcodedText" />
+
+                <Button
+                    android:id="@+id/button_Done"
+                    android:layout_width="match_parent"
+                    android:layout_height="95dp"
+                    android:layout_weight="1.00"
+                    android:text="закончить"
+                    android:textSize="30sp"
+                    tools:ignore="HardcodedText" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/LL2_No_Task"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="bottom"
+                android:orientation="vertical"
+                android:visibility="visible"
                 android:weightSum="1">
 
                 <TextView
-                    android:text="TextView"
+                    android:id="@+id/text_2_info"
                     android:layout_width="match_parent"
-                    android:id="@+id/txt_00_0_Info"
-                    android:layout_height="355dp" />
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="no_current_task"
+                    android:textAlignment="center"
+                    android:textSize="30sp"
+                    tools:ignore="HardcodedText" />
+
+                <Button
+                    android:id="@+id/button_2_Cancel"
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp"
+                    android:layout_weight="0.12"
+                    android:text="отмена"
+                    android:textSize="30sp"
+                    tools:ignore="HardcodedText" />
+
+                <Button
+                    android:id="@+id/button_2_TaskGet"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Получить задание"
+                    android:textSize="30sp"
+                    tools:ignore="HardcodedText" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/LL3_Do_Task"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="bottom"
+                android:orientation="vertical"
+                android:visibility="invisible"
+                android:weightSum="1">
+
+                <TextView
+                    android:id="@+id/text_3_Info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.00"
+                    android:text="Текущая задача:"
+                    android:textAlignment="center"
+                    android:textSize="30sp"
+                    tools:ignore="HardcodedText" />
 
                 <LinearLayout
-                    android:orientation="vertical"
+                    android:id="@+id/LL3_1_Buttons"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.00"
+                    android:orientation="horizontal"
+                    android:visibility="visible">
 
                     <Button
+                        android:id="@+id/button_3_Cancel"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:layout_weight="1"
                         android:text="отмена"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/btn_00_0"
-                        android:textSize="18sp"
-                        android:minHeight="50dp" />
+                        android:textSize="26sp"
+                        tools:ignore="ButtonStyle,HardcodedText,NestedWeights" />
 
                     <Button
-                        android:text="принять"
+                        android:id="@+id/button_3_TaskContinue"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/btn_00_1"
-                        android:textSize="18sp"
-                        android:minHeight="50dp" />
+                        android:layout_height="100dp"
+                        android:layout_weight="1"
+                        android:text="да"
+                        android:textSize="30sp"
+                        tools:ignore="ButtonStyle,HardcodedText" />
+
                 </LinearLayout>
 
             </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/LL4_Task_Select"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="bottom"
+                android:gravity="bottom"
+                android:orientation="vertical"
+                android:visibility="invisible">
+
+                <ListView
+                    android:id="@+id/list_Task_Select"
+                    android:layout_width="match_parent"
+                    android:layout_height="134dp"
+                    android:visibility="visible"
+                    tools:listheader="список доступных задач" />
+
+                <TextView
+                    android:id="@+id/text_4_Info"
+                    android:layout_width="match_parent"
+                    android:layout_height="249dp"
+                    android:elevation="0dp"
+                    android:textAlignment="center"
+                    android:textSize="26sp" />
+
+                <LinearLayout
+                    android:id="@+id/LL4_1_Buttons"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:visibility="visible">
+
+                    <Button
+                        android:id="@+id/button_4_Cancel"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:layout_weight="1"
+                        android:text="отмена"
+                        android:textSize="26sp"
+                        tools:ignore="ButtonStyle,HardcodedText" />
+
+                    <Button
+                        android:id="@+id/button_4_Accept"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:layout_weight="1"
+                        android:text="принять"
+                        android:textSize="26sp"
+                        android:visibility="invisible"
+                        tools:ignore="ButtonStyle,HardcodedText" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/LL5_Oper_select"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="bottom"
+                android:orientation="vertical"
+                android:visibility="invisible"
+                android:weightSum="1">
+
+                <ListView
+                    android:id="@+id/list_Oper_Select"
+                    android:layout_width="match_parent"
+                    android:layout_height="219dp"
+                    android:layout_weight="0.94"
+                    tools:listheader="список операций"
+                    tools:ignore="InefficientWeight" />
+
+                <TextView
+                    android:id="@+id/text_5_Info"
+                    android:layout_width="match_parent"
+                    android:layout_height="107dp"
+                    android:elevation="0dp"
+                    android:textAlignment="center"
+                    android:textSize="26sp" />
+
+                <LinearLayout
+                    android:id="@+id/LL5_1_Buttons"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/button_5_Cancel"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:layout_weight="1"
+                        android:text="отмена"
+                        android:textSize="26sp"
+                        tools:ignore="ButtonStyle,HardcodedText" />
+
+                    <Button
+                        android:id="@+id/button_5_Accept"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="начать"
+                        android:textSize="26sp"
+                        tools:ignore="ButtonStyle,HardcodedText" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/LL6_Simple_Task"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="bottom"
+                android:orientation="vertical"
+                android:visibility="invisible"
+                android:weightSum="1">
+
+                <TextView
+                    android:id="@+id/text_6_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Текущая операция"
+                    android:textAlignment="center"
+                    android:textSize="30sp"
+                    tools:ignore="HardcodedText" />
+
+                <LinearLayout
+                    android:id="@+id/LL6_1_Buttons"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/button_6_Cancel"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:layout_weight="1"
+                        android:text="отмена"
+                        android:textSize="26sp"
+                        tools:ignore="ButtonStyle,HardcodedText,NestedWeights" />
+
+                    <Button
+                        android:id="@+id/button_6_Complete"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:layout_weight="1"
+                        android:text="готово"
+                        android:textSize="30sp"
+                        tools:ignore="ButtonStyle,HardcodedText" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/LL7_Complex_Task"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="bottom"
+                android:orientation="vertical"
+                android:visibility="invisible"
+                android:weightSum="1">
+
+                <TextView
+                    android:id="@+id/text_7_Header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="погрузка"
+                    android:textAlignment="center"
+                    android:textSize="30sp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/text_7_target"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="bottom"
+                    android:text="0"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/holo_orange_dark"
+                    android:textSize="125sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/text_7_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="bottom"
+                    android:text="0"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/holo_orange_dark"
+                    android:textSize="125sp"
+                    android:textStyle="bold"
+                    tools:ignore="HardcodedText" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <Button
+                        android:id="@+id/button_7_Start"
+                        android:layout_width="match_parent"
+                        android:layout_height="85dp"
+                        android:background="@android:color/holo_green_dark"
+                        android:text="начать"
+                        android:textSize="30sp"
+                        android:visibility="visible"
+                        tools:ignore="HardcodedText" />
+
+                    <Button
+                        android:id="@+id/button_7_Complete"
+                        android:layout_width="match_parent"
+                        android:layout_height="85dp"
+                        android:text="закончить"
+                        android:textSize="30sp"
+                        android:visibility="invisible"
+                        tools:ignore="HardcodedText" />
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/LL8_Task_Complete"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="bottom"
+                android:orientation="vertical"
+                android:visibility="invisible"
+                android:weightSum="1">
+
+                <TextView
+                    android:id="@+id/text_8_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.99"
+                    android:text="Текущая задача"
+                    android:textAlignment="center"
+                    android:textSize="30sp"
+                    tools:layout_editor_absoluteX="8dp"
+                    tools:layout_editor_absoluteY="-7dp"
+                    tools:ignore="HardcodedText,InefficientWeight" />
+
+                <Button
+                    android:id="@+id/button_8_ok"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Задача завершена"
+                    android:textSize="30sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/LL9_ServiceRequest"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="bottom"
+                android:orientation="vertical"
+                android:visibility="invisible"
+                android:weightSum="1">
+
+                <TextView
+                    android:id="@+id/text_9_Header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Запрос на обслуживание"
+                    android:textAlignment="center"
+                    android:textSize="30sp" />
+
+                <TextView
+                    android:id="@+id/text_9_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textAlignment="center"
+                    android:textSize="30sp" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <Button
+                        android:id="@+id/button_9_Refresh"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="освежить"
+                        android:visibility="invisible"
+                        tools:ignore="HardcodedText" />
+
+                    <Button
+                        android:id="@+id/button_9_Reject"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="отклонен"
+                        android:visibility="invisible"
+                        tools:ignore="HardcodedText" />
+
+                    <Button
+                        android:id="@+id/button_9_Accept"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="принят"
+                        android:visibility="invisible"
+                        tools:ignore="HardcodedText" />
+
+                    <Button
+                        android:id="@+id/button_9_Cancel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="отменить запрос"
+                        android:textSize="30sp"
+                        tools:ignore="HardcodedText" />
+                </FrameLayout>
+
+            </LinearLayout>
+
         </FrameLayout>
 
-        <LinearLayout
-            android:orientation="horizontal"
+        <TextView
+            android:id="@+id/text_StatusLine"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/StatusLineLayout">
-
-            <TextView
-                android:text="Текст статусной строки "
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/text_StatusLine"
-                android:textSize="18sp"
-                android:elevation="0dp"
-                android:layout_weight="1"
-                tools:ignore="HardcodedText" />
-
-            <TextView
-                android:text="@string/copyright_intex_ltd"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/text_CopyRight"
-                android:textAlignment="textEnd"
-                android:textSize="12sp"
-                android:textColor="@android:color/holo_green_dark" />
-        </LinearLayout>
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
