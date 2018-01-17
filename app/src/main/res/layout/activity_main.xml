@@ -473,6 +473,76 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/LL71_Load_Task"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="bottom"
+                android:orientation="vertical"
+                android:visibility="invisible"
+                android:weightSum="1">
+
+                <TextView
+                    android:id="@+id/text_71_Header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="погрузка"
+                    android:textAlignment="center"
+                    android:textSize="30sp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/text_71_target"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="bottom"
+                    android:text="0"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/holo_orange_dark"
+                    android:textSize="125sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/text_71_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="bottom"
+                    android:text="0"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/holo_orange_dark"
+                    android:textSize="125sp"
+                    android:textStyle="bold"
+                    tools:ignore="HardcodedText" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <Button
+                        android:id="@+id/button_71_Start"
+                        android:layout_width="match_parent"
+                        android:layout_height="85dp"
+                        android:background="@android:color/holo_green_dark"
+                        android:text="начать"
+                        android:textSize="30sp"
+                        android:visibility="visible"
+                        tools:ignore="HardcodedText" />
+
+                    <Button
+                        android:id="@+id/button_71_Complete"
+                        android:layout_width="match_parent"
+                        android:layout_height="85dp"
+                        android:text="закончить"
+                        android:textSize="30sp"
+                        android:visibility="invisible"
+                        tools:ignore="HardcodedText" />
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/LL8_Task_Complete"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

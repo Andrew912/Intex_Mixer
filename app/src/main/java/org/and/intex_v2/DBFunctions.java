@@ -191,7 +191,7 @@ public class DBFunctions {
             } while (c.moveToNext() == true);
 
 
-//            activity.textView[0].setText(s);
+//            mainActivity.textView[0].setText(s);
             c.close();
         }
     }

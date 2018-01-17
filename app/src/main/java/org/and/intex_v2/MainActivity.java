@@ -101,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
             btn_5_Cancel, btn_5_Accept,
             btn_6_Cancel, btn_6_Complete,
             btn_7_Cancel, btn_7_Complete, btn_7_Start,
+            btn_71_Cancel, btn_71_Complete, btn_71_Start,
             btn_8_OK,
             btn_9_Cancel, btn_9_Accept, btn_9_Refresh, btn_9_Reject;
 
@@ -132,6 +133,9 @@ public class MainActivity extends AppCompatActivity {
     static final int L7_BUTTON_COMPLETE = 701;
     static final int L7_BUTTON_CANCEL = 702;
     static final int L7_BUTTON_START = 703;
+    static final int L71_BUTTON_COMPLETE = 7101;
+    static final int L71_BUTTON_CANCEL = 7102;
+    static final int L71_BUTTON_START = 7103;
     static final int L8_BUTTON_OK = 801;
     static final int L9_BUTTON_CANCEL = 901;
     static final int L9_BUTTON_ACCEPT = 902;
@@ -147,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
     static final int LAYOUT_5_OPER_SELECT = 5;
     static final int LAYOUT_6_SIMPLE_OPER = 6;
     static final int LAYOUT_7_COMPLEX_OPER = 7;
+    static final int LAYOUT_71_LOAD_OPER = 10;
     static final int LAYOUT_8_TASK_COMPLETE = 8;
     static final int LAYOUT_9_SERV_REQUEST = 9;
 
@@ -190,23 +195,69 @@ public class MainActivity extends AppCompatActivity {
         server = new ServerCommincator(this);
         loader = new LoaderCommunicator(this);
 
-        // Лайауты (экраны)
+        /**
+         * Лайауты (экраны)
+         */
         layoutStatus = new LayoutStatusClass(Integer.valueOf(getString(R.string.NUMBER_OF_LAYOUTS)));
         layout = new LinearLayout[layoutStatus.numberOfLayouts];
-        layout[0] = (LinearLayout) findViewById(R.id.LL0_Dialog);
-        layout[1] = (LinearLayout) findViewById(R.id.LL1_Begin);
-        layout[2] = (LinearLayout) findViewById(R.id.LL2_No_Task);
-        layout[3] = (LinearLayout) findViewById(R.id.LL3_Do_Task);
-        layout[4] = (LinearLayout) findViewById(R.id.LL4_Task_Select);
-        layout[5] = (LinearLayout) findViewById(R.id.LL5_Oper_select);
-        layout[6] = (LinearLayout) findViewById(R.id.LL6_Simple_Task);
-        layout[LAYOUT_7_COMPLEX_OPER] = (LinearLayout) findViewById(R.id.LL7_Complex_Task);
-        layout[8] = (LinearLayout) findViewById(R.id.LL8_Task_Complete);
-        layout[9] = (LinearLayout) findViewById(R.id.LL9_ServiceRequest);
+        layout[LAYOUT_0_DB] =
+                (LinearLayout) findViewById(R.id.LL0_Dialog);
+        layout[LAYOUT_1_BEGIN] =
+                (LinearLayout) findViewById(R.id.LL1_Begin);
+        layout[LAYOUT_2_NO_TASK] =
+                (LinearLayout) findViewById(R.id.LL2_No_Task);
+        layout[LAYOUT_3_DO_TASK] =
+                (LinearLayout) findViewById(R.id.LL3_Do_Task);
+        layout[LAYOUT_4_TASK_SELECT] =
+                (LinearLayout) findViewById(R.id.LL4_Task_Select);
+        layout[LAYOUT_5_OPER_SELECT] =
+                (LinearLayout) findViewById(R.id.LL5_Oper_select);
+        layout[LAYOUT_6_SIMPLE_OPER] =
+                (LinearLayout) findViewById(R.id.LL6_Simple_Task);
+        layout[LAYOUT_7_COMPLEX_OPER] =
+                (LinearLayout) findViewById(R.id.LL7_Complex_Task);
+        layout[LAYOUT_8_TASK_COMPLETE] =
+                (LinearLayout) findViewById(R.id.LL8_Task_Complete);
+        layout[LAYOUT_9_SERV_REQUEST] =
+                (LinearLayout) findViewById(R.id.LL9_ServiceRequest);
+        layout[LAYOUT_71_LOAD_OPER] =
+                (LinearLayout) findViewById(R.id.LL71_Load_Task);
 
-        layout_4_1 = (LinearLayout) findViewById(R.id.LL4_1_Buttons);
+        layout_4_1 =
+                (LinearLayout) findViewById(R.id.LL4_1_Buttons);
 
-        // ListView: Task select
+        /**
+         * TextViews
+         */
+        textView = new TextView[layoutStatus.numberOfLayouts];
+        textView[LAYOUT_0_DB] =
+                (TextView) findViewById(R.id.text_0_Info);
+        textView[LAYOUT_1_BEGIN] =
+                (TextView) findViewById(R.id.text_1_Info);
+        textView[LAYOUT_2_NO_TASK] =
+                (TextView) findViewById(R.id.text_2_info);
+        textView[LAYOUT_3_DO_TASK] =
+                (TextView) findViewById(R.id.text_3_Info);
+        textView[LAYOUT_4_TASK_SELECT] =
+                (TextView) findViewById(R.id.text_4_Info);
+        textView[LAYOUT_5_OPER_SELECT] =
+                (TextView) findViewById(R.id.text_5_Info);
+        textView[LAYOUT_6_SIMPLE_OPER] =
+                (TextView) findViewById(R.id.text_6_info);
+        textView[LAYOUT_7_COMPLEX_OPER] =
+                (TextView) findViewById(R.id.text_7_info);
+        textView[LAYOUT_8_TASK_COMPLETE] =
+                (TextView) findViewById(R.id.text_8_info);
+        textView[LAYOUT_9_SERV_REQUEST] =
+                (TextView) findViewById(R.id.text_9_info);
+        textView[LAYOUT_71_LOAD_OPER] =
+                (TextView) findViewById(R.id.text_9_info);
+
+        text_7_target = (TextView) findViewById(R.id.text_7_target);
+
+        /**
+         * ListView: Task select
+         */
         taskSelect_ListView = (ListView) findViewById(R.id.list_Task_Select);
         taskSelect_SelectedValue = "";
         taskSelect_ListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -220,7 +271,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // ListView: CurrentOper select
+        /**
+         * ListView: CurrentOper select
+         */
         operSelect_ListView = (ListView) findViewById(R.id.list_Oper_Select);
         operSelect_SelectedValue = "";
         operSelect_ListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -233,21 +286,6 @@ public class MainActivity extends AppCompatActivity {
                 controller.controller(L5_LIST_OPER_SELECT);
             }
         });
-
-        // TextView
-        textView = new TextView[layoutStatus.numberOfLayouts];
-        textView[0] = (TextView) findViewById(R.id.text_0_Info);
-        textView[1] = (TextView) findViewById(R.id.text_1_Info);
-        textView[2] = (TextView) findViewById(R.id.text_2_info);
-        textView[3] = (TextView) findViewById(R.id.text_3_Info);
-        textView[4] = (TextView) findViewById(R.id.text_4_Info);
-        textView[5] = (TextView) findViewById(R.id.text_5_Info);
-        textView[6] = (TextView) findViewById(R.id.text_6_info);
-        textView[LAYOUT_7_COMPLEX_OPER] = (TextView) findViewById(R.id.text_7_info);
-        textView[8] = (TextView) findViewById(R.id.text_8_info);
-        textView[9] = (TextView) findViewById(R.id.text_9_info);
-
-        text_7_target = (TextView) findViewById(R.id.text_7_target);
 
         // Кнопки ВСЕ
         buttonStatus = new boolean[NUMBER_OF_BUTTONS];
@@ -276,21 +314,8 @@ public class MainActivity extends AppCompatActivity {
         btn_ClearDB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 storer.clearDB();
-//              storer.loadDB();
-
                 controller.controller(L__BUTTON_START);
-            }
-        });
-
-        // Кнопка button_Done (LL1)
-        btn_1_Done = (Button) findViewById(R.id.button_Done);
-        btn_1_Done.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                layoutsVisiblityRestore();
-                MainActivity.this.finish();
             }
         });
 
@@ -336,6 +361,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 controller.controller(L1_BUTTON_BEGIN_JOB);
+            }
+        });
+
+        // Кнопка button_Done (LL1)
+        btn_1_Done = (Button) findViewById(R.id.button_Done);
+        btn_1_Done.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                layoutsVisiblityRestore();
+                MainActivity.this.finish();
             }
         });
 
@@ -444,6 +479,24 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 controller.controller(L7_BUTTON_START);
+            }
+        });
+
+        // btn_71_Complete
+        btn_71_Complete = (Button) findViewById(R.id.button_71_Complete);
+        btn_71_Complete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controller.controller(L71_BUTTON_COMPLETE);
+            }
+        });
+
+        // btn_71_Start
+        btn_71_Start = (Button) findViewById(R.id.button_71_Start);
+        btn_71_Start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controller.controller(L71_BUTTON_START);
             }
         });
 
@@ -1011,16 +1064,18 @@ public class MainActivity extends AppCompatActivity {
         return cal;
     }
 
-    public void makeOperation_Load() {
-
+    public void makeOperation_Load_with_Loader() {
 //        weightDataFromDeviceReader_Start(); // Получение показаний весов от терминала
         weightDataToLoaderSender_Start();   // Передача показаний весов на терминал погрузчика
     }
 
+    public void makeOperation_Load_No_Loader() {
+//        weightDataFromDeviceReader_Start(); // Получение показаний весов от терминала
+//        weightDataToLoaderSender_Start();   // Передача показаний весов на терминал погрузчика
+    }
+
     public void weightDataToLoaderSender_Start() {
         Log.i(logTAG + ": weightData: ", "start");
-
-
     }
 
     public void weightDataToLoaderSender_Stop() {
@@ -1154,6 +1209,17 @@ public class MainActivity extends AppCompatActivity {
         textView[LAYOUT_7_COMPLEX_OPER].setText(String.valueOf(storer.weightRemain));
     }
 
+    void displayWeightParameters1() {
+
+        // Вычислить отставщийся вес
+        storer.weightRemain = storer.weightTarget - storer.weightCurrent;
+
+        // ПОказания весов
+        text_7_target.setText(String.valueOf(storer.weightCurrent));
+        // Остаток для погрузки
+        textView[LAYOUT_7_COMPLEX_OPER].setText(String.valueOf(storer.weightRemain));
+    }
+
     void setTextView(int layout, String text) {
     }
 
@@ -1237,6 +1303,10 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case LAYOUT_7_COMPLEX_OPER:
+                loader.serverSendWeight();
+                break;
+
+            case LAYOUT_71_LOAD_OPER:
                 loader.serverSendWeight();
                 break;
 

@@ -142,10 +142,10 @@ public class LoaderCommunicator {
             } else {
                 // Сбросить таймер
                 dropTimerServerRequest();
-//                activity.runOnUiThread(new Runnable() {
+//                mainActivity.runOnUiThread(new Runnable() {
 //                    @Override
 //                    public void run() {
-//                        activity.b2.callOnClick();
+//                        mainActivity.b2.callOnClick();
 //                    }
 //                });
             }
@@ -163,10 +163,10 @@ public class LoaderCommunicator {
             } else {
                 // Сбросить таймер
                 dropTimerServerRequest();
-//                activity.runOnUiThread(new Runnable() {
+//                mainActivity.runOnUiThread(new Runnable() {
 //                    @Override
 //                    public void run() {
-//                        activity.b2.callOnClick();
+//                        mainActivity.b2.callOnClick();
 //                    }
 //                });
             }
@@ -340,7 +340,7 @@ public class LoaderCommunicator {
                 + pair("request", operId)
                 + pair("feed", feed)
                 + pair("status", "begin")
-//                + pair("weight", activity.weightCalc(Integer.parseInt(value)))
+//                + pair("weight", mainActivity.weightCalc(Integer.parseInt(value)))
                 + pair("value", value)
                 ;
     }
@@ -348,7 +348,7 @@ public class LoaderCommunicator {
     public String msg_Weight(String operId, String weight) {
         return msg_header()
                 + pair("cmd", "weight")
-//                + pair("weight", activity.device.weightCalc(Integer.parseInt(value)))
+//                + pair("weight", mainActivity.device.weightCalc(Integer.parseInt(value)))
                 ;
     }
 

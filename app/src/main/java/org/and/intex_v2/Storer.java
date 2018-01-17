@@ -52,10 +52,10 @@ public class Storer {
 
     public Storer(MainActivity mainActivity) {
         activity = mainActivity;
-//        dbHelper = new DBHelper(activity.context);
+//        dbHelper = new DBHelper(mainActivity.context);
 //        db = dbHelper.getWritableDatabase();
 //
-//        activity.log("DATABASE: "+db.toString()+", "+db.getPath());
+//        mainActivity.log("DATABASE: "+db.toString()+", "+db.getPath());
         currentTaskNumber = getRecCount_Task();
     }
 
@@ -129,7 +129,7 @@ public class Storer {
         }
         String[] retVar = new String[c.getCount()];
         c.moveToFirst();
-//        activity.setCurrentOper(controller.getString(controller.getColumnIndex(KEY_OPER_ID)));
+//        mainActivity.setCurrentOper(controller.getString(controller.getColumnIndex(KEY_OPER_ID)));
         int i = 0;
         // Здесь задается вормат вывода параметров задачи в строку списка ListView
         // Далее из этой строки надо вытащить код задачи KEY_TASK_ID
@@ -141,7 +141,7 @@ public class Storer {
             i++;
         } while (c.moveToNext());
 //        for (i=0;i<retVar.length;i++){
-//            activity.log("retVar[" + i + "]=" + retVar[i]);
+//            mainActivity.log("retVar[" + i + "]=" + retVar[i]);
 //        }
         return retVar;
     }
@@ -235,16 +235,15 @@ public class Storer {
             i++;
         } while (c.moveToNext());
 //        for (i = 0; i < retVar.length; i++) {
-//            activity.log("retVar[" + i + "]=" + retVar[i]);
+//            mainActivity.log("retVar[" + i + "]=" + retVar[i]);
 //        }
         return retVar;
     }
 
-    // Установить текущую активную задачу
-
+    // Установить текущую активную операцию
     public void setCurrentOper() {
         setOperProperty_Current(activity.currentOper.operId, 1);
-        Log.i(logTAG, "activity.currentOper.operId=" + activity.currentOper.operId);
+        Log.i(logTAG, "mainActivity.currentOper.operId=" + activity.currentOper.operId);
 //        takeCurrentTaskData();
     }
 
@@ -259,7 +258,7 @@ public class Storer {
                     KEY_TASK_ID + "=" + taskId,
                     null);
         } else {
-//            activity.log("Achtung! setCurrentTask: parameter \"Current task Id\" is NULL");
+//            mainActivity.log("Achtung! setCurrentTask: parameter \"Current task Id\" is NULL");
         }
         takeCurrentTaskData();
     }
@@ -300,7 +299,7 @@ public class Storer {
                 null, null, null);
         if (c.getCount() > 0) {
             c.moveToFirst();
-//            activity.currentTask.set(
+//            mainActivity.currentTask.set(
             return new String[]{
                     c.getString(c.getColumnIndex(KEY_TASK_ID)),
                     c.getString(c.getColumnIndex(KEY_TASK_COMMENT)),
@@ -549,28 +548,28 @@ public class Storer {
     //
     int getRecCount_Task() {
         Cursor cursor = activity.db.rawQuery("select * from task", null);
-//        activity.log("TASK rec=" + cursor.getCount());
+//        mainActivity.log("TASK rec=" + cursor.getCount());
         return cursor.getCount();
     }
 
     int getRecCount_Oper() {
         Cursor cursor = activity.db.rawQuery("select * from operation", null);
-//        activity.log("OPER rec=" + cursor.getCount());
+//        mainActivity.log("OPER rec=" + cursor.getCount());
         return cursor.getCount();
     }
 
     int getRecCount_OperPar() {
         Cursor cursor = activity.db.rawQuery("select * from oper_param", null);
-//        activity.log("OPER_PAR rec=" + cursor.getCount());
+//        mainActivity.log("OPER_PAR rec=" + cursor.getCount());
         return cursor.getCount();
     }
 
 //    void clearDB() {
-//        activity.db.execSQL("drop table if exists mail");
-//        activity.db.execSQL("drop table if exists task");
-//        activity.db.execSQL("drop table if exists operation");
-//        activity.db.execSQL("drop table if exists oper_param");
-//        activity.dbHelper.onCreate(activity.db);
+//        mainActivity.db.execSQL("drop table if exists mail");
+//        mainActivity.db.execSQL("drop table if exists task");
+//        mainActivity.db.execSQL("drop table if exists operation");
+//        mainActivity.db.execSQL("drop table if exists oper_param");
+//        mainActivity.dbHelper.onCreate(mainActivity.db);
 //    }
 
 //    void loadDB() {
@@ -585,7 +584,7 @@ public class Storer {
 //            cv.put(KEY_TASK_COMPLETE, 0);
 //            cv.put(KEY_TASK_IS_CURRENT, 0);
 //            cv.put(KEY_TASK_TO_DELETE, 0);
-//            activity.db.insert(activity.dbHelper.TABLE_TASK, null, cv);
+//            mainActivity.db.insert(mainActivity.dbHelper.TABLE_TASK, null, cv);
 //        }
 //
 //        cv = new ContentValues();
@@ -597,7 +596,7 @@ public class Storer {
 //            cv.put(KEY_OPER_COMPLETE, 0);
 //            cv.put(KEY_OPER_IS_CURRENT, 0);
 //            cv.put(KEY_OPER_TO_DELETE, 0);
-//            activity.db.insert(activity.dbHelper.TABLE_OPERATION, null, cv);
+//            mainActivity.db.insert(mainActivity.dbHelper.TABLE_OPERATION, null, cv);
 //        }
 //
 //        cv = new ContentValues();
@@ -605,7 +604,7 @@ public class Storer {
 //            cv.put(KEY_OPPA_OPER_ID, op.oper_id);
 //            cv.put(KEY_OPPA_PARAM_NAME, op.oper_par_Name);
 //            cv.put(KEY_OPPA_PARAM_VALUE, op.oper_par_Value);
-//            activity.db.insert(activity.dbHelper.TABLE_OPER_PARAM, null, cv);
+//            mainActivity.db.insert(mainActivity.dbHelper.TABLE_OPER_PARAM, null, cv);
 //        }
 //    }
 
@@ -658,11 +657,12 @@ public class Storer {
     }
 
     void clearDB() {
-        activity.db.execSQL("drop table if exists mail");
-        activity.db.execSQL("drop table if exists task");
-        activity.db.execSQL("drop table if exists operation");
-        activity.db.execSQL("drop table if exists oper_param");
-        activity.dbHelper.onCreate(activity.db);
+//        mainActivity.db.execSQL("drop table if exists mail");
+//        mainActivity.db.execSQL("drop table if exists task");
+//        mainActivity.db.execSQL("drop table if exists operation");
+//        mainActivity.db.execSQL("drop table if exists oper_param");
+//        mainActivity.dbHelper.onCreate(mainActivity.db);
+        activity.dbHelper.onUpgrade(activity.db,2,1);
     }
 
 

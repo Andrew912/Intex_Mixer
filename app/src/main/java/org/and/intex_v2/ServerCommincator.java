@@ -34,9 +34,9 @@ public class ServerCommincator {
     String
             logTAG = "Server Communicator";
     MainActivity
-            a;
+            mainActivity;
     String
-            rs = null;
+            rs;
     String
             socketAddr;
     int
@@ -47,23 +47,21 @@ public class ServerCommincator {
             eol = "\r\n\r\n";
 
     public ServerCommincator(MainActivity activity) {
-        this.a = activity;
+        this.mainActivity = activity;
         socketAddr = "91.218.229.25";
-        socketPort = 60000;
-        buffSize = 4096;
+        socketPort = 60001;
+        buffSize = 1024;
     }
 
     // Главная запускалка - отсюда запускаем все, что надо
     public void main() {
-
-//        new DBFunctions(activity).mailClear();
+//        new DBFunctions(mainActivity).mailClear();
 //        insertIntoMailTable_test();
 //        Log.i(logTAG, "reccount=" + dbMailRecCount());
         readTask();
 //        sendMail();
 //        readTask();
 //        readOper();
-
     }
 
     // Получение списка операций
@@ -82,8 +80,9 @@ public class ServerCommincator {
             Socket socket;
             InputStream is;
             OutputStream os;
+            rs = "";
             // Формирование запроса на список операций
-            String o = new MessageMaker(a).request_OperList(params[0]);
+            String o = new MessageMaker(mainActivity).request_OperList(params[0]);
             try {
                 InetAddress serverAddr = InetAddress.getByName(socketAddr);
                 socket = new Socket(serverAddr, socketPort);
@@ -95,10 +94,21 @@ public class ServerCommincator {
                     os.write(buffer);
                     os.flush();
                     buffer = new byte[buffSize];
-                    int read = is.read(buffer, 0, buffSize);
-                    byte[] b = new byte[read];
-                    System.arraycopy(buffer, 0, b, 0, read);
-                    rs = new String(b).replace("\"", "--");
+                    boolean
+                            stopRead = false;
+                    int
+                            read = 0;
+                    while (stopRead == false) {
+                        read = is.read(buffer, 0, buffSize);
+                        Log.i(logTAG, "read=" + read);
+                        byte[] b = new byte[read];
+                        System.arraycopy(buffer, 0, b, 0, read);
+                        rs = rs + new String(b);
+                        if (read < buffSize) {
+                            stopRead = true;
+                        }
+                    }
+//                    rs = new String(b).replace("\"", "--");
                     Log.i(logTAG, "-----------------------------");
                     Log.i(logTAG, "read=" + read);
                     Log.i(logTAG, "-----------------------------");
@@ -147,7 +157,7 @@ public class ServerCommincator {
             Socket socket;
             InputStream is;
             OutputStream os;
-            String o = new MessageMaker(a).request_TaskLisk();
+            String o = new MessageMaker(mainActivity).request_TaskLisk();
             try {
                 InetAddress serverAddr = InetAddress.getByName(socketAddr);
                 socket = new Socket(serverAddr, socketPort);
@@ -191,8 +201,9 @@ public class ServerCommincator {
                 while (sourceInputLineBuffer.getLen() > 0) {
                     ExtractParametersForEachTask(ExtractParametersOfCommand(sourceInputLineBuffer.get().replace("\"", "--")));
                 }
+                // Операции читаем только если есть свежая задача
+                readOper();
             }
-            readOper();
         }
     }
 
@@ -244,8 +255,8 @@ public class ServerCommincator {
                     os = socket.getOutputStream();
 
                     for (int i = 0; i < oSize; i++) {
-                        Log.i(logTAG, "message to send= " + o[i] );
-                        byte[] buffer = (o[i]+eol).getBytes();
+                        Log.i(logTAG, "message to send= " + o[i]);
+                        byte[] buffer = (o[i] + eol).getBytes();
                         os.write(buffer);
                         os.flush();
                         buffer = new byte[buffSize];
@@ -283,11 +294,11 @@ public class ServerCommincator {
                     setMailRecordAsSended(o[i]);
                 }
             }
-            Log.i(logTAG,"============================ Список почты");
-            new DBFunctions(a).mail();
+            Log.i(logTAG, "============================ Список почты");
+            new DBFunctions(mainActivity).mail();
             dbMailDeleteSended();
-            Log.i(logTAG,"============================ Список почты  после отправки");
-            new DBFunctions(a).mail();
+            Log.i(logTAG, "============================ Список почты  после отправки");
+            new DBFunctions(mainActivity).mail();
         }
     }
 
@@ -305,7 +316,7 @@ public class ServerCommincator {
 
     // Выделяем отдельные команды
     public String ExtractMessageStatus(String inS) {
-        Pattern pattern = Pattern.compile(a.getString(R.string.pattern_Cmd_Name) + "=\'" + a.getString(R.string.pattern_Cmd_Value) + "\'");
+        Pattern pattern = Pattern.compile(mainActivity.getString(R.string.pattern_Cmd_Name) + "=\'" + mainActivity.getString(R.string.pattern_Cmd_Value) + "\'");
         Matcher matcher = pattern.matcher(inS);
         IncomingMessageLineParamsClass t = new IncomingMessageLineParamsClass();
         if (matcher.find()) {
@@ -318,7 +329,7 @@ public class ServerCommincator {
     public ArrayList<IncomingMessageLineParamsClass> ExtractParametersOfCommand(String inS) {
         ArrayList<IncomingMessageLineParamsClass> parameters;
         parameters = new ArrayList<>();
-        Pattern pattern = Pattern.compile(a.getString(R.string.pattern_Cmd_Name) + "=\'" + a.getString(R.string.pattern_Cmd_Value) + "\'");
+        Pattern pattern = Pattern.compile(mainActivity.getString(R.string.pattern_Cmd_Name) + "=\'" + mainActivity.getString(R.string.pattern_Cmd_Value) + "\'");
         Matcher matcher = pattern.matcher(inS);
         IncomingMessageLineParamsClass t = new IncomingMessageLineParamsClass();
         while (matcher.find()) {
@@ -333,7 +344,7 @@ public class ServerCommincator {
     public CycleBuffer ExtractToSourceInputLineBuffer(String inBuffer, int outBufferSize) {
         CycleBuffer sourceInputLineBuffer = new CycleBuffer(outBufferSize);
         int i = 0;
-        String regEx = a.getString(R.string.pattern_EndOfLine);
+        String regEx = mainActivity.getString(R.string.pattern_EndOfLine);
         Pattern ptnLine = Pattern.compile(regEx, Pattern.CASE_INSENSITIVE);
         String[] lines = ptnLine.split(inBuffer);
         for (String line : lines) {
@@ -355,19 +366,19 @@ public class ServerCommincator {
         // Находим параметры операции
         for (int i = 0; i < mp.size(); i++) {
             // Код операции
-            if (mp.get(i).getName().equals(a.getString(R.string.MESSAGE_OPER_ID_KEYWORD))) {
+            if (mp.get(i).getName().equals(mainActivity.getString(R.string.MESSAGE_OPER_ID_KEYWORD))) {
                 operId = mp.get(i).getValue();
             }
             // Код задачи
-            if (mp.get(i).getName().equals(a.getString(R.string.MESSAGE_TASK_ID_KEYWORD))) {
+            if (mp.get(i).getName().equals(mainActivity.getString(R.string.MESSAGE_TASK_ID_KEYWORD))) {
                 taskId = mp.get(i).getValue();
             }
             // Тип операции
-            if (mp.get(i).getName().equals(a.getString(R.string.MESSAGE_OPER_TYPE_KEYWORD))) {
+            if (mp.get(i).getName().equals(mainActivity.getString(R.string.MESSAGE_OPER_TYPE_KEYWORD))) {
                 type = mp.get(i).getValue();
             }
             // Комментарий
-            if (mp.get(i).getName().equals(a.getString(R.string.MESSAGE_OPER_COMMENT_KEYWORD))) {
+            if (mp.get(i).getName().equals(mainActivity.getString(R.string.MESSAGE_OPER_COMMENT_KEYWORD))) {
                 comment = mp.get(i).getValue();
             }
         }
@@ -377,7 +388,7 @@ public class ServerCommincator {
         for (IncomingMessageLineParamsClass p : mp) {
             putToDB_OperationParameters(new String[]{operId, p.getName(), p.getValue()});
         }
-        new DBFunctions(a).operList();
+        new DBFunctions(mainActivity).operList();
     }
 
     // Извлекаем параметры команды для каждой строки и
@@ -389,19 +400,19 @@ public class ServerCommincator {
         // Находим параметры задачи
         for (int i = 0; i < mp.size(); i++) {
             // Код задачи
-            if (mp.get(i).getName().equals(a.getString(R.string.MESSAGE_TASK_ID_KEYWORD))) {
+            if (mp.get(i).getName().equals(mainActivity.getString(R.string.MESSAGE_TASK_ID_KEYWORD))) {
                 taskId = mp.get(i).getValue();
                 Log.i(logTAG, "ExtractParametersForEachTask(): taskId" + taskId);
             }
             // Наименование задачи
-            if (mp.get(i).getName().equals(a.getString(R.string.MESSAGE_TASK_NAME_KEYWORD))) {
+            if (mp.get(i).getName().equals(mainActivity.getString(R.string.MESSAGE_TASK_NAME_KEYWORD))) {
                 name = mp.get(i).getValue();
                 Log.i(logTAG, "ExtractParametersForEachTask(): operName" + name);
             }
         }
         // Запись в БД
         putToDB_Task(new String[]{taskId, name});
-        new DBFunctions(a).task();
+        new DBFunctions(mainActivity).task();
     }
 
     // Запись в БД данных операций
@@ -410,7 +421,7 @@ public class ServerCommincator {
         ContentValues newValues = new ContentValues();
         newValues.put(KEY_TASK_ID, s[0]);
         newValues.put(KEY_TASK_COMMENT, s[1]);
-        DBHelper dbh = new DBHelper(a.context);
+        DBHelper dbh = new DBHelper(mainActivity.context);
         SQLiteDatabase db = dbh.getWritableDatabase();
         db.insert(dbh.TABLE_TASK, null, newValues);
         db.close();
@@ -428,7 +439,7 @@ public class ServerCommincator {
         newValues.put(DBHelper.KEY_OPER_ID, s[1]);
         newValues.put(DBHelper.KEY_OPER_TYPE, s[2].toLowerCase());
         newValues.put(DBHelper.KEY_OPER_NAME, s[3]);
-        DBHelper dbh = new DBHelper(a.context);
+        DBHelper dbh = new DBHelper(mainActivity.context);
         SQLiteDatabase db = dbh.getWritableDatabase();
         db.insert(dbh.TABLE_OPERATION, null, newValues);
         db.close();
@@ -445,7 +456,7 @@ public class ServerCommincator {
         newValues.put(DBHelper.KEY_OPPA_PARAM_NAME, s[1]);
         newValues.put(DBHelper.KEY_OPPA_PARAM_VALUE, s[2]);
 
-        DBHelper dbh = new DBHelper(a.context);
+        DBHelper dbh = new DBHelper(mainActivity.context);
         SQLiteDatabase db = dbh.getWritableDatabase();
         db.insert(dbh.TABLE_OPER_PARAM, null, newValues);
         db.close();
@@ -454,10 +465,10 @@ public class ServerCommincator {
 
     private IncomingMessageLineParamsClass extractParam(String inS) {
         IncomingMessageLineParamsClass retV = null;
-        Pattern patternOfName = Pattern.compile("^" + a.getString(R.string.pattern_Cmd_Name));
+        Pattern patternOfName = Pattern.compile("^" + mainActivity.getString(R.string.pattern_Cmd_Name));
         Matcher matcherOfName = patternOfName.matcher(inS);
         if (matcherOfName.find()) {
-            Pattern patternOfValue = Pattern.compile("=\'" + a.getString(R.string.pattern_Cmd_Value) + "\'$");
+            Pattern patternOfValue = Pattern.compile("=\'" + mainActivity.getString(R.string.pattern_Cmd_Value) + "\'$");
             Matcher matcherOfValue = patternOfValue.matcher(inS);
             if (matcherOfValue.find()) {
                 retV = new IncomingMessageLineParamsClass(matcherOfName.group(), matcherOfValue.group().replace("'", "").replace("=", ""));
@@ -469,7 +480,7 @@ public class ServerCommincator {
     // Список сообщений из таблицы mail, которые еще не отправлены
     String[] dbMailGetMessages() {
         String[] r;
-        DBHelper dbh = new DBHelper(a.context);
+        DBHelper dbh = new DBHelper(mainActivity.context);
         SQLiteDatabase db = dbh.getWritableDatabase();
         Cursor cursor = db.query(TABLE_MAIL,
                 new String[]{KEY_MAIL_MESSAGE},
@@ -497,13 +508,13 @@ public class ServerCommincator {
     // Очистка MAIL от отправленных сообщений
     int dbMailDeleteSended() {
         String[] r;
-        DBHelper dbh = new DBHelper(a.context);
+        DBHelper dbh = new DBHelper(mainActivity.context);
         SQLiteDatabase db = dbh.getWritableDatabase();
         int res = db.delete(TABLE_MAIL,
                 KEY_MAIL_COMPLETE + "=?",
                 new String[]{String.valueOf(1)}
         );
-        Log.i(logTAG, res +" message(s) deleted" );
+        Log.i(logTAG, res + " message(s) deleted");
         db.close();
         dbh.close();
         return res;
@@ -512,7 +523,7 @@ public class ServerCommincator {
     //
     int dbMailRecCount() {
         int r;
-        DBHelper dbh = new DBHelper(a.context);
+        DBHelper dbh = new DBHelper(mainActivity.context);
         Cursor cursor = dbh.getReadableDatabase().query(
                 TABLE_MAIL,
                 new String[]{"COUNT (_id) AS counter"},
@@ -533,7 +544,7 @@ public class ServerCommincator {
 
     // Пометить запись как отправленную (complete)
     void setMailRecordAsSended(String key) {
-        DBHelper dbh = new DBHelper(a.context);
+        DBHelper dbh = new DBHelper(mainActivity.context);
         ContentValues newValues = new ContentValues();
         newValues.put(KEY_MAIL_COMPLETE, 1);
         SQLiteDatabase db = dbh.getWritableDatabase();
@@ -544,7 +555,7 @@ public class ServerCommincator {
                 new String[]{key}
         );
 
-        Log.i(logTAG,"setMailRecordAsSended(\""+key+"\"), res="+res);
+        Log.i(logTAG, "setMailRecordAsSended(\"" + key + "\"), res=" + res);
 
         db.close();
         dbh.close();
@@ -554,7 +565,7 @@ public class ServerCommincator {
     String getCurrentTaskIdFromDB() {
         String r = null;
         Log.i(logTAG, "getCurrentTaskIdFromDB: start find taskId");
-        DBHelper dbh = new DBHelper(a.context);
+        DBHelper dbh = new DBHelper(mainActivity.context);
         Cursor c = dbh.getWritableDatabase().query(
                 dbh.TABLE_TASK,
                 new String[]{
@@ -579,19 +590,19 @@ public class ServerCommincator {
     // TEST insert records into table MAIL
     void insertIntoMailTable_test() {
 
-        DBHelper dbh = new DBHelper(a.context);
+        DBHelper dbh = new DBHelper(mainActivity.context);
         SQLiteDatabase db = dbh.getWritableDatabase();
 
         ContentValues newValues = new ContentValues();
-        newValues.put(KEY_MAIL_MESSAGE, new MessageMaker(a).report_OperBegin("101"));
+        newValues.put(KEY_MAIL_MESSAGE, new MessageMaker(mainActivity).report_OperBegin("101"));
         db.insert(TABLE_MAIL, null, newValues);
 
         newValues = new ContentValues();
-        newValues.put(KEY_MAIL_MESSAGE, new MessageMaker(a).report_OperBegin("102"));
+        newValues.put(KEY_MAIL_MESSAGE, new MessageMaker(mainActivity).report_OperBegin("102"));
         db.insert(TABLE_MAIL, null, newValues);
 
         newValues = new ContentValues();
-        newValues.put(KEY_MAIL_MESSAGE, new MessageMaker(a).report_OperBegin("103"));
+        newValues.put(KEY_MAIL_MESSAGE, new MessageMaker(mainActivity).report_OperBegin("103"));
         db.insert(TABLE_MAIL, null, newValues);
         db.close();
         dbh.close();
