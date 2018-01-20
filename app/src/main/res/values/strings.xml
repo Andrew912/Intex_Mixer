@@ -92,10 +92,16 @@
     <string name="MESSAGE_SERVER_NAME_KEYWORD">servername</string>
     <string name="no_current_task">no_current_task</string>
 
-    <!-- СТАТУС загузки -->
+    <!-- =============================================== -->
+    <!-- Кейворды параметров сервера в описании операции -->
+    <!-- =============================================== -->
+    <!-- Код сервера -->
     <string name="MSG_SERVER_ID_KEYWORD">server</string>
+    <!-- Имя сервера -->
     <string name="MSG_SERVER_NAME_KEYWORD">servern</string>
+    <!-- Адрес сервера -->
     <string name="MSG_SERVER_ADDR_KEYWORD">servera</string>
+    <!-- =============================================== -->
 
     <string name="MESSAGE_USER_ID_KEYWORD">username</string>
     <string name="MESSAGE_DEVICE_ID_KEYWORD">dev</string>
@@ -119,5 +125,21 @@
     <string name="LOADING_PERCENT_WEIGHT_TOLERANCE_UP">5</string>
     <!-- Процент отклонения веса при загрузке МЕНЬШЕ -->
     <string name="LOADING_PERCENT_WEIGHT_TOLERANCE_DN">5</string>
+
+    <!-- Ключевые слова для пары "сервер-данные" - весовой терминал -->
+    <string name="INCOMING_MESSAGE_PAIR_SERVER_DATA_SERVER">server</string>
+    <string name="INCOMING_MESSAGE_PAIR_SERVER_DATA_DATA">name</string>
+
+    <!-- Символы окончания строки приема для разных серверов -->
+    <string name="END_OF_LINE_SIGN_TERMINAL">\\r\\n\\r\\n</string>
+    <string name="END_OF_LINE_SIGN_CONTROL_SERVER">\\r\\n\\r\\n</string>
+    <string name="END_OF_LINE_SIGN_OTHER">\\n</string>
+
+    <!-- Паттерн парсера IP-адреса -->
+    <string name="pattern_extract_My_IP_address">\\d+$</string>
+
+    <!-- Системные сообщения -->
+    <string name="NETWORK_NOT_CONNECTED_WIFI">Не подключено к сети. Проверьте Wi-Fi</string>
+
 
 </resources>

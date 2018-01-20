@@ -39,7 +39,9 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String KEY_TASK_IS_CURRENT = "is_current";
     public static final String KEY_TASK_REPORTED = "reported";
 
-    // Table "OPERATION"
+    /**
+     * Table "OPERATION"
+     */
     public static final String TABLE_OPERATION = "operation";
     public static final String KEY_OPER_ID = "_id";
     public static final String KEY_OPER_TASK_ID = "task_id";
@@ -51,14 +53,27 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String KEY_OPER_REPORTED = "reported";
     public static final String KEY_OPER_TO_DELETE = "to_delete";
 
-    // Table "OPER_PARAM"
+    /**
+     * Table "OPER_PARAM"
+     */
+    // По старой схеме
     public static final String TABLE_OPER_PARAM = "oper_param";
+    public static final String KEY_OPPA_ID = "_id";
     public static final String KEY_OPPA_OPER_ID = "oper_id";
     public static final String KEY_OPPA_PARAM_NAME = "param_name";
     public static final String KEY_OPPA_PARAM_VALUE = "param_value";
     public static final String KEY_OPPA_TO_DELETE = "to_delete";
 
-    // Table "MAIL"
+    // По новой схеме
+    public static final int INDEX_OPPA_ID = 0;
+    public static final int INDEX_OPPA_OPER_ID = 1;
+    public static final int INDEX_OPPA_PARAM_NAME = 2;
+    public static final int INDEX_OPPA_PARAM_VALUE = 3;
+    public static final int INDEX_OPPA_TO_DELETE = 4;
+
+    /**
+     * Table "MAIL"
+     */
     public static final String TABLE_MAIL = "mail";
     public static final String KEY_MAIL_ID = "_id";
     public static final String KEY_MAIL_RECIPIENT = "recipient";
@@ -77,26 +92,6 @@ public class DBHelper extends SQLiteOpenHelper {
             = 0;
     public static final int FIRST
             = 0;
-
-    /**
-     * Индекс: Имя таблицы в БД
-     */
-    public static final int PARAMETERS
-            = 0;
-    public static final int PARAMTYPES
-            = 1;
-    public static final int OBJECTS
-            = 2;
-    public static final int OBJTYPES
-            = 3;
-    public static final int TASK
-            = 4;
-    public static final int OPERATION
-            = 5;
-    public static final int OPER_PARAM
-            = 6;
-    public static final int MAIL
-            = 7;
 
     /**
      * Разделы информации о таблице
@@ -141,6 +136,26 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final int TABLE_PROP_BRACKETS
             = 2;
 
+    /**
+     * Индекс: Имя таблицы в БД
+     */
+    public static final int PARAMETERS
+            = 0;
+    public static final int PARAMTYPES
+            = 1;
+    public static final int OBJECTS
+            = 2;
+    public static final int OBJTYPES
+            = 3;
+    public static final int OPER_PARAM
+            = 4;
+    public static final int OPERATION
+            = 5;
+    public static final int TASK
+            = 6;
+    public static final int MAIL
+            = 7;
+
     // Описание структуры базы данных
     static String DBRecord[][][][] = {
             /** ==============================================================================
@@ -152,7 +167,7 @@ public class DBHelper extends SQLiteOpenHelper {
              * */
 
             /**
-             * PARAMETERS - Параметры
+             * 0. PARAMETERS - Параметры
             */
             {
                     {
@@ -191,7 +206,7 @@ public class DBHelper extends SQLiteOpenHelper {
             */
 
             /**
-             * PARAMTYPES - Типы данных параметров
+             * 1. PARAMTYPES - Типы данных параметров
             */
             {
                     {
@@ -205,7 +220,7 @@ public class DBHelper extends SQLiteOpenHelper {
                             {"PRIMARY KEY", "_id", "1"}
                     }},
             /**
-             * OBJECTS - Объекты локальной сети
+             * 2. OBJECTS - Объекты локальной сети
             */
             {
                     {
@@ -242,7 +257,7 @@ public class DBHelper extends SQLiteOpenHelper {
                             {"", "_id", "1"}
                     }},
             /**
-             * OBJTYPES - Типы устройств
+             * 3. OBJTYPES - Типы устройств
             */
             {
                     {
@@ -256,13 +271,15 @@ public class DBHelper extends SQLiteOpenHelper {
                             {"PRIMARY KEY", "_id", "1"}     // Первичный ключ
                     }},
             /**
-             * OPER_PARAM - Параметры операций
+             * 4. OPER_PARAM - Параметры операций
             */
             {
                     {
+                            // DBRecord[OPER_PARAM][TABLENAME][NONE][NONE]
                             {"OPER_PARAM"}
                     },
                     {
+                            // FIELDINFO: Описание полей таблицы
                             {"_id", "INTEGER", ""},         // Идентификатор типа
                             {"oper_id", "INTEGER", ""},     // Идентификатор операции
                             {"param_name", "TEXT", ""},     // Название параметра
@@ -273,7 +290,7 @@ public class DBHelper extends SQLiteOpenHelper {
                             {"PRIMARY KEY", "_id", "1"}     // Первичный ключ
                     }},
             /**
-             * OPERATION - Операции
+             * 5. OPERATION - Операции
             */
             {
                     {
@@ -298,7 +315,7 @@ public class DBHelper extends SQLiteOpenHelper {
                             {"", "oper_id", "1"}
                     }},
             /**
-             * TASK - Задачи
+             * 6. TASK - Задачи
             */
             {
                     {
@@ -321,7 +338,7 @@ public class DBHelper extends SQLiteOpenHelper {
                             {"", "task_id", "1"}
                     }},
             /**
-             * MAIL - Данные о выполнении задач для отправки на сервер
+             * 7. MAIL - Данные о выполнении задач для отправки на сервер
             */
             {
                     {

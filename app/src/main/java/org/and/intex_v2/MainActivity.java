@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -37,22 +38,25 @@ import static org.and.intex_v2.DBHelper.KEY_OPPA_TO_DELETE;
 
 public class MainActivity extends AppCompatActivity {
 
-    String logTAG;
-    String logMessage;
+    String
+            logTAG = "MAIN",
+            logMessage;
 
-    Context context;
-
+    // Классы
+    String
+            ogMessage;
+    Context
+            context;
     public DBHelper
             dbHelper;
     public SQLiteDatabase
             db;
-
     Controller
             controller;
+    Configuration
+            conf;
     Configurator
             configurator;
-//    TestDataLoader
-//            testDataLoader;
     StatusLine
             statusLine;
     DBFunctions
@@ -69,6 +73,10 @@ public class MainActivity extends AppCompatActivity {
             server;
     LoaderCommunicator
             loader;
+    NetworkHandler
+            net;
+    //    TestDataLoader
+//            testDataLoader;
 
     // Лайауты
     LinearLayout layout[];
@@ -160,11 +168,49 @@ public class MainActivity extends AppCompatActivity {
 
     // Текст статусной строки
     TextView
-            statusLineText;
+            textView_StatusLine;
+
+    int
+            statusLineIsVisible;
+    public String
+            toWriteInStatusLine;            // Для вывода в статусную строку
+    public int
+            numOfServerPingClasses = 0;     // Количество открытых в данный момент ServerPingClass
+    public int
+            numOfCallStatusLineBlink = 0;   // Кол-во вызовов мигания статусной строки
+
+    /**
+     * Переменные, определяющие работу при поиске серверов в сети
+     */
+    public String[]
+            serverFound = {null, null, null};   // Параметры найденного сервера
+    public boolean
+            endServerFindCondition = false;         // Условие выхода из цикла при поиске серверов
+
+    // Таймеры
+
+    // Таймер переключения статусной строки
+    Timer
+            statusLineOnOffTimer;
+    MyTimerTask_StatusLineOnOff
+            myTimerTask_statusLineOnOff;        // Задача таймера переключения статусной строки
+
+    // Таймер наблюдения за событиями вывода в статустную строку
+    Timer
+            statusLineLookOnTimer;
+    MyTimerTask_LookAtStatusLine
+            myTimerTask_lookAtServerPingClass;  //
+
+    // Таймер задачи наблюдения за поиском сервера в сети
+    Timer
+            findServerTimer;
+    myTimerTask_WatchOnServerFind
+            myTimerTask_watchOnServerFind;
+
 
     // Дополнительный текст
     TextView
-            text_7_target;
+            text_7_target, text_71_target;
 
     // Таймеры
     private Timer
@@ -173,31 +219,51 @@ public class MainActivity extends AppCompatActivity {
             myTimerTask;            // Задача для опроса весового терминала
 
 
-    // Конструктор
+    /**
+     * Конструктор
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        /***********************
+         * Объявление объектов
+         ***********************/
         context = MainActivity.this;
         logTAG = "MAIN: ";
         logMessage = "";
-        statusLine = new StatusLine();
-        configurator = new Configurator(this);
-        messenger = new Messenger(this);
-        dbHelper = new DBHelper(this.context);
+        statusLine =
+                new StatusLine();
+        configurator =
+                new Configurator(this);
+        conf =
+                new Configuration(this);
+        messenger =
+                new Messenger(this);
+        dbHelper =
+                new DBHelper(this.context);
         db = dbHelper.getWritableDatabase();
-        controller = new Controller(this);
+        controller =
+                new Controller(this);
 //        testDataLoader = new TestDataLoader();
-        storer = new Storer(this);
-        currentTask = new CurrentTask(this);
-        currentOper = new CurrentOper(this);
-        dbFunctions = new DBFunctions(this);
-        server = new ServerCommincator(this);
-        loader = new LoaderCommunicator(this);
+        storer =
+                new Storer(this);
+        currentTask =
+                new CurrentTask(this);
+        currentOper =
+                new CurrentOper(this);
+        dbFunctions =
+                new DBFunctions(this);
+        server =
+                new ServerCommincator(this);
+        loader =
+                new LoaderCommunicator(this);
 
-        /**
+        /***********************
          * Лайауты (экраны)
-         */
+         ***********************/
         layoutStatus = new LayoutStatusClass(Integer.valueOf(getString(R.string.NUMBER_OF_LAYOUTS)));
         layout = new LinearLayout[layoutStatus.numberOfLayouts];
         layout[LAYOUT_0_DB] =
@@ -226,9 +292,9 @@ public class MainActivity extends AppCompatActivity {
         layout_4_1 =
                 (LinearLayout) findViewById(R.id.LL4_1_Buttons);
 
-        /**
+        /***********************
          * TextViews
-         */
+         ***********************/
         textView = new TextView[layoutStatus.numberOfLayouts];
         textView[LAYOUT_0_DB] =
                 (TextView) findViewById(R.id.text_0_Info);
@@ -251,13 +317,14 @@ public class MainActivity extends AppCompatActivity {
         textView[LAYOUT_9_SERV_REQUEST] =
                 (TextView) findViewById(R.id.text_9_info);
         textView[LAYOUT_71_LOAD_OPER] =
-                (TextView) findViewById(R.id.text_9_info);
+                (TextView) findViewById(R.id.text_71_info);
 
         text_7_target = (TextView) findViewById(R.id.text_7_target);
+        text_71_target = (TextView) findViewById(R.id.text_71_target);
 
-        /**
+        /***********************
          * ListView: Task select
-         */
+         ***********************/
         taskSelect_ListView = (ListView) findViewById(R.id.list_Task_Select);
         taskSelect_SelectedValue = "";
         taskSelect_ListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -271,9 +338,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /**
+        /************************
          * ListView: CurrentOper select
-         */
+         ***********************/
         operSelect_ListView = (ListView) findViewById(R.id.list_Oper_Select);
         operSelect_SelectedValue = "";
         operSelect_ListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -287,7 +354,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Кнопки ВСЕ
+        /***********************
+         * Кнопки
+         ***********************/
         buttonStatus = new boolean[NUMBER_OF_BUTTONS];
         buttonStatusDrop();
 
@@ -755,13 +824,15 @@ public class MainActivity extends AppCompatActivity {
          * Описывает операцию - ид, имя и тип (экранное имя)
          */
         MainActivity
-                a;
+                mainActivity;
         String
                 logTAG;
         String
                 operStatus;
         boolean
                 operNow;
+        public boolean
+                loadNoLoader;                   // Загрузка будет без погрузчика
         String
                 operId, operName, operType;
         int
@@ -770,9 +841,9 @@ public class MainActivity extends AppCompatActivity {
                 operationParameters;
 
         public CurrentOper(MainActivity activity) {
-            this.a = activity;
-            operStatus = a.getString(R.string.STATUS_UNDEF);
-            logTAG = a.logTAG + "CurrentOper: Щас будет установка setOperData()";
+            this.mainActivity = activity;
+            operStatus = mainActivity.getString(R.string.STATUS_UNDEF);
+            logTAG = mainActivity.logTAG + "CurrentOper: Щас будет установка setOperData()";
             setOperData();
         }
 
@@ -781,7 +852,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         void setOperData() {
-            logTAG = a.logTAG + "setOperData()";
+            logTAG = mainActivity.logTAG + "setOperData()";
             String[] s = storer.takeCurrentOperData(currentTask.taskId);
             if (s == null) {
                 set(null, null, null, "undef");
@@ -791,6 +862,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        /**
+         * Операция - погрузка
+         *
+         * @return
+         */
         boolean operIsLoad() {
             operType = operType.toLowerCase();
             Log.i(logTAG, "operIsLoad(): operType=" + operType);
@@ -798,6 +874,27 @@ public class MainActivity extends AppCompatActivity {
                 // Получить и сохранить значение веса, который необходимо загрузить
                 loadValue = (int) Float.parseFloat(getParam("value"));
                 return true;
+            } else {
+                loadValue = 0;
+                return false;
+            }
+        }
+
+        /**
+         * Операция - погрузка, но без погрузчика
+         *
+         * @return
+         */
+        boolean operIsLoadNoLoader() {
+            if (operType.toLowerCase().equals(getString(R.string.MSG_COMMAND_IS_LOADING)) == true) {
+                // Получить и сохранить значение веса, который необходимо загрузить
+                loadValue = (int) Float.parseFloat(getParam("value"));
+                if (getParamFromDB(operId, mainActivity.getString(R.string.MSG_SERVER_ADDR_KEYWORD)) == null) {
+                    Log.i(logTAG, "oper Is Load NO LOADER");
+                    return true;
+                } else {
+                    return false;
+                }
             } else {
                 loadValue = 0;
                 return false;
@@ -833,7 +930,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Текущая операция начинает/продолжает выполняться
         public void setToActive() {
-            String logTAG = a.currentOper.logTAG + "setToActive";
+            String logTAG = mainActivity.currentOper.logTAG + "setToActive";
             switch (operStatus) {
                 case "undef":
                     operStatus = "begin";
@@ -865,7 +962,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Текущая операция прерывается/останавливается
         public void setToUnactive() {
-            String logTAG = a.currentOper.logTAG + "setToUnactive";
+            String logTAG = mainActivity.currentOper.logTAG + "setToUnactive";
             switch (operStatus) {
                 case "undef":
                     Log.i(logTAG, "Status: undef->undef");
@@ -895,7 +992,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Текущая операция завершается
         public void setToComplete() {
-            String logTAG = a.currentOper.logTAG + "setToComplete";
+            String logTAG = mainActivity.currentOper.logTAG + "setToComplete";
             switch (operStatus) {
                 case "undef":
                     Log.i(logTAG, "Status: undef->");
@@ -927,7 +1024,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Получение данных о текущей операции
         public String now() {
-            return a.storer.getCurrentOperId(currentTask.taskId);
+            return mainActivity.storer.getCurrentOperId(currentTask.taskId);
         }
 
         // Информация об операции для вывода на экран
@@ -963,12 +1060,17 @@ public class MainActivity extends AppCompatActivity {
             return s;
         }
 
+        // Значение параметра операции по его имени из БД
+        String getParamFromDB(String operId, String parameterName) {
+            return dbFunctions.getOperParameter(operId, parameterName);
+        }
+
         // Значение параметра операции по его имени
-        String getParam(String pName) {
+        String getParam(String parameterName) {
             String retVar = null;
             if (operationParameters.size() != 0) {
                 for (OperationParameter p : operationParameters) {
-                    if (p.name.equals(pName)) {
+                    if (p.name.equals(parameterName)) {
                         retVar = p.value;
                         break;
                     }
@@ -1106,13 +1208,13 @@ public class MainActivity extends AppCompatActivity {
         private String statusLine;
 
         public StatusLine() {
-            statusLineText = (TextView) findViewById(R.id.text_StatusLine);
+            textView_StatusLine = (TextView) findViewById(R.id.text_StatusLine);
             statusLine = getString(R.string.STATUS_LINE_TEXT_INITIAL);
-            statusLineText.setText(statusLine);
+            textView_StatusLine.setText(statusLine);
         }
 
         public void set(String pS) {
-            statusLineText.setText(pS);
+            textView_StatusLine.setText(pS);
         }
     }
 
@@ -1215,9 +1317,9 @@ public class MainActivity extends AppCompatActivity {
         storer.weightRemain = storer.weightTarget - storer.weightCurrent;
 
         // ПОказания весов
-        text_7_target.setText(String.valueOf(storer.weightCurrent));
+        text_71_target.setText(String.valueOf(storer.weightCurrent));
         // Остаток для погрузки
-        textView[LAYOUT_7_COMPLEX_OPER].setText(String.valueOf(storer.weightRemain));
+        textView[LAYOUT_71_LOAD_OPER].setText(String.valueOf(storer.weightRemain));
     }
 
     void setTextView(int layout, String text) {
@@ -1307,10 +1409,11 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case LAYOUT_71_LOAD_OPER:
-                loader.serverSendWeight();
+
                 break;
 
             case LAYOUT_8_TASK_COMPLETE:
+
                 break;
 
             case LAYOUT_9_SERV_REQUEST:
@@ -1321,4 +1424,172 @@ public class MainActivity extends AppCompatActivity {
         }
         setTextInLayout(newLayout, textToInfo);     // Сообщение в поле инфо
     }
+
+    /**
+     * Вывод "тоста"
+     *
+     * @param whatSay
+     */
+    public void sayToast(String whatSay) {
+        Beep();
+        Toast toast = Toast.makeText(getApplicationContext(), whatSay, Toast.LENGTH_LONG);
+        toast.show();
+    }
+
+    /**
+     * Вывод текста в статусную строку: непосредственно установка значения текстовой строки
+     *
+     * @param message
+     */
+    public void toStatusLine(String message) {
+        textView_StatusLine.setText(message);
+    }
+
+    /**
+     * Вывод текста из переменной "toWriteInStatusLine" в статусную строку.
+     * Функция может быть вызвана из других классов активности и других активностей
+     */
+    public void writeStringToStatusLine() {
+        toStatusLine(toWriteInStatusLine);
+    }
+
+    /**
+     * Таймер переключения видимости статусной строки
+     */
+    class MyTimerTask_StatusLineOnOff extends TimerTask {
+        @Override
+        public void run() {
+            runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    statusLineSetVisiblity(-1);
+                }
+            });
+        }
+    }
+
+    /**
+     * Вывод текста в статусную строку с включением мигания
+     *
+     * @param message
+     */
+    public void toStatusLineBlink(String message) {
+        // Включаем таймер мигания статусной строки только если он еще не включен
+        if (numOfCallStatusLineBlink == 0) {
+            statusLineOnOffTimer.schedule(myTimerTask_statusLineOnOff, 500, 500);
+            numOfCallStatusLineBlink++;
+        }
+        textView_StatusLine.setText(message);
+    }
+
+    /**
+     * Вывод текста в статусную строку без мигания
+     *
+     * @param message
+     */
+    public void toStatusLineNoBlink(String message) {
+        // Если есть таймер мигания, выключаем таймер
+        if (statusLineOnOffTimer != null) {
+            statusLineOnOffTimer.cancel();
+        }
+        // Статусная строка - видна
+        statusLineSetVisiblity(View.VISIBLE);
+        // Скидываем данные в строку
+        textView_StatusLine.setText(message);
+    }
+
+    /**
+     * Вывод в реальном времени значения переменной "toWriteInStatusLine" в статусную строку
+     */
+    class MyTimerTask_LookAtStatusLine extends TimerTask {
+        @Override
+        public void run() {
+            runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    writeStringToStatusLine();
+                }
+            });
+        }
+    }
+
+    /**
+     * Уствновка видимости статусной строки
+     */
+    public void statusLineSetVisiblity(int visible) {
+        /** Если статус не определен, то просто меняем значение на противоположное
+         * иначе присваиваем переменной видимости значение параметра
+         */
+        if (visible == -1) {
+            if (statusLineIsVisible == View.VISIBLE) {
+                statusLineIsVisible = View.INVISIBLE;
+            } else {
+                statusLineIsVisible = View.VISIBLE;
+            }
+        } else {
+            statusLineIsVisible = visible;
+        }
+        if (statusLineIsVisible == View.VISIBLE) {
+            textView_StatusLine.setVisibility(View.VISIBLE);
+        } else {
+            textView_StatusLine.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    /**
+     *
+     */
+    class myTimerTask_WatchOnServerFind extends TimerTask {
+        @Override
+        public void run() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    sub1("mixer.001");
+                }
+            });
+        }
+    }
+
+    void sub1(String serverToFind) {
+        logTAG = "Find server " + serverToFind;
+        /**
+         * Условие выхода из цикла:
+         * 1. Найден интересующий нас сервер.
+         * 2. Закончился пул просматриваемых адресов.
+         * 3. Абстрактный тайм-аут.
+         */
+        // 1. Найден сервер
+        if (serverFound[net.SRV_NAME] != null) {
+            Log.i(logTAG, "serverFound=" + serverFound[net.SRV_NAME]);
+            if (serverFound[net.SRV_NAME].equals(serverToFind)) {
+                // Если сервер - тот, который мы ищем
+                // Прекратить дальнейший поиск
+                Log.i(logTAG, "serverFound!!!" + serverFound[net.SRV_NAME]);
+                endServerFindCondition = true;
+            } else {
+                // Сервер оказался не тот, который нужен, сбрасываем результат
+                serverFound[net.SRV_NAME] = null;
+            }
+        } else {
+            // Сервера пока вообще нет
+            // Проверяем, есть ли еще активные процессы срединения с сервером
+            if (numOfServerPingClasses > 0) {
+                // Пока поиск продолжаем
+            } else {
+                // Прекратить дальнейший поиск, т.к. все равно больше ничего не найдется
+                endServerFindCondition = true;
+            }
+        }
+        // Закончить
+        if (endServerFindCondition == true) {
+            Beep();
+            findServerTimer.cancel();
+        }
+
+    }
+
+
 }

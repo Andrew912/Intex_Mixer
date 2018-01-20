@@ -3,6 +3,14 @@ package org.and.intex_v2;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import static android.provider.Contacts.SettingsColumns.KEY;
+import static org.and.intex_v2.DBHelper.FIELDINFO;
+import static org.and.intex_v2.DBHelper.FIELD_PROP_NAME;
+import static org.and.intex_v2.DBHelper.INDEX_OPPA_ID;
+import static org.and.intex_v2.DBHelper.INDEX_OPPA_OPER_ID;
+import static org.and.intex_v2.DBHelper.INDEX_OPPA_PARAM_NAME;
+import static org.and.intex_v2.DBHelper.INDEX_OPPA_PARAM_VALUE;
+import static org.and.intex_v2.DBHelper.INDEX_OPPA_TO_DELETE;
 import static org.and.intex_v2.DBHelper.KEY_MAIL_ANSWER;
 import static org.and.intex_v2.DBHelper.KEY_MAIL_COMPLETE;
 import static org.and.intex_v2.DBHelper.KEY_MAIL_ID;
@@ -19,12 +27,20 @@ import static org.and.intex_v2.DBHelper.KEY_OPER_STATUS;
 import static org.and.intex_v2.DBHelper.KEY_OPER_TASK_ID;
 import static org.and.intex_v2.DBHelper.KEY_OPER_TO_DELETE;
 import static org.and.intex_v2.DBHelper.KEY_OPER_TYPE;
+import static org.and.intex_v2.DBHelper.KEY_OPPA_ID;
+import static org.and.intex_v2.DBHelper.KEY_OPPA_OPER_ID;
+import static org.and.intex_v2.DBHelper.KEY_OPPA_PARAM_NAME;
+import static org.and.intex_v2.DBHelper.KEY_OPPA_PARAM_VALUE;
+import static org.and.intex_v2.DBHelper.KEY_OPPA_TO_DELETE;
 import static org.and.intex_v2.DBHelper.KEY_TASK_COMMENT;
 import static org.and.intex_v2.DBHelper.KEY_TASK_COMPLETE;
 import static org.and.intex_v2.DBHelper.KEY_TASK_ID;
 import static org.and.intex_v2.DBHelper.KEY_TASK_IS_CURRENT;
 import static org.and.intex_v2.DBHelper.KEY_TASK_STATUS;
 import static org.and.intex_v2.DBHelper.KEY_TASK_TO_DELETE;
+import static org.and.intex_v2.DBHelper.NONE;
+import static org.and.intex_v2.DBHelper.OPER_PARAM;
+import static org.and.intex_v2.DBHelper.TABLENAME;
 
 
 /**
@@ -131,11 +147,7 @@ public class DBFunctions {
                         KEY_OPER_TASK_ID,
                         KEY_OPER_TO_DELETE
                 },
-                null,
-                null,
-                null,
-                null,
-                null);
+                null, null, null, null, null);
         s = s + "Cursor: " + c.getCount() + "\n";
         if (c.moveToFirst()) {
             do {
@@ -171,9 +183,7 @@ public class DBFunctions {
                         KEY_MAIL_REPORTED,
                         KEY_MAIL_TO_DELETE
                 },
-                null,
-                null,
-                null, null, null);
+                null, null, null, null, null);
         s = s + "Cursor: " + c.getCount() + "\n";
         if (c.moveToFirst()) {
             do {
@@ -189,9 +199,6 @@ public class DBFunctions {
                                 + "\n";
                 activity.log(s);
             } while (c.moveToNext() == true);
-
-
-//            mainActivity.textView[0].setText(s);
             c.close();
         }
     }
@@ -224,9 +231,7 @@ public class DBFunctions {
                 },
                 "(" + KEY_OPER_COMPLETE + "=?)",
                 new String[]{String.valueOf(0)},
-                null,
-                null,
-                null);
+                null, null, null);
         s = s + "Cursor: " + c.getCount() + "\n";
         if (c.moveToFirst()) {
             do {
@@ -245,6 +250,45 @@ public class DBFunctions {
             activity.log(true, s);
             c.close();
         }
+    }
+
+    /**
+     * Значение конкретного параметра для указанной операции
+     *
+     * @param operId        - операция
+     * @param parameterName - имя параметра
+     * @return - строка-значение параметра, иначе NULL
+     */
+    String getOperParameter(String operId, String parameterName) {
+        activity.log(true, "getOperParameter: operId=" + operId + ", parameterName=" + parameterName + ", table=" +dbHelper.DBRecord[OPER_PARAM][TABLENAME][NONE][NONE]);
+        Cursor c = db.query(
+                //dbHelper.TABLE_OPER_PARAM,
+                dbHelper.DBRecord[OPER_PARAM][TABLENAME][NONE][NONE],
+                new String[]{
+//                        dbHelper.DBRecord[OPER_PARAM][FIELDINFO][INDEX_OPPA_ID][FIELD_PROP_NAME],
+//                        dbHelper.DBRecord[OPER_PARAM][FIELDINFO][INDEX_OPPA_OPER_ID][FIELD_PROP_NAME],
+//                        dbHelper.DBRecord[OPER_PARAM][FIELDINFO][INDEX_OPPA_PARAM_NAME][FIELD_PROP_NAME],
+//                        dbHelper.DBRecord[OPER_PARAM][FIELDINFO][INDEX_OPPA_PARAM_VALUE][FIELD_PROP_NAME],
+//                        dbHelper.DBRecord[OPER_PARAM][FIELDINFO][INDEX_OPPA_TO_DELETE][FIELD_PROP_NAME],
+                        KEY_OPPA_ID,
+                        KEY_OPPA_OPER_ID,
+                        KEY_OPPA_PARAM_NAME,
+                        KEY_OPPA_PARAM_VALUE,
+                        KEY_OPPA_TO_DELETE
+                },
+                "(" + KEY_OPPA_OPER_ID + "=?) AND (" + KEY_OPPA_PARAM_NAME + "=?)",
+                new String[]{operId, parameterName},
+                null, null, null);
+        if (c.moveToFirst()) {
+            activity.log(true, "get Oper Parameter: name=" +
+                    c.getString(c.getColumnIndex(KEY_OPPA_PARAM_NAME)) + ", value=" +
+                    c.getString(c.getColumnIndex(KEY_OPPA_PARAM_VALUE))
+            );
+            return c.getString(c.getColumnIndex(KEY_OPPA_PARAM_VALUE));
+        } else {
+            return null;
+        }
+//        c.close();
     }
 
     void oper1(String id) {

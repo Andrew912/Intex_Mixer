@@ -299,7 +299,6 @@ public class Storer {
                 null, null, null);
         if (c.getCount() > 0) {
             c.moveToFirst();
-//            mainActivity.currentTask.set(
             return new String[]{
                     c.getString(c.getColumnIndex(KEY_TASK_ID)),
                     c.getString(c.getColumnIndex(KEY_TASK_COMMENT)),

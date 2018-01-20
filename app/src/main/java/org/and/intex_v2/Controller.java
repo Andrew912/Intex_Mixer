@@ -43,6 +43,7 @@ import static org.and.intex_v2.MainActivity.LAYOUT_3_DO_TASK;
 import static org.and.intex_v2.MainActivity.LAYOUT_4_TASK_SELECT;
 import static org.and.intex_v2.MainActivity.LAYOUT_5_OPER_SELECT;
 import static org.and.intex_v2.MainActivity.LAYOUT_6_SIMPLE_OPER;
+import static org.and.intex_v2.MainActivity.LAYOUT_71_LOAD_OPER;
 import static org.and.intex_v2.MainActivity.LAYOUT_7_COMPLEX_OPER;
 import static org.and.intex_v2.MainActivity.LAYOUT_8_TASK_COMPLETE;
 import static org.and.intex_v2.MainActivity.LAYOUT_9_SERV_REQUEST;
@@ -71,6 +72,10 @@ public class Controller {
     boolean
             loadingMayBegin;
 
+    /**
+     * Конструктор
+     * @param activity
+     */
     public Controller(MainActivity activity) {
         this.mainActivity = activity;
         messenger = new Messenger(this.mainActivity);
@@ -81,7 +86,6 @@ public class Controller {
 
         switch (btn) {
             case L__BUTTON_START:       //
-
 //                mainActivity.server.sendMail();
 
                 // Начальная установка. Активируем первый экран
@@ -210,15 +214,35 @@ public class Controller {
                 mainActivity.currentOper.setToActive();
 
                 // Если опарция - загрузка без погрузчика, то на экран ???, иначе - проверить "простая" погрузка
-                if (mainActivity.currentOper.operIsLoad() == true) {
+                if (mainActivity.currentOper.operIsLoadNoLoader() == true) {
+                    // Погрузка будет без испольщования погрузчика
+                    mainActivity.currentOper.loadNoLoader = true;
                     // Запускаем Получение показаний весов от терминала
                     mainActivity.weightDataFromDeviceReader_Start();
                     /**
                      * Тут надо поменять переход сразу на начало загрузки
                      */
-                    mainActivity.gotoLayout(LAYOUT_9_SERV_REQUEST, mainActivity.currentOper.getOperationInfoForView());
+                    // Загруженный вес
+                    mainActivity.storer.weightLoaded = 0;
+                    // Стартовый вес в миксере
+                    mainActivity.storer.weightStart = mainActivity.storer.weightCurrent;
+                    // Вычислить конечный вес в погрузчике
+                    mainActivity.storer.weightTarget = mainActivity.currentOper.loadValue + mainActivity.storer.weightCurrent;
+                    Log.i(logTAG, "конечный вес в погрузчике = " + mainActivity.storer.weightTarget);
+                    // Толеранс +
+                    mainActivity.storer.tolerancePlus =
+                            (int) (mainActivity.currentOper.loadValue * Float.parseFloat(mainActivity.getString(R.string.LOADING_PERCENT_WEIGHT_TOLERANCE_UP)));
+                    // Параметры - на экран
+                    mainActivity.displayWeightParameters();
+
+                    mainActivity.gotoLayout(LAYOUT_71_LOAD_OPER, mainActivity.currentOper.getOperationInfoForView());
+                    break;
                 }
-                // Если опарция - загрузка, то на экран 8, иначе - 6
+
+                // Погрузка будет с использованием погрузчика
+                mainActivity.currentOper.loadNoLoader = false;
+
+                // Если оперция - загрузка, то на экран 8, иначе - 6
                 if (mainActivity.currentOper.operIsLoad() == true) {
                     // Запускаем Получение показаний весов от терминала
                     mainActivity.weightDataFromDeviceReader_Start();
@@ -334,7 +358,11 @@ public class Controller {
                 // Параметры - на экран
                 mainActivity.displayWeightParameters();
                 //
-                mainActivity.gotoLayout(LAYOUT_7_COMPLEX_OPER, ""); // Todo
+                if (mainActivity.currentOper.loadNoLoader == true) {
+                    mainActivity.gotoLayout(LAYOUT_71_LOAD_OPER, "");
+                } else {
+                    mainActivity.gotoLayout(LAYOUT_7_COMPLEX_OPER, "");
+                }
                 break;
 
             case L9_BUTTON_REJECT:                      // Сервер отказал
