@@ -20,7 +20,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     // Данный параметр надо исправить для автоматического обновления структуры БД
     public static final int DATABASE_VERSION
-            = 2;
+            = 3;
 
     // Наименование БД
     public static final String DATABASE_NAME
@@ -237,11 +237,14 @@ public class DBHelper extends SQLiteOpenHelper {
                              *
                              * "Сетевой адрес" - адрес, по которому устройство было обнаружено в
                              * последний раз
+                             * "Адрес подсети" - у различных точек доступа могут быть свои подсети,
+                             * соответственно и разные адреса при регистрации в них
                             */
                             {"_id", "INTEGER", ""},     // Идентификатор записи
                             {"name", "TEXT", "\'\'"},   // Имя устройства в системе
                             {"type", "TEXT", ""},       // Тип устройства
                             {"address", "TEXT", ""},    // Сетевой адрес
+                            {"netmask", "TEXT", ""},    // Адрес подсети
                             {"port", "TEXT", ""}        // Сетевой порт
                     },
                     {

@@ -49,8 +49,10 @@ public class MainActivity extends AppCompatActivity {
             context;
     public DBHelper
             dbHelper;
-    public SQLiteDatabase
+    public DBHandler
             db;
+    SQLiteDatabase
+            database;
     Controller
             controller;
     Configuration
@@ -84,6 +86,10 @@ public class MainActivity extends AppCompatActivity {
 
     // Блок кнопок (L4.1)
     LinearLayout layout_4_1;
+
+    int
+            CurrentLayout = 0,                  // Текущий номер экрана
+            savedCurrentLayout = 0;             // Сохраненный номер экрана
 
     // ListView: Выбор задачи из списка: Task Select
     ListView taskSelect_ListView;
@@ -170,25 +176,6 @@ public class MainActivity extends AppCompatActivity {
     TextView
             textView_StatusLine;
 
-    int
-            statusLineIsVisible;
-    public String
-            toWriteInStatusLine;            // Для вывода в статусную строку
-    public int
-            numOfServerPingClasses = 0;     // Количество открытых в данный момент ServerPingClass
-    public int
-            numOfCallStatusLineBlink = 0;   // Кол-во вызовов мигания статусной строки
-
-    /**
-     * Переменные, определяющие работу при поиске серверов в сети
-     */
-    public String[]
-            serverFound = {null, null, null};   // Параметры найденного сервера
-    public boolean
-            endServerFindCondition = false;         // Условие выхода из цикла при поиске серверов
-
-    // Таймеры
-
     // Таймер переключения статусной строки
     Timer
             statusLineOnOffTimer;
@@ -202,11 +189,36 @@ public class MainActivity extends AppCompatActivity {
             myTimerTask_lookAtServerPingClass;  //
 
     // Таймер задачи наблюдения за поиском сервера в сети
-    Timer
+    ArrayList<Timer>
             findServerTimer;
-    myTimerTask_WatchOnServerFind
+    ArrayList<myTimerTask_WatchOnServerFind>
             myTimerTask_watchOnServerFind;
 
+    int
+            statusLineIsVisible;
+    public String
+            toWriteInStatusLine;                // Для вывода в статусную строку
+    public int
+            numOfCallStatusLineBlink = 0;       // Кол-во вызовов мигания статусной строки
+    public ArrayList<Integer>
+            numOfServerPingClasses;             // Количество открытых в данный момент ServerPingClass
+    int whatFindCurrent
+            = 0;                                // Индекс открытых в данный момент ServerPingClass
+
+    static int                                  // Предельное количество устройств для поиска в сети
+            MAX_NUM_OF_DEVICES = 2;
+
+    static int                                  // Индекс ServerPingClass для различных устройств
+            DEVICE_IS_TERMINAL = 0,             // Весовой терминал
+            DEVICE_IS_LOADER = 1;               // Погрузчик
+
+    /**
+     * Переменные, определяющие работу при поиске серверов в сети
+     */
+    public ArrayList<String[]>
+            serverFound;                        // Параметры найденного сервера
+    public ArrayList<Boolean>
+            endServerFindCondition;            // Условие выхода из цикла при поиске серверов
 
     // Дополнительный текст
     TextView
@@ -217,7 +229,6 @@ public class MainActivity extends AppCompatActivity {
             deviceReadTimer;        // Таймер опроса весового терминала
     private MyTimerTask
             myTimerTask;            // Задача для опроса весового терминала
-
 
     /**
      * Конструктор
@@ -234,19 +245,20 @@ public class MainActivity extends AppCompatActivity {
         context = MainActivity.this;
         logTAG = "MAIN: ";
         logMessage = "";
-        statusLine =
-                new StatusLine();
-        configurator =
-                new Configurator(this);
-        conf =
-                new Configuration(this);
-        messenger =
-                new Messenger(this);
-        dbHelper =
-                new DBHelper(this.context);
-        db = dbHelper.getWritableDatabase();
-        controller =
-                new Controller(this);
+        statusLine
+                = new StatusLine();
+        configurator
+                = new Configurator(this);
+        conf
+                = new Configuration(this);
+        messenger
+                = new Messenger(this);
+        dbHelper
+                = new DBHelper(this.context);
+        database
+                = dbHelper.getWritableDatabase();
+        controller
+                = new Controller(this);
 //        testDataLoader = new TestDataLoader();
         storer =
                 new Storer(this);
@@ -291,6 +303,20 @@ public class MainActivity extends AppCompatActivity {
 
         layout_4_1 =
                 (LinearLayout) findViewById(R.id.LL4_1_Buttons);
+
+        /***********************
+         * Таймеры
+         ***********************/
+        int
+                Layout_0 = 0,                       // Номера экранов
+                Layout_1 = 1,
+                findServerLayout_900 = 2,           // Экраны поиска сетевых устройств
+                findServerLayout_901 = 3,
+                findServerLayout_902 = 4;
+
+        int
+                CurrentLayout = 0,                  // Текущий номер экрана
+                savedCurrentLayout = 0;             // Сохраненный номер экрана
 
         /***********************
          * TextViews
@@ -614,9 +640,60 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        currentTask.setTaskData();
-        controller.controller(L__BUTTON_START);
+        /***********************
+         * ЗАПУСК!!!
+         ***********************/
+//        currentTask
+//                .setTaskData();
+//        controller
+//                .controller(L__BUTTON_START);
+        /**
+         * Поиск сервера в сети
+         */
+        String serverToFind
+                = "mixerterm.001";
+        int whatDevice
+                = DEVICE_IS_TERMINAL;
 
+        myTimerTask_watchOnServerFind
+                .add(whatDevice, new myTimerTask_WatchOnServerFind(serverToFind, whatDevice));
+
+        // Сохраняем номер экрана, с которого произошел вызов
+        savedCurrentLayout
+                = CurrentLayout;
+        CurrentLayout
+                = findServerLayout_900;
+
+        layout[savedCurrentLayout]
+                .setVisibility(View.INVISIBLE);
+        layout[CurrentLayout]
+                .setVisibility(View.VISIBLE);
+
+        toTextView(
+                "Find server: " + serverToFind + "@" + conf.networkMask);
+        toStatusLineBlink(
+                "Find server: " + serverToFind + "@" + conf.networkMask);
+
+        Log.i(logTAG, "serverToFind=" + serverToFind + ", netmask=" + conf.networkMask);
+
+        // Пытаемся опеределить параметры устройства, сохраненные в БД
+        String[] terminalAddressFromDB =
+                db.get_Device_Addr_from_DB(conf.networkMask, serverToFind);
+
+        Log.i(logTAG, "Find=" + terminalAddressFromDB[0] + ", addr=" + terminalAddressFromDB[1]);
+
+        // Запускаем поиск интересующего нас сервера
+        try {
+            net.findServerInNetwork(serverToFind, terminalAddressFromDB[1], conf.terminalPort, whatDevice);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        findServerTimer.get(whatDevice)
+                .schedule(myTimerTask_watchOnServerFind.get(whatDevice), 100, 100);
+
+        /***********************
+         * КОНЕЦ
+         ***********************/
     }// end of onCreate
 
     // Сброс статуса кнопок
@@ -1129,7 +1206,7 @@ public class MainActivity extends AppCompatActivity {
          */
         public ArrayList<OperationParameter> getOperationParameter(String pId) {
             ArrayList<OperationParameter> retVar = new ArrayList<>();
-            Cursor c = db.query(
+            Cursor c = database.query(
                     DBHelper.TABLE_OPER_PARAM,
                     new String[]{
                             KEY_OPPA_OPER_ID,
@@ -1542,18 +1619,28 @@ public class MainActivity extends AppCompatActivity {
      *
      */
     class myTimerTask_WatchOnServerFind extends TimerTask {
+        String
+                serverName;
+        int
+                serverIndex;
+
+        public myTimerTask_WatchOnServerFind(String pServerName, int pServerIndex) {
+            serverName = pServerName;
+            serverIndex = pServerIndex;
+        }
+
         @Override
         public void run() {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    sub1("mixer.001");
+                    sub1(serverName, serverIndex);
                 }
             });
         }
     }
 
-    void sub1(String serverToFind) {
+    void sub1(String serverToFind, int wishServerIsFind) {
         logTAG = "Find server " + serverToFind;
         /**
          * Условие выхода из цикла:
@@ -1562,34 +1649,43 @@ public class MainActivity extends AppCompatActivity {
          * 3. Абстрактный тайм-аут.
          */
         // 1. Найден сервер
-        if (serverFound[net.SRV_NAME] != null) {
-            Log.i(logTAG, "serverFound=" + serverFound[net.SRV_NAME]);
-            if (serverFound[net.SRV_NAME].equals(serverToFind)) {
+        if (serverFound.get(wishServerIsFind)[net.SRV_NAME] != null) {
+            Log.i(logTAG, "serverFound=" + serverFound.get(wishServerIsFind)[net.SRV_NAME]);
+            if (serverFound.get(wishServerIsFind)[net.SRV_NAME].equals(serverToFind)) {
                 // Если сервер - тот, который мы ищем
                 // Прекратить дальнейший поиск
-                Log.i(logTAG, "serverFound!!!" + serverFound[net.SRV_NAME]);
-                endServerFindCondition = true;
+                Log.i(getClass().getSimpleName(), "serverFound!!!" + serverFound.get(wishServerIsFind)[net.SRV_NAME]);
+                endServerFindCondition.set(wishServerIsFind, true);
+                // Сохраняем данные в БД
+                db.store_Device_Addr_to_DB(
+                        conf.networkMask,
+                        serverFound.get(wishServerIsFind)[net.SRV_NAME],
+                        serverFound.get(wishServerIsFind)[net.SRV_ADDR]
+                );
+                // Адрес переносим в конфигурацию
+                conf.ipAddress = serverFound.get(wishServerIsFind)[net.SRV_ADDR];
             } else {
                 // Сервер оказался не тот, который нужен, сбрасываем результат
-                serverFound[net.SRV_NAME] = null;
+                serverFound.get(wishServerIsFind)[net.SRV_NAME] = null;
             }
         } else {
             // Сервера пока вообще нет
             // Проверяем, есть ли еще активные процессы срединения с сервером
-            if (numOfServerPingClasses > 0) {
+            if (numOfServerPingClasses.get(wishServerIsFind) > 0) {
                 // Пока поиск продолжаем
             } else {
                 // Прекратить дальнейший поиск, т.к. все равно больше ничего не найдется
-                endServerFindCondition = true;
+                endServerFindCondition.set(wishServerIsFind, true);
             }
         }
-        // Закончить
-        if (endServerFindCondition == true) {
-            Beep();
-            findServerTimer.cancel();
-        }
-
     }
 
+    void toTextView(String textToTextView) {
+        textView[CurrentLayout].setText(textToTextView);
+    }
+
+    void serverFindResultToStatusLine(String serverFindResult) {
+        toStatusLineNoBlink(serverFindResult);
+    }
 
 }

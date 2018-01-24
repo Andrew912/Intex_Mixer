@@ -144,7 +144,7 @@ public class NetworkHandler {
         // Проходим по всему диапазону адресов
         for (int i = 66; i < 90; i++) {
             if (i != myAddr) {
-                tryConnectToAllServers(config.networkMask + i, config.terminalPort);
+                tryConnectToAllServers(config.networkMask + i, config.terminalPort, 0);
             }
         }
     }
@@ -155,40 +155,46 @@ public class NetworkHandler {
      * @param serverAddr
      * @param serverPort
      */
-    void tryConnectToAllServers(String serverAddr, int serverPort) throws Exception {
+    void tryConnectToAllServers(String serverAddr, int serverPort, int whatFind) throws Exception {
         String retVar;
         Log.i("tryConnectToAllServers", "serverAddr=" + serverAddr + ", serverPort=" + serverPort);
-        ServerPingClass serverPing = new ServerPingClass(activity, serverAddr, serverPort);
+        ServerPingClass serverPing = new ServerPingClass(activity, serverAddr, serverPort, whatFind);
         activity.toStatusLineNoBlink("ServerPingClass=" + activity.numOfServerPingClasses);
         if (serverPing != null) {
-            retVar = serverPing.readServerName();
-            Log.i(logTag, "retVar=" + retVar);
+            retVar = serverPing.readServerName(whatFind);
+            Log.i(getClass().getSimpleName(), "retVar=" + retVar);
         }
     }
 
     /**
      * Поиск в сети указанного устройства
      *
-     * @param config     - класс-конфигуратор: из него поллучаются собственный адрес и маска сети
      * @param serverName - имя
      * @param serverAddr - стартовый адрес для поиска, полученный из DNS
      * @param serverPort - порт
+     * @param whatFind   - номер счетика запущенных классов поиска устройства
      * @return String[2]
      * [0] - адрес
      * [1] - порт
      */
-    public String[] findServerInNetwork(Configuration config, String serverName, String serverAddr, int serverPort) throws Exception {
+    public String[] findServerInNetwork(String serverName, String serverAddr, int serverPort, int whatFind) throws Exception {
         activity.toStatusLineBlink("Find server = " + serverName);
-        Log.i("Поиск сервера в сетке", "Find server = " + serverName + " at " + serverAddr);
+
+        Log.i(getClass().getSimpleName(), "Поиск сервера: " + serverName + " at " + serverAddr);
         String[] serverParameters = {null, null, null};
+
+        /**
+         * Вообще сука проверяем, не пустой ли адрес (!=NULL).
+         * Если адрес пуст, то смысла искать сервер нет
+         */
 
         /**
          * Проверяем, нет ли сервера с заданным именем по указанному адресу
          */
-        serverParameters[0] = tryConnectToServer(serverName, serverAddr, serverPort);
+        serverParameters[0] = tryConnectToServer(serverName, serverAddr, serverPort, whatFind);
         if (serverParameters[SRV_NAME] != null) {
             if (serverParameters[SRV_NAME].equals(serverName)) {
-                Log.i("Поиск сервера в сетке 0", "Server name = " + serverParameters[SRV_NAME]);
+                Log.i(getClass().getSimpleName(), "Поиск сервера в сетке 0: " + serverParameters[SRV_NAME]);
                 return serverParameters;
             }
         }
@@ -196,17 +202,20 @@ public class NetworkHandler {
          * Если сервер с указанными параметрами не найден, то проводим поиск по всей подсети
          */
         int tryAddr = 0;
-        // Выделяем IP-адрес из полного адреса
+        // Выделяем IP-адрес из полного адреса, если он там есть. Если нет - равен 0.
         int myAddr = extractAddress(serverAddr);
+        if (myAddr == 0) {
+            myAddr = Integer.parseInt(activity.getString(R.string.SERVER_FIND_START_ADDRESS));
+        }
         // А теперь проходим по всем адресам, если отвечает, то типа нашли
         for (int i = 1; i < 254; i++) {
             // На адрес вниз
             tryAddr = myAddr - i;
             if (tryAddr > 1) {
-                serverParameters[0] = tryConnectToServer(serverName, config.networkMask + tryAddr, serverPort);
+                serverParameters[0] = tryConnectToServer(serverName, activity.conf.networkMask + tryAddr, serverPort, whatFind);
                 if (serverParameters[SRV_NAME] != null) {
                     if (serverParameters[SRV_NAME].equals(serverName)) {
-                        Log.i("Поиск сервера в сетке 1", "Server name = " + serverParameters[SRV_NAME]);
+                        Log.i(getClass().getSimpleName(), "Поиск сервера в сетке 1: " + serverParameters[SRV_NAME]);
                         return serverParameters;
                     }
                 }
@@ -214,17 +223,17 @@ public class NetworkHandler {
             // На адрес вверх
             tryAddr = myAddr + i;
             if (tryAddr < 255) {
-                serverParameters[0] = tryConnectToServer(serverName, config.networkMask + tryAddr, serverPort);
+                serverParameters[0] = tryConnectToServer(serverName, activity.conf.networkMask + tryAddr, serverPort, whatFind);
                 if (serverParameters[SRV_NAME] != null) {
                     if (serverParameters[SRV_NAME].equals(serverName)) {
-                        Log.i("Поиск сервера в сетке 2", "Server name = " + serverParameters[SRV_NAME]);
+                        Log.i(getClass().getSimpleName(), "Поиск сервера в сетке 2: " + serverParameters[SRV_NAME]);
                         return serverParameters;
                     }
                 }
             }
         }
         // В данном случае ничего нужного в сетке не нашлось
-        Log.i("Поиск сервера в сетке 3", "Server name = " + serverParameters[SRV_NAME]);
+//        Log.i("Поиск сервера в сетке 3", " " + serverParameters[SRV_NAME]);
         return serverParameters;
     }
 
@@ -236,11 +245,11 @@ public class NetworkHandler {
      * @param serverPort
      * @return
      */
-    public String tryConnectToServer(String serverName, String serverAddr, int serverPort) {
+    public String tryConnectToServer(String serverName, String serverAddr, int serverPort, int whatFind) {
         String returnVar;
         ServerPingClass serverPing =
-                new ServerPingClass(activity, serverAddr, serverPort);
-        returnVar = serverPing.readServerName();
+                new ServerPingClass(activity, serverAddr, serverPort, whatFind);
+        returnVar = serverPing.readServerName(whatFind);
         return returnVar;
     }
 

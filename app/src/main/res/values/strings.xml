@@ -141,5 +141,8 @@
     <!-- Системные сообщения -->
     <string name="NETWORK_NOT_CONNECTED_WIFI">Не подключено к сети. Проверьте Wi-Fi</string>
 
+    <!-- Параметры для поиска устройств в сети -->
+    <string name="SERVER_FIND_START_ADDRESS">23</string>
+
 
 </resources>

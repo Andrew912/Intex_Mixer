@@ -24,7 +24,7 @@ public class LoaderCommunicator {
     String
             logTAG = "Server Communicator: ";
     MainActivity
-            a;
+            activity;
     String
             rs = null;
     String
@@ -70,13 +70,19 @@ public class LoaderCommunicator {
             msgLoadingStop;             // Сообщение об окончании обслуживания
 
 
-    public LoaderCommunicator(MainActivity activity) {
-        this.a = activity;
-        socketAddr = "192.168.1.150";
-        socketPort = 18080;
-        buffSize = 1024;
-        deviceName = "smesitel001";
+    public LoaderCommunicator(MainActivity mainActivity) {
+        this.activity =
+                mainActivity;
+        socketAddr =
+                activity.conf.getIPaddress(activity.conf.terminalStartAddress);
+        socketPort =
+                activity.conf.terminalPort;
+        buffSize =
+                activity.conf.dataLoadBufferSize;
+        deviceName =
+                activity.conf.deviceName;
 
+        //
         tryServiceRequest = false;
         continueSendWeight = false;
         channelFree = true;
@@ -101,8 +107,8 @@ public class LoaderCommunicator {
 
     void serverServiceRequest() {
         //  Начинаем попытки
-        msgServiceRequest = a.messenger.msg_ToLoader_ServiceRequest();
-        msgLoadingBegin = a.messenger.msg_ToLoader_LoadBegin();
+        msgServiceRequest = activity.messenger.msg_ToLoader_ServiceRequest();
+        msgLoadingBegin = activity.messenger.msg_ToLoader_LoadBegin();
         tryServiceRequest = true;
         deviceWaitAnswerStatus = DeviceWaitAnswerStatus.REQUEST;
 
@@ -134,11 +140,11 @@ public class LoaderCommunicator {
 
         @Override
         public void run() {
-            msgSendWeight = a.messenger.msg_ToLoader_SendWeight();
+            msgSendWeight = activity.messenger.msg_ToLoader_SendWeight();
             // Если можно продолжать попытки отправки запроса, то
             if (continueSendWeight == true) {
                 // Отправить
-                new LoaderSendMessagesClass().execute(a.messenger.msg_ToLoader_SendWeight());
+                new LoaderSendMessagesClass().execute(activity.messenger.msg_ToLoader_SendWeight());
             } else {
                 // Сбросить таймер
                 dropTimerServerRequest();
@@ -243,17 +249,17 @@ public class LoaderCommunicator {
                 if (amType == AnswerMessageType.NO) {
                     tryServiceRequest = false;
                     deviceWaitAnswerStatus = REJECT;
-                    a.btn_9_Reject.callOnClick();
+                    activity.btn_9_Reject.callOnClick();
                 }
                 if (amType == AnswerMessageType.YES) {
                     tryServiceRequest = false;
                     deviceWaitAnswerStatus = LOAD;
 
                     // Кнопка "Accept"
-                    a.btn_9_Accept.callOnClick();
+                    activity.btn_9_Accept.callOnClick();
 
                     // Если дано разрешение на начало погрузки
-                    if (a.controller.loadingMayBegin == true) {
+                    if (activity.controller.loadingMayBegin == true) {
                     // Сообщение о начале погрузки
                         send(msgLoadingBegin);
                     }
@@ -271,7 +277,7 @@ public class LoaderCommunicator {
                     // Сообщение о начале погрузки
                     send(msgLoadingBegin);
                     // Кнопка "Accept"
-                    a.btn_9_Accept.callOnClick();
+                    activity.btn_9_Accept.callOnClick();
                 }
                 break;
             case END:

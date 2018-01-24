@@ -2,6 +2,7 @@ package org.and.intex_v2;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,13 +30,12 @@ public class ServerPingClass {
             socketPort;
     int
             buffSize;
-    //    String
-//            eol =
-//            activity.getString(R.string.END_OF_LINE_SIGN_TERMINAL);
-    //    ArrayList<String>
-//            serverList;             // Список серверов при их поиске в сети
     IncomingMessage
             incomingMessage;
+    String
+            whatFindParam;                  // Номер (счетчик) запущенных классов ServerPingClass
+    int
+            whatFindParamI;
 
     /**
      * Конструктор
@@ -44,11 +44,12 @@ public class ServerPingClass {
      * @param pAddr
      * @param pPort
      */
-    public ServerPingClass(MainActivity activity, String pAddr, int pPort) {
+    public ServerPingClass(MainActivity activity, String pAddr, int pPort, int whatFind) {
         this.activity =
                 activity;
         // Обозначаем свое присутствие
-        activity.numOfServerPingClasses++;
+        activity.numOfServerPingClasses
+                .add(whatFind, activity.numOfServerPingClasses.get(whatFind) + 1);
 
         socketAddr =
                 pAddr;
@@ -56,8 +57,6 @@ public class ServerPingClass {
                 String.valueOf(pPort);
         buffSize =
                 128;
-//        incomingMessage =
-//                new IncomingMessage(activity, null);
     }
 
     /**
@@ -67,8 +66,8 @@ public class ServerPingClass {
      *
      * @return
      */
-    public String readServerName() {
-        new ServerPingTaskClass().execute(new String[]{socketAddr, socketPort});
+    public String readServerName(int whatFind) {
+        new ServerPingTaskClass().execute(new String[]{socketAddr, socketPort, String.valueOf(whatFind)});
         return serverName;
     }
 
@@ -80,10 +79,11 @@ public class ServerPingClass {
 
         @Override
         protected Void doInBackground(String... params) {
-            if (activity.endServerFindCondition == false) {
+            if (activity.endServerFindCondition.get(Integer.parseInt(params[2])) == false) {
                 serverName = null;
-                Log.i(logTAG, "ServerExchangeClass_getOperations: params[0]=" + params[0] + ", params[1]=" + params[1]);
-//            activity.toWriteInStatusLine = params[0] + ":" + params[1];
+                Log.i(logTAG, "ServerExchangeClass_getOperations: params[0]=" + params[0] + ", params[1]=" + params[1] + ", params[2]=" + params[2]);
+                whatFindParam = params[2];
+                whatFindParamI = Integer.parseInt(whatFindParam);
                 Socket socket;
                 InputStream is;
                 OutputStream os;
@@ -95,36 +95,25 @@ public class ServerPingClass {
                         is = socket.getInputStream();
                         os = socket.getOutputStream();
                         byte[] buffer = o.getBytes();
-//                        Log.i(logTAG, "\n" + o);
                         os.write(buffer);
                         os.flush();
-//                    os.write(buffer);
-//                    os.flush();
                         buffer = new byte[buffSize];
                         int read = is.read(buffer, 0, buffSize);
                         byte[] b = new byte[read];
                         System.arraycopy(buffer, 0, b, 0, read);
                         rs = new String(b).replace("\"", "--");
                         socket.close();
-//                        Log.i(logTAG, "-----------------------------");
-//                        Log.i(logTAG, "read=" + read + ", '" + rs + "'");
                         /**
                          * Фиксируем адрес+порт, если сервер ответил
                          * Теоретически можно эти параметры фиксировать и при верхнем вызове класса
                          * Надо посмотреть с точки зрения оптимальности, что удалить
                          */
-//                    activity.serverFound[activity.net.SRV_ADDR] = params[0];
-//                    activity.serverFound[activity.net.SRV_PORT] = params[1];
-//
-//                    Log.i(
-//                            logTAG, "SRV_ADDR=" + activity.serverFound[activity.net.SRV_ADDR] + ", " +
-//                                    "SRV_PORT=" + activity.serverFound[activity.net.SRV_PORT]);
-
-//                        Log.i(logTAG, "-----------------------------");
+                        activity.serverFound.get(whatFindParamI)[activity.net.SRV_ADDR] = params[0];
+                        activity.serverFound.get(whatFindParamI)[activity.net.SRV_PORT] = params[1];
                     }
                     socket = null;
                 } catch (Exception e) {
-                    Log.i(logTAG, "Not connect: "+e);
+                    Log.i(logTAG, "Not connect: " + e);
                 }
 //            System.gc();
             }
@@ -135,7 +124,7 @@ public class ServerPingClass {
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
             // Если не объявлен стоп
-            if (activity.endServerFindCondition == false) {
+            if (activity.endServerFindCondition.get(whatFindParamI) == false) {
                 // Разбираем входящее сообщение
                 incomingMessage = new IncomingMessage(activity, rs);
                 // Пытаемся выделить имя сервера
@@ -147,31 +136,43 @@ public class ServerPingClass {
                     /**
                      * Вот тут мы фиксируем имя найденного сервера
                      */
-                    activity.serverFound[activity.net.SRV_NAME] = serverName;
+                    activity.serverFound.get(whatFindParamI)[activity.net.SRV_NAME] = serverName;
                 }
             }
-            //
-            activity.numOfServerPingClasses--;
-//            activity.toWriteInStatusLine = "ServerPingClass=" + activity.numOfServerPingClasses--;
-        }
-    }
-
-    // Разбор входящего потока на строки
-    public CycleBufferClass ExtractToSourceInputLineBuffer(String inBuffer, int outBufferSize) {
-        CycleBufferClass sourceInputLineBuffer = new CycleBufferClass(outBufferSize);
-        int i = 0;
-        String regEx = activity.getString(R.string.pattern_EndOfLine);
-        Pattern ptnLine = Pattern.compile(regEx, Pattern.CASE_INSENSITIVE);
-        String[] lines = ptnLine.split(inBuffer);
-        for (String line : lines) {
-            if (line != null) {
-                sourceInputLineBuffer.put(line);
+            if (serverName != null) {
+                activity.numOfServerPingClasses
+                        .set(whatFindParamI, activity.numOfServerPingClasses.get(Integer.parseInt(whatFindParam)) - 1);
+                /**
+                 * А тут мы резко выводим на экран всякую информацию о происходящем
+                 */
+                activity.layout[activity.CurrentLayout]
+                        .setVisibility(View.INVISIBLE);
+                activity.CurrentLayout = activity.savedCurrentLayout;
+                activity.layout[activity.CurrentLayout]
+                        .setVisibility(View.VISIBLE);
+                activity.serverFindResultToStatusLine("Сервер найден");
+                activity.toTextView("Сервер " +
+                        activity.serverFound.get(whatFindParamI)[activity.net.SRV_NAME] +
+                        " найден по адресу " +
+                        activity.serverFound.get(whatFindParamI)[activity.net.SRV_ADDR]);
+                Log.i(getClass().getSimpleName(), "Сервер найден, БЛЯ!!!");
             }
         }
-        sourceInputLineBuffer.get();
-        return sourceInputLineBuffer;
-    }
 
-
-}
+        // Разбор входящего потока на строки
+        public CycleBufferClass ExtractToSourceInputLineBuffer(String inBuffer, int outBufferSize) {
+            CycleBufferClass sourceInputLineBuffer = new CycleBufferClass(outBufferSize);
+            int i = 0;
+            String regEx = activity.getString(R.string.pattern_EndOfLine);
+            Pattern ptnLine = Pattern.compile(regEx, Pattern.CASE_INSENSITIVE);
+            String[] lines = ptnLine.split(inBuffer);
+            for (String line : lines) {
+                if (line != null) {
+                    sourceInputLineBuffer.put(line);
+                }
+            }
+            sourceInputLineBuffer.get();
+            return sourceInputLineBuffer;
+        }
+    }}
 

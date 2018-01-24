@@ -18,17 +18,25 @@ public class Configuration {
      */
 
     String
-            ipAddress;                  //
+            ipAddress;                      //
     String
-            networkMask;                //
+            networkMask;                    //
     int
-            terminalPort = 18080;       // Порты подключения весовых терминалов
+            terminalPort = 18080;           // Порты подключения весовых терминалов
     int
-            terminalFindAddr = 80;      // Адрес в сети, с которого будет начат поиск терминала
+            terminalFindAddr = 80;          // Адрес в сети, с которого будет начат поиск терминала
     int
-            mixerPort = 28080;          // Порты подключения миксеров
+            mixerPort = 28080;              // Порты подключения миксеров
     boolean
-            is_Connected_to_network;    //
+            is_Connected_to_network;        //
+    int
+            terminalStartAddress = 150;     // Стартовый адрес для поиска терминала в сети
+    String
+            deviceName = "mixer.001";       //
+    String
+            terminalName = "mixerterm.001";       //
+    int
+            dataLoadBufferSize = 1024;      // Размер буфера для получения даннфх с сервера управления
 
     /**============================================================
      * Переменные среды, запоминаемые при приостановке приложения
@@ -55,5 +63,12 @@ public class Configuration {
 
     }
 
-
+    /**
+     * IP-адрес
+     * @param addr
+     * @return
+     */
+    public String getIPaddress(int addr) {
+        return networkMask + String.valueOf(addr);
+    }
 }
