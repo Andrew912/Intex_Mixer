@@ -24,7 +24,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     // Наименование БД
     public static final String DATABASE_NAME
-            = "config.db";
+            = "config.database";
 
     /**
      * Параметры таблиц данных (обратная совместимость)

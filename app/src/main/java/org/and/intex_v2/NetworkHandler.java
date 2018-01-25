@@ -269,4 +269,21 @@ public class NetworkHandler {
         }
         return myAddr;
     }
+
+    /**
+     * Вычисляет маску сети для поиска новых устройств
+     *
+     * @param ip
+     * @return
+     */
+    String get_Net_Mask_from_IP(String ip) {
+        Pattern pattern = Pattern.compile("(\\d+.\\d+.\\d+.)");
+        Matcher matcher = pattern.matcher(ip);
+        if (matcher.find()) {
+            return matcher.group();
+        } else {
+            return null;
+        }
+    }
+
 }

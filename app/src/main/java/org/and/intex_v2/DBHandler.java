@@ -21,7 +21,7 @@ public class DBHandler {
     public DBHelper
             dbHelper;
     public SQLiteDatabase
-            db;
+            database;
     Column_OBJECTS
             cObjects;           // Названия столбцов таблицы OBJECTS
     Column_OBJTYPES
@@ -70,9 +70,9 @@ public class DBHandler {
      */
     public DBHandler(MainActivity mainActivity, Context context) {
         this.activity = mainActivity;
-        dbHelper = new DBHelper(context);
-
-        db =
+        dbHelper
+                = new DBHelper(context);
+        database =
                 dbHelper.getWritableDatabase();
         cObjects =
                 new Column_OBJECTS();
@@ -145,7 +145,7 @@ public class DBHandler {
 //        Log.i(logTag, "get_Device_Addr_from_DB");
 //
         String[] retVar = {null, null};
-        Cursor c = db.query(
+        Cursor c = activity.db.database.query(
                 table_OBJECTS.TABLE_NAME,
                 new String[]{
                         table_OBJECTS.ID,
@@ -195,7 +195,7 @@ public class DBHandler {
         newValues.put(table_OBJECTS.ADDRESS, devAddr);
         newValues.put(table_OBJECTS.NETMASK, devNetMask);
 
-        db.insert(
+        activity.db.database.insert(
                 table_OBJECTS.TABLE_NAME,
                 null,
                 newValues
@@ -215,7 +215,7 @@ public class DBHandler {
         ContentValues newValues = new ContentValues();
         newValues.put(table_OBJECTS.ADDRESS, devAddr);
 
-        db.update(
+        activity.db.database.update(
                 table_OBJECTS.TABLE_NAME,
                 newValues,
                 "(" + table_OBJECTS.NETMASK + "=?) AND (" + table_OBJECTS.NAME + "=?)",
@@ -233,7 +233,7 @@ public class DBHandler {
 //
         Log.i(logTag, "delete_Device_Addr_in_DB: " + devName);
 //
-        db.delete(
+        activity.db.database.delete(
                 table_OBJECTS.TABLE_NAME,
                 "(" + table_OBJECTS.NETMASK + "=?) AND (" + table_OBJECTS.NAME + "=?)",
                 new String[]{devNetMask, devName});
@@ -251,7 +251,7 @@ public class DBHandler {
      */
     public String[] get_Device_Addr_n_Port(String devNetMask, String devName) {
         String[] retVar = {null, null, null};
-        Cursor c = db.query(
+        Cursor c = activity.db.database.query(
                 Column_OBJECTS.TABLE_NAME,
                 new String[]{
                         Column_OBJECTS.ID,
@@ -301,7 +301,7 @@ public class DBHandler {
                 cursor;
         int
                 recNo;
-        cursor = db.query(
+        cursor = activity.db.database.query(
                 cParam.TABLE_NAME,
                 new String[]{cParam.NAME},
                 cParam.NAME + "=?",
@@ -336,7 +336,7 @@ public class DBHandler {
                 cursor;
         int
                 recNo;
-        cursor = db.query(
+        cursor = activity.db.database.query(
                 cParam.TABLE_NAME,
                 new String[]{
                         cParam.ID,

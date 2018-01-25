@@ -51,8 +51,8 @@ public class MainActivity extends AppCompatActivity {
             dbHelper;
     public DBHandler
             db;
-    SQLiteDatabase
-            database;
+    //    SQLiteDatabase
+//            database;
     Controller
             controller;
     Configuration
@@ -255,23 +255,29 @@ public class MainActivity extends AppCompatActivity {
                 = new Messenger(this);
         dbHelper
                 = new DBHelper(this.context);
-        database
-                = dbHelper.getWritableDatabase();
+        db
+                = new DBHandler(this, this);
+//        database
+//                = dbHelper.getWritableDatabase();
         controller
                 = new Controller(this);
-//        testDataLoader = new TestDataLoader();
-        storer =
-                new Storer(this);
-        currentTask =
-                new CurrentTask(this);
-        currentOper =
-                new CurrentOper(this);
-        dbFunctions =
-                new DBFunctions(this);
-        server =
-                new ServerCommincator(this);
-        loader =
-                new LoaderCommunicator(this);
+//        testDataLoader
+// = new TestDataLoader();
+        storer
+                = new Storer(this);
+        currentTask
+                = new CurrentTask(this);
+        currentOper
+                = new CurrentOper(this);
+        dbFunctions
+                = new DBFunctions(this);
+        server
+                = new ServerCommincator(this);
+        loader
+                = new LoaderCommunicator(this);
+        net
+                = new NetworkHandler(this);
+
 
         /***********************
          * Лайауты (экраны)
@@ -307,6 +313,12 @@ public class MainActivity extends AppCompatActivity {
         /***********************
          * Таймеры
          ***********************/
+
+        statusLineOnOffTimer
+                = new Timer();
+        myTimerTask_statusLineOnOff
+                = new MyTimerTask_StatusLineOnOff();
+
         int
                 Layout_0 = 0,                       // Номера экранов
                 Layout_1 = 1,
@@ -317,6 +329,40 @@ public class MainActivity extends AppCompatActivity {
         int
                 CurrentLayout = 0,                  // Текущий номер экрана
                 savedCurrentLayout = 0;             // Сохраненный номер экрана
+
+        /**
+         * Переменные, управляющие поиском устройств в сети
+         */
+        findServerTimer
+                = new ArrayList<>();
+        myTimerTask_watchOnServerFind
+                = new ArrayList<>();
+        numOfServerPingClasses
+                = new ArrayList<>();
+        serverFound
+                = new ArrayList<>();
+        endServerFindCondition
+                = new ArrayList<>();
+
+        for (int i = 0; i < MAX_NUM_OF_DEVICES; i++) {
+            findServerTimer
+                    .add(i, new Timer());
+//            myTimerTask_watchOnServerFind
+//                    .add(i, new myTimerTask_WatchOnServerFind("mixerterm.001",DEVICE_IS_TERMINAL));
+            numOfServerPingClasses
+                    .add(i, new Integer(0));
+            serverFound
+                    .add(i, new String[3]);
+            endServerFindCondition
+                    .add(i, false);
+        }
+
+        conf.is_Connected_to_network = net.isConnectedToNetwork();
+        if (conf.is_Connected_to_network) {
+            conf.ipAddress = net.get_My_IP();
+            conf.networkMask = net.get_Net_Mask_from_IP(conf.ipAddress);
+        }
+
 
         /***********************
          * TextViews
@@ -639,7 +685,6 @@ public class MainActivity extends AppCompatActivity {
                 controller.controller(L9_BUTTON_REFRESH);
             }
         });
-
         /***********************
          * ЗАПУСК!!!
          ***********************/
@@ -1206,7 +1251,7 @@ public class MainActivity extends AppCompatActivity {
          */
         public ArrayList<OperationParameter> getOperationParameter(String pId) {
             ArrayList<OperationParameter> retVar = new ArrayList<>();
-            Cursor c = database.query(
+            Cursor c = db.database.query(
                     DBHelper.TABLE_OPER_PARAM,
                     new String[]{
                             KEY_OPPA_OPER_ID,
