@@ -261,7 +261,11 @@ public class NetworkHandler {
      */
 
     public int extractAddress(String address) {
+        if (address == null) {
+            return 0;
+        }
         int myAddr = 0;
+        Log.i(getClass().getSimpleName(), "address: " + address);
         Pattern pattern = Pattern.compile(activity.getString(R.string.pattern_extract_My_IP_address));
         Matcher matcher = pattern.matcher(address);
         if (matcher.find()) {

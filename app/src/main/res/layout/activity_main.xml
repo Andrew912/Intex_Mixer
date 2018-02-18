@@ -26,6 +26,103 @@
             android:layout_height="472dp">
 
             <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/layout_1000"
+                android:weightSum="1"
+                android:visibility="invisible">
+
+                <TextView
+                    android:text="Поиск сервера"
+                    android:layout_width="match_parent"
+                    android:layout_height="127dp"
+                    android:id="@+id/textView_Header_1001"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textSize="24sp" />
+
+                <TextView
+                    android:text="Адрес сервера"
+                    android:layout_width="match_parent"
+                    android:layout_height="127dp"
+                    android:id="@+id/textView_Header_1002"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textSize="24sp" />
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <Button
+                        android:text="No"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/b_1000_0"
+                        android:layout_weight="1"
+                        android:visibility="invisible" />
+
+                    <Button
+                        android:text="Yes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:id="@+id/b_1000_1"
+                        android:layout_weight="1" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/layout_1010"
+                android:weightSum="1"
+                android:visibility="invisible">
+
+                <TextView
+                    android:text="Поиск сервера"
+                    android:layout_width="match_parent"
+                    android:layout_height="127dp"
+                    android:id="@+id/textView_Header_1011"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textSize="24sp" />
+
+                <TextView
+                    android:text="Адрес сервера"
+                    android:layout_width="match_parent"
+                    android:layout_height="127dp"
+                    android:id="@+id/textView_Header_1012"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textSize="24sp" />
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <Button
+                        android:text="No"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:id="@+id/b_1010_0"
+                        android:layout_weight="1"
+                        android:visibility="invisible" />
+
+                    <Button
+                        android:text="Yes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:id="@+id/b_1010_1"
+                        android:layout_weight="1"
+                        android:visibility="invisible" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/LL0_Dialog"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -118,7 +215,7 @@
                 android:elevation="1dp"
                 android:gravity="bottom"
                 android:orientation="vertical"
-                android:visibility="invisible"
+                android:visibility="visible"
                 android:weightSum="1">
 
                 <LinearLayout
@@ -132,7 +229,7 @@
                         android:layout_width="150dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="goto_db"
+                        android:text="Параметры"
                         tools:ignore="InefficientWeight,NestedWeights" />
                 </LinearLayout>
 

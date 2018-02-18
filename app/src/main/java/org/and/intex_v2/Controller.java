@@ -74,6 +74,7 @@ public class Controller {
 
     /**
      * Конструктор
+     *
      * @param activity
      */
     public Controller(MainActivity activity) {
@@ -184,10 +185,13 @@ public class Controller {
 
             case L4_BUTTON_ACCEPT:
                 // Задача выбрана
-                mainActivity.btn_4_Accept.setVisibility(View.INVISIBLE);
+                mainActivity.btn_4_Accept
+                        .setVisibility(View.INVISIBLE);
                 // Установить текущую задачу
-                mainActivity.storer.setTaskProperty_Current(getKeyTaskIdFromListView(), 1);
-                mainActivity.currentTask.setTaskData();
+                mainActivity.storer
+                        .setTaskProperty_Current(getKeyTaskIdFromListView(), 1);
+                mainActivity.currentTask
+                        .setTaskData();
                 // Переходим к выбору операции
                 mainActivity.gotoLayout(LAYOUT_5_OPER_SELECT, "");
                 break;
@@ -201,19 +205,26 @@ public class Controller {
                 break;
 
             case L5_BUTTON_ACCEPT:      // Начать выполнение операций задачи
-                mainActivity.currentTask.setToActive();
-                currentOperParam = new String[4];
-                currentOperParam = mainActivity.storer.getFirstOperationForExecution();
-                mainActivity.currentOper.set(
-                        currentOperParam[0],
-                        currentOperParam[1],
-                        currentOperParam[2],
-                        mainActivity.storer.getOperData(currentOperParam[0])[4]
-                );
-                mainActivity.currentOper.setCurrent();
-                mainActivity.currentOper.setToActive();
 
-                // Если опарция - загрузка без погрузчика, то на экран ???, иначе - проверить "простая" погрузка
+                mainActivity.currentTask
+                        .setToActive();
+                currentOperParam
+                        = new String[4];
+                currentOperParam
+                        = mainActivity.storer.getFirstOperationForExecution();
+                mainActivity.currentOper
+                        .set(
+                                currentOperParam[0],
+                                currentOperParam[1],
+                                currentOperParam[2],
+                                mainActivity.storer.getOperData(currentOperParam[0])[4]
+                        );
+                mainActivity.currentOper
+                        .setCurrent();
+                mainActivity.currentOper
+                        .setToActive();
+
+                // Если операция - "загрузка без погрузчика", то на экран ???, иначе - проверить "простая" погрузка
                 if (mainActivity.currentOper.operIsLoadNoLoader() == true) {
                     // Погрузка будет без испольщования погрузчика
                     mainActivity.currentOper.loadNoLoader = true;
@@ -223,15 +234,18 @@ public class Controller {
                      * Тут надо поменять переход сразу на начало загрузки
                      */
                     // Загруженный вес
-                    mainActivity.storer.weightLoaded = 0;
+                    mainActivity.storer.weightLoaded
+                            = 0;
                     // Стартовый вес в миксере
-                    mainActivity.storer.weightStart = mainActivity.storer.weightCurrent;
+                    mainActivity.storer.weightStart
+                            = mainActivity.storer.weightCurrent;
                     // Вычислить конечный вес в погрузчике
-                    mainActivity.storer.weightTarget = mainActivity.currentOper.loadValue + mainActivity.storer.weightCurrent;
+                    mainActivity.storer.weightTarget
+                            = mainActivity.currentOper.loadValue + mainActivity.storer.weightCurrent;
                     Log.i(logTAG, "конечный вес в погрузчике = " + mainActivity.storer.weightTarget);
                     // Толеранс +
-                    mainActivity.storer.tolerancePlus =
-                            (int) (mainActivity.currentOper.loadValue * Float.parseFloat(mainActivity.getString(R.string.LOADING_PERCENT_WEIGHT_TOLERANCE_UP)));
+                    mainActivity.storer.tolerancePlus
+                            = (int) (mainActivity.currentOper.loadValue * Float.parseFloat(mainActivity.getString(R.string.LOADING_PERCENT_WEIGHT_TOLERANCE_UP)));
                     // Параметры - на экран
                     mainActivity.displayWeightParameters();
 
@@ -272,7 +286,7 @@ public class Controller {
 
             case L7_BUTTON_START:     // Начинаем непосредственно погрузку
                 mainActivity.displayWeightParameters();
-                // Можно передать на погрузчик сигнала "Начать"
+                // Можно передать на погрузчик сигнал "Начать"
                 loadingMayBegin = true;
                 // Начать передачу данных на погрузчик
                 mainActivity.makeOperation_Load_with_Loader();

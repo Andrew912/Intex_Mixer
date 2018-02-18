@@ -51,8 +51,6 @@ public class MainActivity extends AppCompatActivity {
             dbHelper;
     public DBHandler
             db;
-    //    SQLiteDatabase
-//            database;
     Controller
             controller;
     Configuration
@@ -77,15 +75,22 @@ public class MainActivity extends AppCompatActivity {
             loader;
     NetworkHandler
             net;
-    //    TestDataLoader
-//            testDataLoader;
 
     // Лайауты
-    LinearLayout layout[];
-    LayoutStatusClass layoutStatus;
+    LinearLayout[]
+            layout;
+
+    LayoutStatusClass
+            layoutStatus;
+
+    LayoutClass
+            L[],
+            L0,
+            L1;
 
     // Блок кнопок (L4.1)
-    LinearLayout layout_4_1;
+    LinearLayout
+            layout_4_1;
 
     int
             CurrentLayout = 0,                  // Текущий номер экрана
@@ -105,9 +110,12 @@ public class MainActivity extends AppCompatActivity {
     String operSelect_SelectedValue;                                    // Значение списка при выборе
     TextView textView2;
 
-    // Кнопки
-    Button btn_1_Done, btn_ClearDB, btn_ToDB;
-    Button btn_0_Back, btn_0_Task, btn_0_Task1, btn_0_Oper, btn_0_SendMail,
+    /* Кнопки */
+    Button btn_1_Done,
+            btn_ClearDB,
+            btn_ToDB;
+    Button
+            btn_0_Back, btn_0_Task, btn_0_Task1, btn_0_Oper, btn_0_SendMail,
             btn_1_Begin,
             btn_2_TaskGet, btn_2_Cancel,
             btn_3_Cancel, btn_3_Continue,
@@ -119,11 +127,18 @@ public class MainActivity extends AppCompatActivity {
             btn_8_OK,
             btn_9_Cancel, btn_9_Accept, btn_9_Refresh, btn_9_Reject;
 
-    // Какие-то параметры кнопок
+    /* Кнопки служебных экранов поиска */
+    Button
+            b_1000_0,
+            b_1000_1,
+            b_1010_0,
+            b_1010_1;
+
+    /* Какие-то параметры кнопок */
     boolean[] buttonStatus;
     static final int NUMBER_OF_BUTTONS = 4;
 
-    // События нажатия клавиш, списков и пр.
+    /* Коды - События нажатия клавиш, списков и пр. */
     static final int L__BUTTON_START = 0;
     static final int L0_BUTTON_SENDMAIL = 1001;
     static final int L0_BUTTON_BACK = 1;
@@ -156,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
     static final int L9_BUTTON_REJECT = 903;
     static final int L9_BUTTON_REFRESH = 904;
 
-    // Ссылки на лайауты для выборки из массива
+    /* Коды - Ссылки на лайауты для выборки из массива */
     static final int LAYOUT_0_DB = 0;
     static final int LAYOUT_1_BEGIN = 1;
     static final int LAYOUT_2_NO_TASK = 2;
@@ -169,26 +184,26 @@ public class MainActivity extends AppCompatActivity {
     static final int LAYOUT_8_TASK_COMPLETE = 8;
     static final int LAYOUT_9_SERV_REQUEST = 9;
 
-    // Текст экрана в лайауте
+    /* Текст экрана в лайауте */
     TextView textView[];
 
-    // Текст статусной строки
+    /* Текст статусной строки */
     TextView
             textView_StatusLine;
 
-    // Таймер переключения статусной строки
+    /* Таймер переключения статусной строки */
     Timer
             statusLineOnOffTimer;
     MyTimerTask_StatusLineOnOff
             myTimerTask_statusLineOnOff;        // Задача таймера переключения статусной строки
 
-    // Таймер наблюдения за событиями вывода в статустную строку
+    /* Таймер наблюдения за событиями вывода в статустную строку */
     Timer
             statusLineLookOnTimer;
     MyTimerTask_LookAtStatusLine
             myTimerTask_lookAtServerPingClass;  //
 
-    // Таймер задачи наблюдения за поиском сервера в сети
+    /* Таймер задачи наблюдения за поиском сервера в сети */
     ArrayList<Timer>
             findServerTimer;
     ArrayList<myTimerTask_WatchOnServerFind>
@@ -212,19 +227,17 @@ public class MainActivity extends AppCompatActivity {
             DEVICE_IS_TERMINAL = 0,             // Весовой терминал
             DEVICE_IS_LOADER = 1;               // Погрузчик
 
-    /**
-     * Переменные, определяющие работу при поиске серверов в сети
-     */
+    /* Переменные, определяющие работу при поиске серверов в сети */
     public ArrayList<String[]>
             serverFound;                        // Параметры найденного сервера
     public ArrayList<Boolean>
             endServerFindCondition;            // Условие выхода из цикла при поиске серверов
 
-    // Дополнительный текст
+    /* Дополнительный текст */
     TextView
             text_7_target, text_71_target;
 
-    // Таймеры
+    /* Таймеры */
     private Timer
             deviceReadTimer;        // Таймер опроса весового терминала
     private MyTimerTask
@@ -257,12 +270,8 @@ public class MainActivity extends AppCompatActivity {
                 = new DBHelper(this.context);
         db
                 = new DBHandler(this, this);
-//        database
-//                = dbHelper.getWritableDatabase();
         controller
                 = new Controller(this);
-//        testDataLoader
-// = new TestDataLoader();
         storer
                 = new Storer(this);
         currentTask
@@ -278,42 +287,100 @@ public class MainActivity extends AppCompatActivity {
         net
                 = new NetworkHandler(this);
 
-
         /***********************
-         * Лайауты (экраны)
+         * Объявление Лайауты
          ***********************/
-        layoutStatus = new LayoutStatusClass(Integer.valueOf(getString(R.string.NUMBER_OF_LAYOUTS)));
-        layout = new LinearLayout[layoutStatus.numberOfLayouts];
-        layout[LAYOUT_0_DB] =
-                (LinearLayout) findViewById(R.id.LL0_Dialog);
-        layout[LAYOUT_1_BEGIN] =
-                (LinearLayout) findViewById(R.id.LL1_Begin);
-        layout[LAYOUT_2_NO_TASK] =
-                (LinearLayout) findViewById(R.id.LL2_No_Task);
-        layout[LAYOUT_3_DO_TASK] =
-                (LinearLayout) findViewById(R.id.LL3_Do_Task);
-        layout[LAYOUT_4_TASK_SELECT] =
-                (LinearLayout) findViewById(R.id.LL4_Task_Select);
-        layout[LAYOUT_5_OPER_SELECT] =
-                (LinearLayout) findViewById(R.id.LL5_Oper_select);
-        layout[LAYOUT_6_SIMPLE_OPER] =
-                (LinearLayout) findViewById(R.id.LL6_Simple_Task);
-        layout[LAYOUT_7_COMPLEX_OPER] =
-                (LinearLayout) findViewById(R.id.LL7_Complex_Task);
-        layout[LAYOUT_8_TASK_COMPLETE] =
-                (LinearLayout) findViewById(R.id.LL8_Task_Complete);
-        layout[LAYOUT_9_SERV_REQUEST] =
-                (LinearLayout) findViewById(R.id.LL9_ServiceRequest);
-        layout[LAYOUT_71_LOAD_OPER] =
-                (LinearLayout) findViewById(R.id.LL71_Load_Task);
+        // ???
+        layoutStatus
+                = new LayoutStatusClass(Integer.valueOf(getString(R.string.NUMBER_OF_LAYOUTS)));
+        // Старый вариант формирования экранов
+        layout
+                = new LinearLayout[layoutStatus.numberOfLayouts];
+        layout[LAYOUT_0_DB]
+                = (LinearLayout) findViewById(R.id.LL0_Dialog);
+        layout[LAYOUT_1_BEGIN]
+                = (LinearLayout) findViewById(R.id.LL1_Begin);
+        layout[LAYOUT_2_NO_TASK]
+                = (LinearLayout) findViewById(R.id.LL2_No_Task);
+        layout[LAYOUT_3_DO_TASK]
+                = (LinearLayout) findViewById(R.id.LL3_Do_Task);
+        layout[LAYOUT_4_TASK_SELECT]
+                = (LinearLayout) findViewById(R.id.LL4_Task_Select);
+        layout[LAYOUT_5_OPER_SELECT]
+                = (LinearLayout) findViewById(R.id.LL5_Oper_select);
+        layout[LAYOUT_6_SIMPLE_OPER]
+                = (LinearLayout) findViewById(R.id.LL6_Simple_Task);
+        layout[LAYOUT_7_COMPLEX_OPER]
+                = (LinearLayout) findViewById(R.id.LL7_Complex_Task);
+        layout[LAYOUT_8_TASK_COMPLETE]
+                = (LinearLayout) findViewById(R.id.LL8_Task_Complete);
+        layout[LAYOUT_9_SERV_REQUEST]
+                = (LinearLayout) findViewById(R.id.LL9_ServiceRequest);
+        layout[LAYOUT_71_LOAD_OPER]
+                = (LinearLayout) findViewById(R.id.LL71_Load_Task);
+        layout_4_1
+                = (LinearLayout) findViewById(R.id.LL4_1_Buttons);
 
-        layout_4_1 =
-                (LinearLayout) findViewById(R.id.LL4_1_Buttons);
+        // Новый вариант формирования экранов
+        L
+                = new LayoutClass[Integer.valueOf(getString(R.string.NUMBER_OF_LAYOUTS))];
+
+        // Массив экранов. Объявляем только те, которые нам будут нужны, остальные - null
+        L[LAYOUT_1_BEGIN] =
+                new LayoutClass(
+                        (LinearLayout) findViewById(R.id.LL1_Begin),
+                        new Timer[]
+                                {},
+                        new TextView[]
+                                {
+                                        (TextView) findViewById(R.id.text_1_Info)
+                                },
+                        new String[]
+                                {
+                                        "Начать работу"
+                                },
+                        new Button[]
+                                {
+                                        (Button) findViewById(R.id.button_1_BeginJob)
+                                },
+                        new String[]
+                                {
+                                        "Начать"
+                                }
+                );
+
+        // Служебный экран - акивируется в момент выполнения поиска сервера в подсети
+        L1 = new LayoutClass(
+                (LinearLayout) findViewById(R.id.layout_1000),
+                new Timer[]
+                        {
+                                new Timer()                                             // Btn OK
+                        },
+                new TextView[]
+                        {
+                                (TextView) findViewById(R.id.textView_Header_1001),     // HEADER
+                                (TextView) findViewById(R.id.textView_Header_1002)      // INFO
+                        },
+                new String[]
+                        {
+                                "Поиск сервера",
+                                "Адрес сервера"
+                        },
+                new Button[]
+                        {
+                                (Button) findViewById(R.id.b_1000_0),                   // OK
+                                (Button) findViewById(R.id.b_1000_1),                   // CANCEL
+                        },
+                new String[]
+                        {
+                                "OK",                                                   // Btn OK
+                                "ОТМЕНА"                                                // Btn CANCEL
+                        }
+        );
 
         /***********************
          * Таймеры
          ***********************/
-
         statusLineOnOffTimer
                 = new Timer();
         myTimerTask_statusLineOnOff
@@ -330,9 +397,9 @@ public class MainActivity extends AppCompatActivity {
                 CurrentLayout = 0,                  // Текущий номер экрана
                 savedCurrentLayout = 0;             // Сохраненный номер экрана
 
-        /**
+        /**************************************************
          * Переменные, управляющие поиском устройств в сети
-         */
+         **************************************************/
         findServerTimer
                 = new ArrayList<>();
         myTimerTask_watchOnServerFind
@@ -362,7 +429,6 @@ public class MainActivity extends AppCompatActivity {
             conf.ipAddress = net.get_My_IP();
             conf.networkMask = net.get_Net_Mask_from_IP(conf.ipAddress);
         }
-
 
         /***********************
          * TextViews
@@ -410,9 +476,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /************************
+        /******************************
          * ListView: CurrentOper select
-         ***********************/
+         ******************************/
         operSelect_ListView = (ListView) findViewById(R.id.list_Oper_Select);
         operSelect_SelectedValue = "";
         operSelect_ListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -426,8 +492,48 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        /*******************************
+         * Кнопки - экран поиска сервера
+         *******************************/
+
+        // Сервер найден - возврат к предыдущему экрану
+        b_1000_0 = (Button) findViewById(R.id.b_1000_0);
+        b_1000_0.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                L1.Deactivate(
+                        layout);
+                // Экран возврата
+                L[LAYOUT_1_BEGIN].Activate(
+                        null,
+                        null,
+                        layout,
+                        null,
+                        null);
+            }
+        });
+
+        // ОТМЕНА - надо остановить поиск и отменить операции предыдущего экрана
+        b_1000_1 = (Button) findViewById(R.id.b_1000_1);
+        b_1000_1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                endServerFindCondition.set(0, true);
+                toStatusLineNoBlink("Поиск отменен");
+                L1.Deactivate(
+                        layout);
+                // Экран возврата
+                L[LAYOUT_1_BEGIN].Activate(
+                        null,
+                        null,
+                        layout,
+                        null,
+                        btn_1_Done);
+            }
+        });
+
         /***********************
-         * Кнопки
+         * Кнопки ВСЕ
          ***********************/
         buttonStatus = new boolean[NUMBER_OF_BUTTONS];
         buttonStatusDrop();
@@ -510,8 +616,10 @@ public class MainActivity extends AppCompatActivity {
         btn_1_Done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                layoutsVisiblityRestore();
-                MainActivity.this.finish();
+//                layoutsVisiblityRestore();
+//                Toast.makeText(getApplicationContext(),"Работа завершена",Toast.LENGTH_LONG).show();
+//                MainActivity.this.finish();
+                System.exit(0);
             }
         });
 
@@ -686,60 +794,123 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         /***********************
+         * Поиск сервера в сети
+         ***********************/
+//        String serverToFind
+////                = "mixerterm.001";
+//                = "loader.001";
+//        int whatDevice
+//                = DEVICE_IS_TERMINAL;
+//
+//        myTimerTask_watchOnServerFind
+//                .add(whatDevice, new myTimerTask_WatchOnServerFind(serverToFind, whatDevice));
+//
+//        // Сохраняем номер экрана, с которого произошел вызов
+//        savedCurrentLayout
+//                = CurrentLayout;
+//        CurrentLayout
+//                = findServerLayout_900;
+//
+//        layout[savedCurrentLayout]
+//                .setVisibility(View.INVISIBLE);
+//        layout[CurrentLayout]
+//                .setVisibility(View.VISIBLE);
+//
+//        toTextView(
+//                "Find server: " + serverToFind + "@" + conf.networkMask);
+//        toStatusLineBlink(
+//                "Find server: " + serverToFind + "@" + conf.networkMask);
+//
+//        Log.i(logTAG, "serverToFind=" + serverToFind + ", netmask=" + conf.networkMask);
+//
+//        // Пытаемся опеределить параметры устройства, сохраненные в БД
+//        String[] terminalAddressFromDB =
+//                db.get_Device_Addr_from_DB(conf.networkMask, serverToFind);
+//
+//        Log.i(logTAG, "Find=" + terminalAddressFromDB[0] + ", addr=" + terminalAddressFromDB[1]);
+//
+//        // Запускаем поиск интересующего нас сервера
+//        try {
+//            net.findServerInNetwork(serverToFind, terminalAddressFromDB[1], conf.terminalPort, whatDevice);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        findServerTimer.get(whatDevice)
+//                .schedule(myTimerTask_watchOnServerFind.get(whatDevice), 100, 100);
+//
+        // Вызов проверки подключения к серверу
+        // CheckConnection("loader.001", L[LAYOUT_1_BEGIN]);
+
+        /***********************
          * ЗАПУСК!!!
          ***********************/
-//        currentTask
-//                .setTaskData();
-//        controller
-//                .controller(L__BUTTON_START);
-        /**
-         * Поиск сервера в сети
-         */
-        String serverToFind
-                = "mixerterm.001";
-        int whatDevice
-                = DEVICE_IS_TERMINAL;
-
-        myTimerTask_watchOnServerFind
-                .add(whatDevice, new myTimerTask_WatchOnServerFind(serverToFind, whatDevice));
-
-        // Сохраняем номер экрана, с которого произошел вызов
-        savedCurrentLayout
-                = CurrentLayout;
-        CurrentLayout
-                = findServerLayout_900;
-
-        layout[savedCurrentLayout]
-                .setVisibility(View.INVISIBLE);
-        layout[CurrentLayout]
-                .setVisibility(View.VISIBLE);
-
-        toTextView(
-                "Find server: " + serverToFind + "@" + conf.networkMask);
-        toStatusLineBlink(
-                "Find server: " + serverToFind + "@" + conf.networkMask);
-
-        Log.i(logTAG, "serverToFind=" + serverToFind + ", netmask=" + conf.networkMask);
-
-        // Пытаемся опеределить параметры устройства, сохраненные в БД
-        String[] terminalAddressFromDB =
-                db.get_Device_Addr_from_DB(conf.networkMask, serverToFind);
-
-        Log.i(logTAG, "Find=" + terminalAddressFromDB[0] + ", addr=" + terminalAddressFromDB[1]);
-
-        // Запускаем поиск интересующего нас сервера
-        try {
-            net.findServerInNetwork(serverToFind, terminalAddressFromDB[1], conf.terminalPort, whatDevice);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        findServerTimer.get(whatDevice)
-                .schedule(myTimerTask_watchOnServerFind.get(whatDevice), 100, 100);
+        currentTask
+                .setTaskData();
+        controller
+                .controller(L__BUTTON_START);
 
         /***********************
          * КОНЕЦ
          ***********************/
     }// end of onCreate
+
+    /**
+     * Проверка возможности подключения к конкретному серверу.
+     * Проверка производится в текущей подсети (networkMask)
+     *
+     * @param serverToFind - имя сервера
+     */
+    public boolean CheckConnection(String serverToFind, LayoutClass pLayoutToReturn) {
+        /**
+         * В данной реализации whatDeviceWeFind всегда равно 0, т.к. мы не будем запускать более
+         * одного поиска сервера одновременно.
+         * Но, в принципе, ничто не мешает запустить их несколько.
+         */
+        int whatDeviceWeFind
+                = 0;
+
+        // Новая задача таймера
+        myTimerTask_watchOnServerFind
+                .add(whatDeviceWeFind, new myTimerTask_WatchOnServerFind(serverToFind, whatDeviceWeFind));
+
+        //
+        Log.i(logTAG, "serverToFind=" + serverToFind + ", netmask=" + conf.networkMask);
+
+        // Переходим в экран поиска
+        L1.Activate(
+                new String[]{null, serverToFind},
+                null,
+                layout,
+                pLayoutToReturn,
+                null
+        );
+
+        // Пытаемся определить параметры устройства, сохраненные в БД
+        String[] terminalAddressFromDB
+                = db.get_Device_Addr_from_DB(conf.networkMask, serverToFind);
+        //
+        Log.i(logTAG, "Find=" + terminalAddressFromDB[0] + ", addr=" + terminalAddressFromDB[1]);
+
+        // Запускаем поиск интересующего нас сервера
+        try {
+            net.findServerInNetwork(serverToFind, terminalAddressFromDB[1], conf.terminalPort, whatDeviceWeFind);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Запускаем опрос по таймеру на предмет того, что сервер найден
+        findServerTimer.get(whatDeviceWeFind)
+                .schedule(myTimerTask_watchOnServerFind.get(whatDeviceWeFind), 100, 100);
+        //
+        Log.i(logTAG, "L1.res=" + L1.findResult);
+        //
+        return true;
+    }
+
+    // "Нажимает" кнопку b_1000_0
+    void b_1000_0_Press() {
+        b_1000_0.callOnClick();
+    }
 
     // Сброс статуса кнопок
     void buttonStatusDrop() {
@@ -783,6 +954,7 @@ public class MainActivity extends AppCompatActivity {
         Log.i("MAIN.LOG: ", s);
     }
 
+    //
     void setTextInLayout(int n, String s) {
         textView[n].setText(s);
     }
@@ -1473,6 +1645,7 @@ public class MainActivity extends AppCompatActivity {
     void gotoLayout(int newLayout, String pTextToInfo) {
         String textToInfo = pTextToInfo;
         layoutVisiblitySet(newLayout);                          // Установить видимость слоя
+        toStatusLine("Layout=" + newLayout);
         switch (newLayout) {
             case LAYOUT_0_DB:
                 break;
@@ -1496,8 +1669,10 @@ public class MainActivity extends AppCompatActivity {
 
             case LAYOUT_4_TASK_SELECT:
                 if (storer.getNumberTaskForExecution() > 0) {
-                    taskSelect_ListItems = storer.getListTasksForExecution();
-                    taskSelect_ListAdapter = new ArrayAdapter<String>(
+                    taskSelect_ListItems
+                            = storer.getListTasksForExecution();
+                    taskSelect_ListAdapter
+                            = new ArrayAdapter<String>(
                             context,
                             android.R.layout.simple_list_item_1,
                             taskSelect_ListItems);
@@ -1685,8 +1860,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * @param serverToFind
+     * @param wishServerIsFind
+     */
     void sub1(String serverToFind, int wishServerIsFind) {
-        logTAG = "Find server " + serverToFind;
+        logTAG = "sub1 ";
+        // Закончить
+        if (endServerFindCondition.get(wishServerIsFind) == true) {
+            Beep();
+            findServerTimer.get(wishServerIsFind).cancel();
+        }
         /**
          * Условие выхода из цикла:
          * 1. Найден интересующий нас сервер.
@@ -1709,6 +1893,11 @@ public class MainActivity extends AppCompatActivity {
                 );
                 // Адрес переносим в конфигурацию
                 conf.ipAddress = serverFound.get(wishServerIsFind)[net.SRV_ADDR];
+
+                Log.i(getClass().getSimpleName(), "ПОИСК СЕРВЕРА ОСТАНОВЛЕН: " + wishServerIsFind);
+
+                b_1000_0_Press();
+
             } else {
                 // Сервер оказался не тот, который нужен, сбрасываем результат
                 serverFound.get(wishServerIsFind)[net.SRV_NAME] = null;
@@ -1731,6 +1920,42 @@ public class MainActivity extends AppCompatActivity {
 
     void serverFindResultToStatusLine(String serverFindResult) {
         toStatusLineNoBlink(serverFindResult);
+    }
+
+    /**
+     * Заполняет массив лайаутов по новому образцу
+     */
+    void setNewLayout() {
+        //
+        L[0] = new LayoutClass(
+                (LinearLayout) findViewById(R.id.layout_1010),
+                new Timer[]
+                        {
+                                new Timer()                                             // Btn OK
+                        },
+                new TextView[]
+                        {
+                                (TextView) findViewById(R.id.textView_Header_1011),     // HEADER
+                                (TextView) findViewById(R.id.textView_Header_1012)      // INFO
+                        },
+                new String[]
+                        {
+                                "L0: Первая строка",
+                                "L0: Вторая строка"
+                        },
+                new Button[]
+                        {
+                                (Button) findViewById(R.id.b_1010_0),                   // NO
+                                (Button) findViewById(R.id.b_1010_1),                   // YES
+                        },
+                new String[]
+                        {
+                                "OK",                                                   // Btn OK
+                                "CANCEL"                                                // Btn CANCEL
+                        }
+        );
+
+
     }
 
 }

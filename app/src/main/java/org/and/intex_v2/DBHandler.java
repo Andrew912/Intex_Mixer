@@ -141,9 +141,9 @@ public class DBHandler {
      * [1] - адрес
      */
     public String[] get_Device_Addr_from_DB(String devNetMask, String devName) {
-//
-//        Log.i(logTag, "get_Device_Addr_from_DB");
-//
+
+        Log.i(logTag, "get_Device_Addr_from_DB: devNetMask="+devNetMask+", devName="+devName);
+
         String[] retVar = {null, null};
         Cursor c = activity.db.database.query(
                 table_OBJECTS.TABLE_NAME,
