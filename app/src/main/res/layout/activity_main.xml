@@ -215,7 +215,7 @@
                 android:elevation="1dp"
                 android:gravity="bottom"
                 android:orientation="vertical"
-                android:visibility="visible"
+                android:visibility="invisible"
                 android:weightSum="1">
 
                 <LinearLayout

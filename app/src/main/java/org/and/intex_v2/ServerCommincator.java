@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -45,6 +46,9 @@ public class ServerCommincator {
             buffSize;
     String
             eol = "\r\n\r\n";
+
+    boolean
+            dataFromServerReaded;
 
     public ServerCommincator(MainActivity activity) {
         this.mainActivity = activity;
@@ -115,9 +119,11 @@ public class ServerCommincator {
                     Log.i(logTAG, rs);
                     Log.i(logTAG, "-----------------------------");
                     socket.close();
+                    dataFromServerReaded = true;
                 }
             } catch (Exception e) {
                 Log.i(logTAG, "Ошибка подключения: " + e);
+                dataFromServerReaded = false;
             }
             return null;
         }
@@ -125,18 +131,25 @@ public class ServerCommincator {
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
-            sourceInputLineBuffer = ExtractToSourceInputLineBuffer(rs, bufferSize);          // Разобрать поток на строки
 
-            // Определение статуса сообщения St=?
-            String messageStatus = null;
-            if (sourceInputLineBuffer.getLen() > 0) {
-                messageStatus = ExtractMessageStatus(sourceInputLineBuffer.get());
-            }
-
-            if (messageStatus.equals("0")) {
-                while (sourceInputLineBuffer.getLen() > 0) {
-                    ExtractParametersForEachOperation(ExtractParametersOfCommand(sourceInputLineBuffer.get()));
+            // Если данные с сервера прочитались
+            if (dataFromServerReaded == true) {
+                sourceInputLineBuffer = ExtractToSourceInputLineBuffer(rs, bufferSize);          // Разобрать поток на строки
+                // Определение статуса сообщения St=?
+                String messageStatus = null;
+                if (sourceInputLineBuffer.getLen() > 0) {
+                    messageStatus = ExtractMessageStatus(sourceInputLineBuffer.get());
                 }
+                //
+                if (messageStatus.equals("0")) {
+                    while (sourceInputLineBuffer.getLen() > 0) {
+                        ExtractParametersForEachOperation(ExtractParametersOfCommand(sourceInputLineBuffer.get()));
+                    }
+                }
+            }
+            // А вот если не прочитались, хз что делать...
+            else {
+                mainActivity.errorReadDataFromServer();
             }
         }
     }
@@ -179,9 +192,11 @@ public class ServerCommincator {
                     Log.i(logTAG, rs);
                     Log.i(logTAG, "-----------------------------");
                     socket.close();
+                    dataFromServerReaded = true;
                 }
             } catch (Exception e) {
                 Log.i(logTAG, "Ошибка подключения: " + e);
+                dataFromServerReaded = false;
             }
             return null;
         }
@@ -189,20 +204,27 @@ public class ServerCommincator {
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
-            sourceInputLineBuffer = ExtractToSourceInputLineBuffer(rs, bufferSize);          // Разобрать поток на строки
 
-            // Определение статуса сообщения St=?
-            String messageStatus = null;
-            if (sourceInputLineBuffer.getLen() > 0) {
-                messageStatus = ExtractMessageStatus(sourceInputLineBuffer.get());
-            }
-
-            if (messageStatus.equals("0")) {
-                while (sourceInputLineBuffer.getLen() > 0) {
-                    ExtractParametersForEachTask(ExtractParametersOfCommand(sourceInputLineBuffer.get().replace("\"", "--")));
+            // Если данные сервера прочитались
+            if (dataFromServerReaded == true) {
+                sourceInputLineBuffer = ExtractToSourceInputLineBuffer(rs, bufferSize);          // Разобрать поток на строки
+                // Определение статуса сообщения St=?
+                String messageStatus = null;
+                if (sourceInputLineBuffer.getLen() > 0) {
+                    messageStatus = ExtractMessageStatus(sourceInputLineBuffer.get());
                 }
-                // Операции читаем только если есть свежая задача
-                readOper();
+                //
+                if (messageStatus.equals("0")) {
+                    while (sourceInputLineBuffer.getLen() > 0) {
+                        ExtractParametersForEachTask(ExtractParametersOfCommand(sourceInputLineBuffer.get().replace("\"", "--")));
+                    }
+                    // Операции читаем только если есть свежая задача
+                    readOper();
+                }
+            }
+            // А вот если не прочитались, хз что делать...
+            else {
+                mainActivity.errorReadDataFromServer();
             }
         }
     }
@@ -342,18 +364,22 @@ public class ServerCommincator {
 
     // Разбор входящего потока на строки
     public CycleBuffer ExtractToSourceInputLineBuffer(String inBuffer, int outBufferSize) {
-        CycleBuffer sourceInputLineBuffer = new CycleBuffer(outBufferSize);
-        int i = 0;
-        String regEx = mainActivity.getString(R.string.pattern_EndOfLine);
-        Pattern ptnLine = Pattern.compile(regEx, Pattern.CASE_INSENSITIVE);
-        String[] lines = ptnLine.split(inBuffer);
-        for (String line : lines) {
-            if (line != null) {
-                sourceInputLineBuffer.put(line);
+        if (dataFromServerReaded == true) {
+            CycleBuffer sourceInputLineBuffer = new CycleBuffer(outBufferSize);
+            int i = 0;
+            String regEx = mainActivity.getString(R.string.pattern_EndOfLine);
+            Pattern ptnLine = Pattern.compile(regEx, Pattern.CASE_INSENSITIVE);
+            String[] lines = ptnLine.split(inBuffer);
+            for (String line : lines) {
+                if (line != null) {
+                    sourceInputLineBuffer.put(line);
+                }
             }
+            sourceInputLineBuffer.get();
+            return sourceInputLineBuffer;
+        } else {
+            return null;
         }
-        sourceInputLineBuffer.get();
-        return sourceInputLineBuffer;
     }
 
     // Извлекаем параметры команды для каждой строки и  

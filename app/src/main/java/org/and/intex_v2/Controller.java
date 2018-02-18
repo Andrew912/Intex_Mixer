@@ -12,7 +12,7 @@ import static org.and.intex_v2.MainActivity.L0_BUTTON_SENDMAIL;
 import static org.and.intex_v2.MainActivity.L0_BUTTON_TASK;
 import static org.and.intex_v2.MainActivity.L0_BUTTON_TASK1;
 import static org.and.intex_v2.MainActivity.L1_BUTTON_BEGIN_JOB;
-import static org.and.intex_v2.MainActivity.L1_BUTTON_TO_DB;
+import static org.and.intex_v2.MainActivity.L1_BUTTON_TO_PARAMS;
 import static org.and.intex_v2.MainActivity.L2_BUTTON_CANCEL;
 import static org.and.intex_v2.MainActivity.L2_BUTTON_TASK_SELECT;
 import static org.and.intex_v2.MainActivity.L3_BUTTON_CANCEL;
@@ -36,7 +36,7 @@ import static org.and.intex_v2.MainActivity.L9_BUTTON_ACCEPT;
 import static org.and.intex_v2.MainActivity.L9_BUTTON_CANCEL;
 import static org.and.intex_v2.MainActivity.L9_BUTTON_REFRESH;
 import static org.and.intex_v2.MainActivity.L9_BUTTON_REJECT;
-import static org.and.intex_v2.MainActivity.LAYOUT_0_DB;
+import static org.and.intex_v2.MainActivity.LAYOUT_0_PARAMS;
 import static org.and.intex_v2.MainActivity.LAYOUT_1_BEGIN;
 import static org.and.intex_v2.MainActivity.LAYOUT_2_NO_TASK;
 import static org.and.intex_v2.MainActivity.LAYOUT_3_DO_TASK;
@@ -92,9 +92,10 @@ public class Controller {
                 // Начальная установка. Активируем первый экран
                 mainActivity.gotoLayout(
                         LAYOUT_1_BEGIN,
-                        "rec in Task=" + mainActivity.storer.getRecCount_Task() + "\n " +
-                                "rec in Oper=" + mainActivity.storer.getRecCount_Oper() + "\n " +
-                                "rec in Oper.Par=" + mainActivity.storer.getRecCount_OperPar());
+                        "Терминал миксера");
+//                        "rec in Task=" + mainActivity.storer.getRecCount_Task() + "\n " +
+//                                "rec in Oper=" + mainActivity.storer.getRecCount_Oper() + "\n " +
+//                                "rec in Oper.Par=" + mainActivity.storer.getRecCount_OperPar());
                 break;
 
             case L0_BUTTON_SENDMAIL:     //
@@ -118,13 +119,14 @@ public class Controller {
                 mainActivity.dbFunctions.mail();
                 break;
 
-            case L1_BUTTON_TO_DB:       // На экран БД
-                mainActivity.gotoLayout(LAYOUT_0_DB, "");
+            case L1_BUTTON_TO_PARAMS:       // На экран БД
+                mainActivity.gotoLayout(LAYOUT_0_PARAMS, "");
                 break;
 
             case L1_BUTTON_BEGIN_JOB:   // Начало работы
 
                 mainActivity.currentTask.setTaskData();
+
                 if (mainActivity.currentTask.now) {
                     currentOper = mainActivity.storer.getCurrentOperId(String.valueOf(mainActivity.currentTask.taskId));
                     if (currentOper != null) {
@@ -152,7 +154,8 @@ public class Controller {
                     mainActivity.gotoLayout(LAYOUT_2_NO_TASK, "Нет текущей задачи, получите задание от диспетчера");
                     /**
                      * Нет ни текущей задачи, ни операции.
-                     * Переходим на экран выбора задачи.
+                     * ??? Переходим на экран выбора задачи.
+                     * Скорее, пытаемся прочитать список задач с сервера
                      */
                     mainActivity.server.readTask();
                 }

@@ -2,7 +2,6 @@ package org.and.intex_v2;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -145,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
     static final int L0_BUTTON_TASK = 2;
     static final int L0_BUTTON_TASK1 = 3;
     static final int L0_BUTTON_OPER = 4;
-    static final int L1_BUTTON_TO_DB = 100;
+    static final int L1_BUTTON_TO_PARAMS = 100;
     static final int L1_BUTTON_BEGIN_JOB = 101;
     static final int L2_BUTTON_TASK_SELECT = 200;
     static final int L2_BUTTON_CANCEL = 201;
@@ -172,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
     static final int L9_BUTTON_REFRESH = 904;
 
     /* Коды - Ссылки на лайауты для выборки из массива */
-    static final int LAYOUT_0_DB = 0;
+    static final int LAYOUT_0_PARAMS = 0;
     static final int LAYOUT_1_BEGIN = 1;
     static final int LAYOUT_2_NO_TASK = 2;
     static final int LAYOUT_3_DO_TASK = 3;
@@ -296,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
         // Старый вариант формирования экранов
         layout
                 = new LinearLayout[layoutStatus.numberOfLayouts];
-        layout[LAYOUT_0_DB]
+        layout[LAYOUT_0_PARAMS]
                 = (LinearLayout) findViewById(R.id.LL0_Dialog);
         layout[LAYOUT_1_BEGIN]
                 = (LinearLayout) findViewById(R.id.LL1_Begin);
@@ -337,7 +336,7 @@ public class MainActivity extends AppCompatActivity {
                                 },
                         new String[]
                                 {
-                                        "Начать работу"
+                                        "Терминал миксера"
                                 },
                         new Button[]
                                 {
@@ -434,7 +433,7 @@ public class MainActivity extends AppCompatActivity {
          * TextViews
          ***********************/
         textView = new TextView[layoutStatus.numberOfLayouts];
-        textView[LAYOUT_0_DB] =
+        textView[LAYOUT_0_PARAMS] =
                 (TextView) findViewById(R.id.text_0_Info);
         textView[LAYOUT_1_BEGIN] =
                 (TextView) findViewById(R.id.text_1_Info);
@@ -552,7 +551,7 @@ public class MainActivity extends AppCompatActivity {
         btn_ToDB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                controller.controller(L1_BUTTON_TO_DB);
+                controller.controller(L1_BUTTON_TO_PARAMS);
             }
         });
 
@@ -1647,16 +1646,19 @@ public class MainActivity extends AppCompatActivity {
         layoutVisiblitySet(newLayout);                          // Установить видимость слоя
         toStatusLine("Layout=" + newLayout);
         switch (newLayout) {
-            case LAYOUT_0_DB:
+            case LAYOUT_0_PARAMS:
                 break;
 
             case LAYOUT_1_BEGIN:
 
+                /**
+                 * Непонятно, какого хрена вот так сделано, но надо будет потом разобраться...
+                 */
                 // Установка кнопок в 7 экране
                 btn_7_Start.setVisibility(VISIBLE);
                 btn_7_Complete.setVisibility(View.INVISIBLE);
-
-                weightDataFromDeviceReader_Stop();  // Остановить получение показаний весов
+                // Остановить получение показаний весов
+                weightDataFromDeviceReader_Stop();
                 weightDataToLoaderSender_Stop();
 
                 break;
@@ -1729,8 +1731,10 @@ public class MainActivity extends AppCompatActivity {
      */
     public void sayToast(String whatSay) {
         Beep();
-        Toast toast = Toast.makeText(getApplicationContext(), whatSay, Toast.LENGTH_LONG);
-        toast.show();
+        Toast toast
+                = Toast.makeText(this, whatSay, Toast.LENGTH_LONG);
+        toast
+                .show();
     }
 
     /**
@@ -1956,6 +1960,16 @@ public class MainActivity extends AppCompatActivity {
         );
 
 
+    }
+
+    /**
+     * Ситуация, когда не смогли получить данные с сервера
+     */
+    void errorReadDataFromServer() {
+        sayToast("Нет подключения к серверу");
+//        Beep();
+//        toStatusLineBlink("Нет подключения к серверу");
+        btn_4_Cancel.callOnClick();
     }
 
 }
