@@ -22,7 +22,7 @@ import static org.and.intex_v2.LoaderCommunicator.DeviceWaitAnswerStatus.REJECT;
 public class LoaderCommunicator {
 
     String
-            logTAG = "Server Communicator: ";
+            logTAG = "LOADER Communicator: ";
     MainActivity
             activity;
     String

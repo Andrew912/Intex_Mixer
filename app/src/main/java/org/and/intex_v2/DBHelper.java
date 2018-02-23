@@ -107,13 +107,13 @@ public class DBHelper extends SQLiteOpenHelper {
      * Выбор строки в FIELDINFO для таблицы PARAMETERS
      * Для других таблиц может быть другим
      */
-    public static final int FLD_ID
+    public static final int FIELD_IS_ID
             = 0;
-    public static final int FLD_NAME
+    public static final int FIELD_IS_NAME
             = 1;
-    public static final int FLD_TYPE
+    public static final int FIELD_IS_TYPE
             = 2;
-    public static final int FLD_VALUE
+    public static final int FIELD_IS_VALUE
             = 3;
 
     /**

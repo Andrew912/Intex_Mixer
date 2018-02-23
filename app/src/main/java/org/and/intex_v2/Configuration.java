@@ -30,11 +30,11 @@ public class Configuration {
     boolean
             is_Connected_to_network;        //
     int
-            terminalStartAddress = 150;     // Стартовый адрес для поиска терминала в сети
+            terminalStartAddress = 35;      // Стартовый адрес для поиска терминала в сети
     String
             deviceName = "mixer.001";       //
     String
-            terminalName = "mixerterm.001";       //
+            terminalName = "mixerterm.001"; //
     int
             dataLoadBufferSize = 1024;      // Размер буфера для получения даннфх с сервера управления
 
@@ -51,7 +51,7 @@ public class Configuration {
      */
 
     boolean
-            current_WiFi_status;          // Текущий системный статус Wi-Fi соединения
+            current_WiFi_status;            // Текущий системный статус Wi-Fi соединения
 
     /**
      * Конструктор
@@ -65,10 +65,25 @@ public class Configuration {
 
     /**
      * IP-адрес
+     *
      * @param addr
      * @return
      */
     public String getIPaddress(int addr) {
         return networkMask + String.valueOf(addr);
     }
+
+    /**
+     * Обновляет значения параметров конфигурации
+     */
+    public void paramRefresh() {
+        terminalStartAddress
+                = 35;                  // Стартовый адрес для поиска терминала в сети
+        deviceName
+                = a.db.paramGet("MixerName")[0];      //
+        terminalName
+                = a.db.paramGet("MixerName")[0];
+
+    }
+
 }

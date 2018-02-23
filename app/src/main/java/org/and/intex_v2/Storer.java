@@ -55,11 +55,16 @@ public class Storer {
 //        dbHelper = new DBHelper(mainActivity.context);
 //        database = dbHelper.getWritableDatabase();
 
-        mainActivity.log("DATABASE: "+activity.db.database.toString()+", "+activity.db.database.getPath());
-        currentTaskNumber = getRecCount_Task();
-    }
+    mainActivity.log("DATABASE: " + activity.db.database.toString() + ", " + activity.db.database.getPath());
+    currentTaskNumber = getRecCount_Task();
+}
 
-    // Количество незавершенных задач в списке
+    /**
+     * Количество незавершенных задач в списке
+     *
+     * @return
+     */
+
     public int getNumberTaskForExecution() {
         Cursor c = activity.db.database.query(
                 activity.dbHelper.TABLE_TASK,
@@ -76,7 +81,12 @@ public class Storer {
         return c.getCount();
     }
 
-    // Количество незавершенных задач в списке
+    /**
+     * Количество незавершенных задач в списке
+     *
+     * @return
+     */
+
     public int getNumberOperForExecution() {
         Cursor c = activity.db.database.query(
                 activity.dbHelper.TABLE_OPERATION,
@@ -100,7 +110,11 @@ public class Storer {
         return c.getCount();
     }
 
-    // Список операций для выполнения в рамках текущей задачи
+    /**
+     * Список операций для выполнения в рамках текущей задачи
+     *
+     * @return
+     */
     public String[] getListOperationsForExecution() {
         activity.log("getListOperationsForExecution");
         Cursor c = activity.db.database.query(
@@ -129,20 +143,63 @@ public class Storer {
         }
         String[] retVar = new String[c.getCount()];
         c.moveToFirst();
-//        mainActivity.setCurrentOper(controller.getString(controller.getColumnIndex(KEY_OPER_ID)));
+
+        //
         int i = 0;
-        // Здесь задается вормат вывода параметров задачи в строку списка ListView
-        // Далее из этой строки надо вытащить код задачи KEY_TASK_ID
+        String keyOperName = "";
+        String s = "";
+
+        /* *************************************************************************
+        /* Здесь задается вормат вывода параметров задачи в строку списка ListView *
+         ***************************************************************************/
         do {
+            s
+                    = "";
+            keyOperName =
+                    c.getString(c.getColumnIndex(KEY_OPER_TYPE));
             retVar[i] =
-                    c.getString(c.getColumnIndex(KEY_OPER_NAME)) + ": " +
-                            getOperParam(c.getString(c.getColumnIndex(KEY_OPER_ID)), "feedn") + " [" +
-                            c.getString(c.getColumnIndex(KEY_OPER_ID)) + "]";
+                    c.getString(c.getColumnIndex(KEY_OPER_NAME)) + ": ";
+
+            Log.i(logTAG, "KEY_OPER_TYPE = " + keyOperName);
+
+            switch (keyOperName) {
+                case "load":
+                    Log.i(logTAG, "keyOperName = " + keyOperName);
+                    s
+                            = s + getOperParam(c.getString(c.getColumnIndex(KEY_OPER_ID)), "feedn") + " ";
+                    s
+                            = s + getOperParam(c.getString(c.getColumnIndex(KEY_OPER_ID)), "value") + " ";
+                    s
+                            = s + getOperParam(c.getString(c.getColumnIndex(KEY_OPER_ID)), "unit") + " ";
+                    s
+                            = s + getOperParam(c.getString(c.getColumnIndex(KEY_OPER_ID)), "servern");
+                    break;
+                case "move":
+                    Log.i(logTAG, "keyOperName = " + keyOperName);
+                    s
+                            = s + getOperParam(c.getString(c.getColumnIndex(KEY_OPER_ID)), "pointn");
+                    break;
+                case "deploy":
+                    Log.i(logTAG, "keyOperName = " + keyOperName);
+                    s
+                            = s + getOperParam(c.getString(c.getColumnIndex(KEY_OPER_ID)), "value") + " ";
+                    s
+                            = s + getOperParam(c.getString(c.getColumnIndex(KEY_OPER_ID)), "unit") + " ";
+                    break;
+            }
+
+            retVar[i] =
+                    retVar[i] +
+                            s +
+                            " [" +
+                            c.getString(c.getColumnIndex(KEY_OPER_ID)) +
+                            "]";
             i++;
         } while (c.moveToNext());
-//        for (i=0;i<retVar.length;i++){
-//            mainActivity.log("retVar[" + i + "]=" + retVar[i]);
-//        }
+        /* *************************************************************************
+         *                                                                         *
+         ***************************************************************************/
+
         return retVar;
     }
 
@@ -164,7 +221,11 @@ public class Storer {
         return "";
     }
 
-    // Список операций для выполнения в рамках текущей задачи
+    /**
+     * Список операций для выполнения в рамках текущей задачи
+     *
+     * @return
+     */
     public String[] getFirstOperationForExecution() {
         activity.log("getFirstOperationForExecution");
         Cursor c = activity.db.database.query(
@@ -200,7 +261,11 @@ public class Storer {
         return retVar;
     }
 
-    // Список задач для выполнения
+    /**
+     * Список задач для выполнения
+     *
+     * @return
+     */
     public String[] getListTasksForExecution() {
         Cursor c = activity.db.database.query(
                 activity.dbHelper.TABLE_TASK,
@@ -216,16 +281,17 @@ public class Storer {
                 null,
                 null,
                 null);
-        // Если записей нет, возвращаем НУЛЬ
-        //
+
+        /* Если записей нет, возвращаем НУЛЬ */
         if (c.getCount() == 0) {
             return null;
         }
-        // Заполняем массив
-        //
+
+        /* Заполняем массив */
         String[] retVar = new String[c.getCount()];
         c.moveToFirst();
         int i = 0;
+
         // Здесь задается вормат вывода параметров задачи в строку списка ListView
         // Далее из этой строки надо вытащить код задачи KEY_TASK_ID
         do {
@@ -240,14 +306,18 @@ public class Storer {
         return retVar;
     }
 
-    // Установить текущую активную операцию
+    /**
+     * Установить текущую активную операцию
+     */
     public void setCurrentOper() {
         setOperProperty_Current(activity.currentOper.operId, 1);
         Log.i(logTAG, "mainActivity.currentOper.operId=" + activity.currentOper.operId);
 //        takeCurrentTaskData();
     }
 
-    // Установить текущую активную задачу
+    /**
+     * Установить текущую активную задачу
+     */
     public void setCurrentTask() {
         String taskId = activity.controller.getKeyTaskIdFromListView();
         if (taskId != null) {
@@ -263,7 +333,11 @@ public class Storer {
         takeCurrentTaskData();
     }
 
-    // Текущая активная задача
+    /**
+     * Текущая активная задача
+     *
+     * @return
+     */
     public String getCurrentTask() {
         Cursor c = activity.db.database.query(
                 activity.dbHelper.TABLE_TASK,
@@ -282,11 +356,14 @@ public class Storer {
         }
     }
 
-    // Текущая активная задача: Data
+    /**
+     * Текущая активная задача: Data
+     *
+     * @return
+     */
+
     public String[] takeCurrentTaskData() {
-        /**
-         * А неплохо бы еще сразу проверить и на наличие текущей активной (приторможенной) операции
-         */
+        /* А неплохо бы еще сразу проверить и на наличие текущей активной (приторможенной) операции */
         Cursor c = activity.db.database.query(
                 activity.dbHelper.TABLE_TASK,
                 new String[]{
@@ -308,7 +385,13 @@ public class Storer {
         }
     }
 
-    // Текущая активная операция
+    /**
+     * Текущая активная операция
+     *
+     * @param taskId
+     * @return
+     */
+
     public String[] takeCurrentOperData(String taskId) {
         if (taskId == null) {
             return null;
@@ -337,7 +420,12 @@ public class Storer {
         }
     }
 
-    // Получить данные задачи с указанным ID
+    /**
+     * Получить данные задачи с указанным ID
+     *
+     * @param taskId
+     * @return
+     */
     public String[] getTaskData(String taskId) {
         Cursor c = activity.db.database.query(
                 activity.dbHelper.TABLE_TASK,
@@ -367,7 +455,13 @@ public class Storer {
         }
     }
 
-    // Получить данные операции с указанным ID
+    /**
+     * Получить данные операции с указанным ID
+     *
+     * @param operId
+     * @return
+     */
+
     public String[] getOperData(String operId) {
         Cursor c = activity.db.database.query(
                 activity.dbHelper.TABLE_OPERATION,
@@ -403,9 +497,15 @@ public class Storer {
         }
     }
 
-    // Получить ID текущей операции (для заданной задачи)
+    /**
+     * Получить ID текущей операции (для заданной задачи)
+     *
+     * @param taskId
+     * @return
+     */
+
     public String getCurrentOperId(String taskId) {
-        /**
+        /*
          * Находит при наличии в БД запись о текущей операции.
          * Ограничение - задача, которой должна принадлежать данная операция.
          */
@@ -425,7 +525,12 @@ public class Storer {
         }
     }
 
-    // Задача - завершена
+    /**
+     * Задача - завершена
+     *
+     * @param taskId
+     */
+
     public void setTaskProperty_Complete(String taskId) {
         ContentValues cv = new ContentValues();
         cv.put(KEY_TASK_COMPLETE, String.valueOf(1));
@@ -437,7 +542,12 @@ public class Storer {
         );
     }
 
-    // Задача - запись на удаление
+    /**
+     * Задача - запись на удаление
+     *
+     * @param taskId
+     */
+
     public void setTaskProperty_Delete(String taskId) {
         ContentValues cv = new ContentValues();
         cv.put(KEY_TASK_TO_DELETE, String.valueOf(1));
@@ -449,7 +559,12 @@ public class Storer {
         );
     }
 
-    // Задача - сформирован отчет
+    /**
+     * Задача - сформирован отчет
+     *
+     * @param taskId
+     */
+
     public void setTaskProperty_Reported(String taskId) {
         ContentValues cv = new ContentValues();
         cv.put(KEY_TASK_REPORTED, String.valueOf(1));
@@ -461,7 +576,13 @@ public class Storer {
         );
     }
 
-    // Задача - установить текущей
+    /**
+     * Задача - установить текущей
+     *
+     * @param taskId
+     * @param value
+     */
+
     public void setTaskProperty_Current(String taskId, int value) {
         ContentValues cv = new ContentValues();
         cv.put(KEY_TASK_IS_CURRENT, String.valueOf(value));
@@ -473,7 +594,13 @@ public class Storer {
         );
     }
 
-    // Задача - установить статус
+    /**
+     * Задача - установить статус
+     *
+     * @param taskId
+     * @param status
+     */
+
     public void setTaskProperty_Status(String taskId, String status) {
         ContentValues cv = new ContentValues();
         cv.put(KEY_TASK_STATUS, status);
@@ -661,7 +788,7 @@ public class Storer {
 //        mainActivity.database.execSQL("drop table if exists operation");
 //        mainActivity.database.execSQL("drop table if exists oper_param");
 //        mainActivity.dbHelper.onCreate(mainActivity.database);
-        activity.dbHelper.onUpgrade(activity.db.database,2,1);
+        activity.dbHelper.onUpgrade(activity.db.database, 2, 1);
     }
 
 

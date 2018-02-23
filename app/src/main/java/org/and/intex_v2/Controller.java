@@ -6,8 +6,10 @@ import android.view.View;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 import static org.and.intex_v2.MainActivity.L0_BUTTON_BACK;
 import static org.and.intex_v2.MainActivity.L0_BUTTON_OPER;
+import static org.and.intex_v2.MainActivity.L0_BUTTON_PARAM_SAVE;
 import static org.and.intex_v2.MainActivity.L0_BUTTON_SENDMAIL;
 import static org.and.intex_v2.MainActivity.L0_BUTTON_TASK;
 import static org.and.intex_v2.MainActivity.L0_BUTTON_TASK1;
@@ -98,8 +100,14 @@ public class Controller {
 //                                "rec in Oper.Par=" + mainActivity.storer.getRecCount_OperPar());
                 break;
 
-            case L0_BUTTON_SENDMAIL:     //
-//                mainActivity.gotoLayout(LAYOUT_1_BEGIN, "");
+            case L0_BUTTON_PARAM_SAVE:
+                // Сохранение параметров
+                mainActivity.paramSave();
+                break;
+
+            case L0_BUTTON_SENDMAIL:
+                // Отправка статистики по операциям
+
                 mainActivity.server.sendMail();
                 break;
 
@@ -124,6 +132,9 @@ public class Controller {
                 break;
 
             case L1_BUTTON_BEGIN_JOB:   // Начало работы
+
+                // Проверяем подключение весового терминала
+                mainActivity.CheckConnection(mainActivity.conf.terminalName, mainActivity.L[LAYOUT_4_TASK_SELECT]);
 
                 mainActivity.currentTask.setTaskData();
 

@@ -6,6 +6,16 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import static org.and.intex_v2.DBHelper.FIELDINFO;
+import static org.and.intex_v2.DBHelper.FIELD_IS_ID;
+import static org.and.intex_v2.DBHelper.FIELD_IS_TYPE;
+import static org.and.intex_v2.DBHelper.FIELD_PROP_NAME;
+import static org.and.intex_v2.DBHelper.FIELD_IS_NAME;
+import static org.and.intex_v2.DBHelper.FIELD_IS_VALUE;
+import static org.and.intex_v2.DBHelper.NONE;
+import static org.and.intex_v2.DBHelper.PARAMETERS;
+import static org.and.intex_v2.DBHelper.TABLENAME;
+
 /**
  * Created by Андрей on 19.12.2017.
  */
@@ -30,6 +40,13 @@ public class DBHandler {
             cParam;             // Названия столбцов таблицы PARAMETERS
     Column_PARAMTYPES
             cPtype;             // Названия столбцов таблицы PARAMTYPES
+
+    /* Номер Свойства параметра, которые возвращает paramGet() */
+    public static int
+            PARAMETER_VALUE = 0,
+            PARAMETER_NAME = 1,
+            PARAMETER_TYPE = 2,
+            PARAMETER_ID = 3;
 
     /**
      * Описание класса, содержащего названия полей для таблицы OBJECTS
@@ -87,6 +104,7 @@ public class DBHandler {
     /**
      * Описание класса, содержащего названия полей для таблицы OBJECTS
      */
+
     public static class Column_OBJECTS {
         public static final String
                 TABLE_NAME = "OBJECTS";
@@ -107,6 +125,7 @@ public class DBHandler {
     /**
      * Описание класса, содержащего названия полей для таблицы PARAMETERS
      */
+
     public static class Column_PARAMETERS {
         public static final String
                 TABLE_NAME = "PARAMETERS";
@@ -123,6 +142,7 @@ public class DBHandler {
     /**
      * Описание класса, содержащего названия полей для таблицы PARAMTYPES
      */
+
     public static class Column_PARAMTYPES {
         public static final String
                 TABLE_NAME = "PARAMTYPES";
@@ -140,9 +160,10 @@ public class DBHandler {
      * [0] - если найдено, то имя, иначе - null
      * [1] - адрес
      */
+
     public String[] get_Device_Addr_from_DB(String devNetMask, String devName) {
 
-        Log.i(logTag, "get_Device_Addr_from_DB: devNetMask="+devNetMask+", devName="+devName);
+        Log.i(logTag, "get_Device_Addr_from_DB: devNetMask=" + devNetMask + ", devName=" + devName);
 
         String[] retVar = {null, null};
         Cursor c = activity.db.database.query(
@@ -172,6 +193,7 @@ public class DBHandler {
      * @param devName
      * @param devAddr
      */
+
     public void store_Device_Addr_to_DB(String devNetMask, String devName, String devAddr) {
         if (get_Device_Addr_from_DB(devNetMask, devName)[1] != null) {
             update_Device_Addr_in_DB(devNetMask, devName, devAddr);
@@ -186,6 +208,7 @@ public class DBHandler {
      * @param devName
      * @param devAddr
      */
+
     public void append_Device_Addr_in_DB(String devNetMask, String devName, String devAddr) {
 //
         Log.i(logTag, "append_Device_Addr_in_DB: " + devName + "=" + devAddr);
@@ -208,6 +231,7 @@ public class DBHandler {
      * @param devName
      * @param devAddr
      */
+
     public void update_Device_Addr_in_DB(String devNetMask, String devName, String devAddr) {
 //
         Log.i(logTag, "update_Device_Addr_in_DB: " + devName + "=" + devAddr);
@@ -229,6 +253,7 @@ public class DBHandler {
      * @param devNetMask
      * @param devName
      */
+
     public void delete_Device_Addr_in_DB(String devNetMask, String devName) {
 //
         Log.i(logTag, "delete_Device_Addr_in_DB: " + devName);
@@ -240,7 +265,6 @@ public class DBHandler {
     }
 
 
-
     /**
      * Получить адрес и порт указанного устройства
      *
@@ -249,6 +273,7 @@ public class DBHandler {
      * [0] - если найдено, то адрес, иначе - null
      * [1] - порт
      */
+
     public String[] get_Device_Addr_n_Port(String devNetMask, String devName) {
         String[] retVar = {null, null, null};
         Cursor c = activity.db.database.query(
@@ -277,6 +302,7 @@ public class DBHandler {
      * @param devAddr
      * @param devPort
      */
+
     public void store_Device_Addr_n_Port(String devName, String devAddr, String devPort) {
 
     }
@@ -291,11 +317,119 @@ public class DBHandler {
     }
 
     /**
+     * Сохраняет в базу значение конкретного параметра
+     *
+     * @param paramName
+     * @param paramValue
+     * @param paramType
+     */
+
+    public void paramStore(String paramName, String paramValue, String paramType) {
+        Log.i("paramStore","paramName="+paramName+", paramValue="+paramValue);
+        // Если паратера в БД нет, то добавляем его
+        if (paramNow(paramName) == false) {
+            paramAppend(paramName, paramValue, null);
+        } else {
+            paramUpdate(paramName, paramValue, null);
+        }
+        // Листинг таблицы PARAMETERS
+        dbTableList_Parameters();
+    }
+
+    /**
+     * Добавляет значение параметра в таблицу
+     *
+     * @param paramName
+     * @param paramValue
+     * @param paramType
+     */
+
+    public void paramAppend(String paramName, String paramValue, String paramType) {
+        ContentValues newValues =
+                new ContentValues();
+        newValues
+                .put(dbHelper.DBRecord[PARAMETERS][FIELDINFO][FIELD_IS_NAME][NONE], paramName);
+        newValues
+                .put(dbHelper.DBRecord[PARAMETERS][FIELDINFO][FIELD_IS_VALUE][NONE], paramValue);
+        database.insert(
+                dbHelper.DBRecord[PARAMETERS][TABLENAME][NONE][NONE],
+                null,
+                newValues
+        );
+    }
+
+    /**
+     * Распечатка значений в таблице PARAMETERS
+     */
+
+    void dbTableList_Parameters() {
+        Cursor cursor =
+                database.query(
+                        dbHelper.DBRecord[PARAMETERS][TABLENAME][NONE][NONE],
+                        new String[]{
+                                dbHelper.DBRecord[PARAMETERS][FIELDINFO][FIELD_IS_ID][FIELD_PROP_NAME],
+                                dbHelper.DBRecord[PARAMETERS][FIELDINFO][FIELD_IS_NAME][FIELD_PROP_NAME],
+                                dbHelper.DBRecord[PARAMETERS][FIELDINFO][FIELD_IS_TYPE][FIELD_PROP_NAME],
+                                dbHelper.DBRecord[PARAMETERS][FIELDINFO][FIELD_IS_VALUE][FIELD_PROP_NAME]
+                        },
+                        null, null, null, null, null
+                );
+        int
+                recCount;
+        String[]
+                res;
+        try {
+            recCount = cursor.getCount();
+        } catch (Exception e) {
+            recCount = 0;
+        }
+        // Записей явно больше нуля
+        if (recCount > 0) {
+            cursor.moveToFirst();
+            do {
+                res = new String[]{
+                        cursor.getString(cursor.getColumnIndex(dbHelper.DBRecord[PARAMETERS][FIELDINFO][FIELD_IS_ID][FIELD_PROP_NAME])),
+                        cursor.getString(cursor.getColumnIndex(dbHelper.DBRecord[PARAMETERS][FIELDINFO][FIELD_IS_NAME][FIELD_PROP_NAME])),
+                        cursor.getString(cursor.getColumnIndex(dbHelper.DBRecord[PARAMETERS][FIELDINFO][FIELD_IS_TYPE][FIELD_PROP_NAME])),
+                        cursor.getString(cursor.getColumnIndex(dbHelper.DBRecord[PARAMETERS][FIELDINFO][FIELD_IS_VALUE][FIELD_PROP_NAME]))
+                };
+                Log.i("dbTableList_Parameters", "id=" + res[0] + ", name=" + res[1] + ", value=" + res[3]);
+            } while (cursor.moveToNext());
+            Log.i("dbTableList_Parameters", "Table " + dbHelper.DBRecord[PARAMETERS][TABLENAME][NONE][NONE] + " has " + cursor.getCount() + " records");
+        } else {
+            Log.i("dbTableList_Parameters", "Table " + dbHelper.DBRecord[PARAMETERS][TABLENAME][NONE][NONE] + " has no records");
+        }
+    }
+
+    /**
+     * Заменяет значение параметра в таблице
+     *
+     * @param paramName
+     * @param paramValue
+     * @param paramType
+     */
+
+    public void paramUpdate(String paramName, String paramValue, String paramType) {
+        ContentValues newValues =
+                new ContentValues();
+        newValues
+                .put(dbHelper.DBRecord[PARAMETERS][FIELDINFO][FIELD_IS_VALUE][NONE], paramValue);
+        database.update(
+                dbHelper.DBRecord[PARAMETERS][TABLENAME][NONE][NONE],
+                newValues,
+                dbHelper.DBRecord[PARAMETERS][FIELDINFO][FIELD_IS_NAME][FIELD_PROP_NAME] + "=?",
+                new String[]{paramName}
+        );
+    }
+
+
+    /**
      * Наличие параметра с таким именем
      *
      * @param paramName - имя параметра
      * @return - параметр существует
      */
+
     public boolean paramNow(String paramName) {
         Cursor
                 cursor;
@@ -321,7 +455,7 @@ public class DBHandler {
     }
 
     /**
-     * Значение параметра по его имени
+     * Получение значения параметра по его имени
      *
      * @param paramName
      * @return String[]
@@ -331,6 +465,7 @@ public class DBHandler {
      * 2 - тип данных параметра
      * 3 - _id записи таблицы
      */
+
     public String[] paramGet(String paramName) {
         Cursor
                 cursor;
@@ -365,6 +500,5 @@ public class DBHandler {
             return null;
         }
     }
-
 
 }

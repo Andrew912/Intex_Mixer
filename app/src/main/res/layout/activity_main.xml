@@ -128,12 +128,12 @@
                 android:layout_height="match_parent"
                 android:gravity="bottom"
                 android:orientation="vertical"
-                android:visibility="invisible"
+                android:visibility="visible"
                 android:weightSum="1">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="167dp"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                     <Button
@@ -141,8 +141,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="clear_db"
-                        tools:ignore="InefficientWeight" />
+                        android:text="очистить базу данных"
+                        tools:ignore="InefficientWeight"
+                        android:background="@android:color/holo_red_dark" />
                 </LinearLayout>
 
                 <TextView
@@ -155,6 +156,87 @@
                     tools:ignore="HardcodedText" />
 
                 <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top">
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:text="Миксер"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/textView_0_2_0"
+                            android:layout_weight="50" />
+
+                        <EditText
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPersonName"
+                            android:ems="10"
+                            android:id="@+id/editText_0_2_0"
+                            android:layout_weight="1"
+                            android:text="mixer.002" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:text="Терминал"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/textView_0_2_1"
+                            android:layout_weight="50" />
+
+                        <EditText
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPersonName"
+                            android:ems="10"
+                            android:id="@+id/editText_0_2_1"
+                            android:layout_weight="1"
+                            android:text="mixerterm.002" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:text="Адрес"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/textView_0_2_2"
+                            android:layout_weight="50" />
+
+                        <EditText
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPersonName"
+                            android:ems="10"
+                            android:id="@+id/editText_0_2_2"
+                            android:layout_weight="1"
+                            android:text="20" />
+                    </LinearLayout>
+
+                    <Button
+                        android:text="Сохранить параметры"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/button_0_2"
+                        android:background="@android:color/holo_green_dark" />
+
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -164,8 +246,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="SendMail"
-                        tools:ignore="HardcodedText,InefficientWeight" />
+                        android:text="отправить статистику"
+                        tools:ignore="HardcodedText,InefficientWeight"
+                        android:background="@android:color/holo_orange_light" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -179,8 +262,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="back "
-                        tools:ignore="ButtonStyle,HardcodedText,NestedWeights" />
+                        android:text="выход"
+                        tools:ignore="ButtonStyle,HardcodedText,NestedWeights"
+                        android:background="@android:color/holo_green_dark" />
 
                     <Button
                         android:id="@+id/button_0_Task"
@@ -408,23 +492,29 @@
                 android:gravity="bottom"
                 android:orientation="vertical"
                 android:visibility="invisible"
-                android:weightSum="1">
+                android:weightSum="1"
+                android:layout_gravity="top">
 
                 <ListView
                     android:id="@+id/list_Oper_Select"
                     android:layout_width="match_parent"
-                    android:layout_height="219dp"
-                    android:layout_weight="0.94"
+                    android:layout_weight="1"
                     tools:listheader="список операций"
-                    tools:ignore="InefficientWeight" />
+                    tools:ignore="InefficientWeight"
+                    android:scaleX="1.1"
+                    android:layout_height="180dp"
+                    android:scaleY="1.1" />
 
                 <TextView
                     android:id="@+id/text_5_Info"
                     android:layout_width="match_parent"
-                    android:layout_height="107dp"
                     android:elevation="0dp"
                     android:textAlignment="center"
-                    android:textSize="26sp" />
+                    android:textSize="30sp"
+                    android:textColor="@android:color/holo_orange_dark"
+                    android:gravity="bottom"
+                    android:layout_weight="0.48"
+                    android:layout_height="120dp" />
 
                 <LinearLayout
                     android:id="@+id/LL5_1_Buttons"
@@ -692,7 +782,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textAlignment="center"
-                    android:textSize="30sp" />
+                    android:textSize="40sp"
+                    android:textColor="@android:color/holo_orange_dark" />
 
                 <FrameLayout
                     android:layout_width="match_parent"

@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -36,14 +37,12 @@ import static org.and.intex_v2.DBHelper.KEY_OPPA_PARAM_VALUE;
 import static org.and.intex_v2.DBHelper.KEY_OPPA_TO_DELETE;
 
 public class MainActivity extends AppCompatActivity {
-
+    /* Паараметры лога */
     String
             logTAG = "MAIN",
             logMessage;
 
-    // Классы
-    String
-            ogMessage;
+    /* Классы */
     Context
             context;
     public DBHelper
@@ -75,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
     NetworkHandler
             net;
 
-    // Лайауты
+    /* Лайауты */
     LinearLayout[]
             layout;
 
@@ -87,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
             L0,
             L1;
 
-    // Блок кнопок (L4.1)
+    /* Блок кнопок (L4.1) */
     LinearLayout
             layout_4_1;
 
@@ -95,14 +94,14 @@ public class MainActivity extends AppCompatActivity {
             CurrentLayout = 0,                  // Текущий номер экрана
             savedCurrentLayout = 0;             // Сохраненный номер экрана
 
-    // ListView: Выбор задачи из списка: Task Select
+    /* ListView: Выбор задачи из списка: Task Select */
     ListView taskSelect_ListView;
     String[] taskSelect_ListItems;
     ArrayAdapter<String> taskSelect_ListAdapter;
     String taskSelect_SelectedValue;                                    // Значение списка при выборе
     TextView textView1;
 
-    // ListView: Выбор задачи из списка: CurrentOper Select
+    /* ListView: Выбор задачи из списка: CurrentOper Select */
     ListView operSelect_ListView;
     String[] operSelect_ListItems;
     ArrayAdapter<String> operSelect_ListAdapter;
@@ -133,6 +132,10 @@ public class MainActivity extends AppCompatActivity {
             b_1010_0,
             b_1010_1;
 
+    /* Кнопка сохранения параметров */
+    Button
+            b_ParamSave;
+
     /* Какие-то параметры кнопок */
     boolean[] buttonStatus;
     static final int NUMBER_OF_BUTTONS = 4;
@@ -144,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
     static final int L0_BUTTON_TASK = 2;
     static final int L0_BUTTON_TASK1 = 3;
     static final int L0_BUTTON_OPER = 4;
+    static final int L0_BUTTON_PARAM_SAVE = 5;
     static final int L1_BUTTON_TO_PARAMS = 100;
     static final int L1_BUTTON_BEGIN_JOB = 101;
     static final int L2_BUTTON_TASK_SELECT = 200;
@@ -220,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
             = 0;                                // Индекс открытых в данный момент ServerPingClass
 
     static int                                  // Предельное количество устройств для поиска в сети
-            MAX_NUM_OF_DEVICES = 2;
+            MAX_NUM_OF_DEVICES = 1;
 
     static int                                  // Индекс ServerPingClass для различных устройств
             DEVICE_IS_TERMINAL = 0,             // Весовой терминал
@@ -228,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
 
     /* Переменные, определяющие работу при поиске серверов в сети */
     public ArrayList<String[]>
-            serverFound;                        // Параметры найденного сервера
+            serverFound;                       // Параметры найденного сервера
     public ArrayList<Boolean>
             endServerFindCondition;            // Условие выхода из цикла при поиске серверов
 
@@ -241,6 +245,17 @@ public class MainActivity extends AppCompatActivity {
             deviceReadTimer;        // Таймер опроса весового терминала
     private MyTimerTask
             myTimerTask;            // Задача для опроса весового терминала
+
+    /* Параметры конфигурации */
+    String
+            MixerName,              // имя миксера
+            MixerTermName,          // имя весового терминала
+            MixerTermAddr;          // стартовый адрес весового терминала (для быстрого поиска в сети)
+    // Поля для редактирования
+    EditText
+            et_MixerName,
+            et_MixerTermName,
+            et_MixerTermAddr;
 
     /**
      * Конструктор
@@ -325,6 +340,29 @@ public class MainActivity extends AppCompatActivity {
                 = new LayoutClass[Integer.valueOf(getString(R.string.NUMBER_OF_LAYOUTS))];
 
         // Массив экранов. Объявляем только те, которые нам будут нужны, остальные - null
+        L[LAYOUT_4_TASK_SELECT] =
+                new LayoutClass(
+                        (LinearLayout) findViewById(R.id.LL1_Begin),
+                        new Timer[]
+                                {},
+                        new TextView[]
+                                {
+                                        (TextView) findViewById(R.id.text_1_Info)
+                                },
+                        new String[]
+                                {
+                                        "Терминал миксера"
+                                },
+                        new Button[]
+                                {
+                                        (Button) findViewById(R.id.button_1_BeginJob)
+                                },
+                        new String[]
+                                {
+                                        "Начать"
+                                }
+                );
+
         L[LAYOUT_1_BEGIN] =
                 new LayoutClass(
                         (LinearLayout) findViewById(R.id.LL1_Begin),
@@ -413,8 +451,6 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < MAX_NUM_OF_DEVICES; i++) {
             findServerTimer
                     .add(i, new Timer());
-//            myTimerTask_watchOnServerFind
-//                    .add(i, new myTimerTask_WatchOnServerFind("mixerterm.001",DEVICE_IS_TERMINAL));
             numOfServerPingClasses
                     .add(i, new Integer(0));
             serverFound
@@ -429,9 +465,9 @@ public class MainActivity extends AppCompatActivity {
             conf.networkMask = net.get_Net_Mask_from_IP(conf.ipAddress);
         }
 
-        /***********************
+        /*******************************
          * TextViews
-         ***********************/
+         *******************************/
         textView = new TextView[layoutStatus.numberOfLayouts];
         textView[LAYOUT_0_PARAMS] =
                 (TextView) findViewById(R.id.text_0_Info);
@@ -459,9 +495,9 @@ public class MainActivity extends AppCompatActivity {
         text_7_target = (TextView) findViewById(R.id.text_7_target);
         text_71_target = (TextView) findViewById(R.id.text_71_target);
 
-        /***********************
+        /*******************************
          * ListView: Task select
-         ***********************/
+         *******************************/
         taskSelect_ListView = (ListView) findViewById(R.id.list_Task_Select);
         taskSelect_SelectedValue = "";
         taskSelect_ListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -475,9 +511,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /******************************
+        /*******************************
          * ListView: CurrentOper select
-         ******************************/
+         *******************************/
         operSelect_ListView = (ListView) findViewById(R.id.list_Oper_Select);
         operSelect_SelectedValue = "";
         operSelect_ListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -531,9 +567,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /***********************
+        /*******************************
+         * Кнопка сохранения параметров
+         *******************************/
+        b_ParamSave = (Button) findViewById(R.id.button_0_2);
+        b_ParamSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                controller.controller(L0_BUTTON_PARAM_SAVE);
+            }
+        });
+
+        /*******************************
          * Кнопки ВСЕ
-         ***********************/
+         *******************************/
         buttonStatus = new boolean[NUMBER_OF_BUTTONS];
         buttonStatusDrop();
 
@@ -792,66 +839,84 @@ public class MainActivity extends AppCompatActivity {
                 controller.controller(L9_BUTTON_REFRESH);
             }
         });
-        /***********************
-         * Поиск сервера в сети
-         ***********************/
-//        String serverToFind
-////                = "mixerterm.001";
-//                = "loader.001";
-//        int whatDevice
-//                = DEVICE_IS_TERMINAL;
-//
-//        myTimerTask_watchOnServerFind
-//                .add(whatDevice, new myTimerTask_WatchOnServerFind(serverToFind, whatDevice));
-//
-//        // Сохраняем номер экрана, с которого произошел вызов
-//        savedCurrentLayout
-//                = CurrentLayout;
-//        CurrentLayout
-//                = findServerLayout_900;
-//
-//        layout[savedCurrentLayout]
-//                .setVisibility(View.INVISIBLE);
-//        layout[CurrentLayout]
-//                .setVisibility(View.VISIBLE);
-//
-//        toTextView(
-//                "Find server: " + serverToFind + "@" + conf.networkMask);
-//        toStatusLineBlink(
-//                "Find server: " + serverToFind + "@" + conf.networkMask);
-//
-//        Log.i(logTAG, "serverToFind=" + serverToFind + ", netmask=" + conf.networkMask);
-//
-//        // Пытаемся опеределить параметры устройства, сохраненные в БД
-//        String[] terminalAddressFromDB =
-//                db.get_Device_Addr_from_DB(conf.networkMask, serverToFind);
-//
-//        Log.i(logTAG, "Find=" + terminalAddressFromDB[0] + ", addr=" + terminalAddressFromDB[1]);
-//
-//        // Запускаем поиск интересующего нас сервера
-//        try {
-//            net.findServerInNetwork(serverToFind, terminalAddressFromDB[1], conf.terminalPort, whatDevice);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        findServerTimer.get(whatDevice)
-//                .schedule(myTimerTask_watchOnServerFind.get(whatDevice), 100, 100);
-//
-        // Вызов проверки подключения к серверу
-        // CheckConnection("loader.001", L[LAYOUT_1_BEGIN]);
+        /*******************************
+         * Редактирование параметров
+         *******************************/
+        et_MixerName
+                = (EditText) findViewById(R.id.editText_0_2_0);
+        et_MixerTermName
+                = (EditText) findViewById(R.id.editText_0_2_1);
+        et_MixerTermAddr
+                = (EditText) findViewById(R.id.editText_0_2_2);
 
-        /***********************
+        /*******************************
          * ЗАПУСК!!!
-         ***********************/
+         *******************************/
+
+        paramInit();
+
         currentTask
                 .setTaskData();
+
         controller
                 .controller(L__BUTTON_START);
 
-        /***********************
+        /*******************************
          * КОНЕЦ
-         ***********************/
+         *******************************/
     }// end of onCreate
+
+    /**
+     * Сохраняет все параметры конфигурации
+     */
+
+    void paramSave() {
+        if (MixerTermName.equals(et_MixerTermName.getText()) == false) {
+            MixerTermName = et_MixerTermName.getText().toString();
+            db.paramStore("MixerTermName", MixerTermName, null);
+        }
+        if (MixerTermAddr.equals(et_MixerTermAddr.getText()) == false) {
+            MixerTermAddr = et_MixerTermAddr.getText().toString();
+            db.paramStore("MixerTermAddr", MixerTermAddr, null);
+        }
+        if (MixerTermAddr.equals(et_MixerName.getText()) == false) {
+            MixerName = et_MixerName.getText().toString();
+            db.paramStore("MixerName", MixerName, null);
+        }
+        // Обновляет параметры из конфигурации
+        conf.paramRefresh();
+    }
+
+    /**
+     * Загрузка параметров конфигурации
+     * <p>
+     * Параметры конфигурации:
+     * 1. MixerTermName     имя весового терминала
+     * 2. MixerTermAddr     стартовый адрес весового терминала (для быстрого поиска в сети)
+     */
+
+    void paramInit() {
+        if (db.paramNow("MixerName")) {
+            MixerName = db.paramGet("MixerName")[db.PARAMETER_VALUE];
+        } else {
+            MixerName = "mixer.001";
+        }
+        et_MixerName.setText(MixerName);
+
+        if (db.paramNow("MixerTermName")) {
+            MixerTermName = db.paramGet("MixerTermName")[db.PARAMETER_VALUE];
+        } else {
+            MixerTermName = "mixerterm.001";
+        }
+        et_MixerTermName.setText(MixerTermName);
+
+        if (db.paramNow("MixerTermAddr")) {
+            MixerTermAddr = db.paramGet("MixerTermAddr")[db.PARAMETER_VALUE];
+        } else {
+            MixerTermAddr = "20";
+        }
+        et_MixerTermAddr.setText(MixerTermAddr);
+    }
 
     /**
      * Проверка возможности подключения к конкретному серверу.
@@ -859,14 +924,20 @@ public class MainActivity extends AppCompatActivity {
      *
      * @param serverToFind - имя сервера
      */
+
     public boolean CheckConnection(String serverToFind, LayoutClass pLayoutToReturn) {
         /**
+         * В результате поиска адрес найденного сервера записывается в serverFound[]
+         *
          * В данной реализации whatDeviceWeFind всегда равно 0, т.к. мы не будем запускать более
          * одного поиска сервера одновременно.
          * Но, в принципе, ничто не мешает запустить их несколько.
          */
         int whatDeviceWeFind
                 = 0;
+
+        // Гасим тот экран, на который будем возвращаться
+        pLayoutToReturn.myLayout.setVisibility(View.INVISIBLE);
 
         // Новая задача таймера
         myTimerTask_watchOnServerFind
@@ -1320,7 +1391,11 @@ public class MainActivity extends AppCompatActivity {
             return mainActivity.storer.getCurrentOperId(currentTask.taskId);
         }
 
-        // Информация об операции для вывода на экран
+        /**
+         * Информация об операции для вывода на экран непосредственно при погрузке
+         *
+         * @return
+         */
         public String getOperationInfoForView() {
             // Тут надо будет поработать с выводом параметров операции
             Log.i(logTAG, "getOperationInfoForView(): START");
@@ -1353,12 +1428,23 @@ public class MainActivity extends AppCompatActivity {
             return s;
         }
 
-        // Значение параметра операции по его имени из БД
+        /**
+         * Значение параметра операции по его имени из БД
+         *
+         * @param operId
+         * @param parameterName
+         * @return
+         */
         String getParamFromDB(String operId, String parameterName) {
             return dbFunctions.getOperParameter(operId, parameterName);
         }
 
-        // Значение параметра операции по его имени
+        /**
+         * Значение параметра операции по его имени
+         *
+         * @param parameterName
+         * @return
+         */
         String getParam(String parameterName) {
             String retVar = null;
             if (operationParameters.size() != 0) {
@@ -1372,7 +1458,13 @@ public class MainActivity extends AppCompatActivity {
             return retVar;
         }
 
-        // Значение параметра операции по его имени
+        /**
+         * Значение параметра операции по его имени
+         *
+         * @param pName
+         * @param op
+         * @return
+         */
         String getParam0(String pName, ArrayList<OperationParameter> op) {
             String retVar = null;
             if (op.size() != 0) {
@@ -1447,7 +1539,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Установка текущей операции
+    /**
+     * Установка текущей операции
+     *
+     * @param operId
+     */
     public void setCurrentOper(String operId) {
         Log.i(logTAG, "setCurrentOper: start: " + operId);
         currentOper.setParamInClass();
@@ -1647,6 +1743,9 @@ public class MainActivity extends AppCompatActivity {
         toStatusLine("Layout=" + newLayout);
         switch (newLayout) {
             case LAYOUT_0_PARAMS:
+                // Заполнение значений параметров
+                et_MixerTermName.setText(MixerTermName);
+                et_MixerTermAddr.setText(MixerTermAddr);
                 break;
 
             case LAYOUT_1_BEGIN:
