@@ -19,7 +19,7 @@ public class ServerPingClass {
     String
             logTAG = "Server PING class";
     MainActivity
-            activity;
+            mainActivity;
     String
             rs = null;
     String
@@ -45,7 +45,7 @@ public class ServerPingClass {
      * @param pPort
      */
     public ServerPingClass(MainActivity activity, String pAddr, int pPort, int whatFind) {
-        this.activity =
+        mainActivity =
                 activity;
         // Обозначаем свое присутствие
         activity.numOfServerPingClasses
@@ -79,7 +79,7 @@ public class ServerPingClass {
 
         @Override
         protected Void doInBackground(String... params) {
-            if (activity.endServerFindCondition.get(Integer.parseInt(params[2])) == false) {
+            if (mainActivity.endServerFindCondition.get(Integer.parseInt(params[2])) == false) {
                 serverName = null;
                 Log.i(logTAG, "ServerExchangeClass_getOperations: params[0]=" + params[0] + ", params[1]=" + params[1] + ", params[2]=" + params[2]);
                 whatFindParam = params[2];
@@ -108,8 +108,8 @@ public class ServerPingClass {
                          * Теоретически можно эти параметры фиксировать и при верхнем вызове класса
                          * Надо посмотреть с точки зрения оптимальности, что удалить
                          */
-                        activity.serverFound.get(whatFindParamI)[activity.net.SRV_ADDR] = params[0];
-                        activity.serverFound.get(whatFindParamI)[activity.net.SRV_PORT] = params[1];
+                        mainActivity.serverFound.get(whatFindParamI)[mainActivity.net.SRV_ADDR] = params[0];
+                        mainActivity.serverFound.get(whatFindParamI)[mainActivity.net.SRV_PORT] = params[1];
                     }
                     socket = null;
                 } catch (Exception e) {
@@ -124,9 +124,9 @@ public class ServerPingClass {
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
             // Если не объявлен стоп
-            if (activity.endServerFindCondition.get(whatFindParamI) == false) {
+            if (mainActivity.endServerFindCondition.get(whatFindParamI) == false) {
                 // Разбираем входящее сообщение
-                incomingMessage = new IncomingMessage(activity, rs);
+                incomingMessage = new IncomingMessage(mainActivity, rs);
                 // Пытаемся выделить имя сервера
                 serverName = incomingMessage.getServerName();
                 if (serverName != null) {
@@ -136,25 +136,25 @@ public class ServerPingClass {
                     /**
                      * Вот тут мы фиксируем имя найденного сервера
                      */
-                    activity.serverFound.get(whatFindParamI)[activity.net.SRV_NAME] = serverName;
+                    mainActivity.serverFound.get(whatFindParamI)[mainActivity.net.SRV_NAME] = serverName;
                 }
             }
             if (serverName != null) {
-                activity.numOfServerPingClasses
-                        .set(whatFindParamI, activity.numOfServerPingClasses.get(Integer.parseInt(whatFindParam)) - 1);
+                mainActivity.numOfServerPingClasses
+                        .set(whatFindParamI, mainActivity.numOfServerPingClasses.get(Integer.parseInt(whatFindParam)) - 1);
                 /**
                  * А тут мы резко выводим на экран всякую информацию о происходящем
                  */
-                activity.layout[activity.CurrentLayout]
+                mainActivity.layout[mainActivity.CurrentLayout]
                         .setVisibility(View.INVISIBLE);
-                activity.CurrentLayout = activity.savedCurrentLayout;
-                activity.layout[activity.CurrentLayout]
+                mainActivity.CurrentLayout = mainActivity.savedCurrentLayout;
+                mainActivity.layout[mainActivity.CurrentLayout]
                         .setVisibility(View.VISIBLE);
-                activity.serverFindResultToStatusLine("Сервер найден");
-                activity.toTextView("Сервер " +
-                        activity.serverFound.get(whatFindParamI)[activity.net.SRV_NAME] +
+                mainActivity.serverFindResultToStatusLine("Сервер найден");
+                mainActivity.toTextView("Сервер " +
+                        mainActivity.serverFound.get(whatFindParamI)[mainActivity.net.SRV_NAME] +
                         " найден по адресу " +
-                        activity.serverFound.get(whatFindParamI)[activity.net.SRV_ADDR]);
+                        mainActivity.serverFound.get(whatFindParamI)[mainActivity.net.SRV_ADDR]);
                 Log.i(getClass().getSimpleName(), "Сервер найден, БЛЯ!!!");
             }
         }
@@ -163,7 +163,7 @@ public class ServerPingClass {
         public CycleBufferClass ExtractToSourceInputLineBuffer(String inBuffer, int outBufferSize) {
             CycleBufferClass sourceInputLineBuffer = new CycleBufferClass(outBufferSize);
             int i = 0;
-            String regEx = activity.getString(R.string.pattern_EndOfLine);
+            String regEx = mainActivity.getString(R.string.pattern_EndOfLine);
             Pattern ptnLine = Pattern.compile(regEx, Pattern.CASE_INSENSITIVE);
             String[] lines = ptnLine.split(inBuffer);
             for (String line : lines) {

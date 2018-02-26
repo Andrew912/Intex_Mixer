@@ -29,6 +29,26 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:id="@+id/LL11_Empty"
+                android:visibility="invisible">
+
+                <Button
+                    android:text="loader found"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btn_11_01_Loader_Found" />
+
+                <Button
+                    android:text="to begin job"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btn_11_00_Begin_job" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:id="@+id/layout_1000"
                 android:weightSum="1"
                 android:visibility="invisible">
@@ -128,7 +148,7 @@
                 android:layout_height="match_parent"
                 android:gravity="bottom"
                 android:orientation="vertical"
-                android:visibility="visible"
+                android:visibility="invisible"
                 android:weightSum="1">
 
                 <LinearLayout
@@ -160,6 +180,51 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="top">
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="50">
+
+                        <TextView
+                            android:text="Сеть"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/textView_0_2_5"
+                            android:layout_weight="50" />
+
+                        <EditText
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPersonName"
+                            android:ems="10"
+                            android:id="@+id/editText_0_2_5"
+                            android:layout_weight="1"
+                            android:text="intex" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:text="Пароль"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/textView_0_2_4"
+                            android:layout_weight="50" />
+
+                        <EditText
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPersonName"
+                            android:ems="10"
+                            android:id="@+id/editText_0_2_4"
+                            android:layout_weight="1"
+                            android:text="921063060" />
+                    </LinearLayout>
 
                     <LinearLayout
                         android:orientation="horizontal"

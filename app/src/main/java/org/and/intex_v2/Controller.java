@@ -1,18 +1,21 @@
 package org.and.intex_v2;
 
+import android.database.Cursor;
 import android.util.Log;
 import android.view.View;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
+import static org.and.intex_v2.DBHelper.KEY_MAIL_COMPLETE;
+import static org.and.intex_v2.DBHelper.TABLE_MAIL;
 import static org.and.intex_v2.MainActivity.L0_BUTTON_BACK;
 import static org.and.intex_v2.MainActivity.L0_BUTTON_OPER;
 import static org.and.intex_v2.MainActivity.L0_BUTTON_PARAM_SAVE;
 import static org.and.intex_v2.MainActivity.L0_BUTTON_SENDMAIL;
 import static org.and.intex_v2.MainActivity.L0_BUTTON_TASK;
 import static org.and.intex_v2.MainActivity.L0_BUTTON_TASK1;
+import static org.and.intex_v2.MainActivity.L11_BUTTON_BEGIN_JOB_NEXT;
 import static org.and.intex_v2.MainActivity.L1_BUTTON_BEGIN_JOB;
 import static org.and.intex_v2.MainActivity.L1_BUTTON_TO_PARAMS;
 import static org.and.intex_v2.MainActivity.L2_BUTTON_CANCEL;
@@ -133,9 +136,28 @@ public class Controller {
 
             case L1_BUTTON_BEGIN_JOB:   // Начало работы
 
-                // Проверяем подключение весового терминала
-                mainActivity.CheckConnection(mainActivity.conf.terminalName, mainActivity.L[LAYOUT_4_TASK_SELECT]);
+                // Отправляем почту, если есть, что отправлять
+                if (dbMailRecNotEmpty()) {
+                    mainActivity.server.sendMail();
+                    Log.i("MAIL", "Почта отправлена!");
+                } else {
+                    Log.i("MAIL", "Нет почты для отправки...");
+                }
 
+                // Проверяем подключение весового терминала если он еще не подключен
+                if (mainActivity.ifServerFound(mainActivity.conf.terminalName) == false) {
+                    mainActivity.CheckConnection(
+                            mainActivity.conf.terminalName,
+                            mainActivity.L[LAYOUT_4_TASK_SELECT],
+                            mainActivity.btn_11_Next);
+                    mainActivity.conf.termAddrRefresh();
+                    break;
+                } else {
+                    mainActivity.printServerFound();
+                }
+
+            case L11_BUTTON_BEGIN_JOB_NEXT:
+                // Если весовой терминал подключен, то работаем дальше как положено
                 mainActivity.currentTask.setTaskData();
 
                 if (mainActivity.currentTask.now) {
@@ -272,8 +294,11 @@ public class Controller {
 
                 // Если оперция - загрузка, то на экран 8, иначе - 6
                 if (mainActivity.currentOper.operIsLoad() == true) {
-                    // Запускаем Получение показаний весов от терминала
-                    mainActivity.weightDataFromDeviceReader_Start();
+
+                    /* Надо проверить подключние погрузчика */
+
+
+
                     mainActivity.gotoLayout(LAYOUT_9_SERV_REQUEST, mainActivity.currentOper.getOperationInfoForView());
                 } else {
                     mainActivity.gotoLayout(LAYOUT_6_SIMPLE_OPER, mainActivity.currentOper.getOperationInfoForView());
@@ -433,5 +458,28 @@ public class Controller {
             return 0;
         }
     }
+
+    /**
+     * Количество записей в таблице с отчетами по операциям
+     *
+     * @return
+     */
+    boolean dbMailRecNotEmpty() {
+        int r;
+        DBHelper dbh = new DBHelper(mainActivity.context);
+        Cursor cursor = dbh.getReadableDatabase().query(
+                TABLE_MAIL,
+                new String[]{"COUNT (_id) AS counter"},
+                KEY_MAIL_COMPLETE + "=?",
+                new String[]{String.valueOf(0)},
+                null, null, null);
+        cursor.moveToFirst();
+        if (cursor.getCount() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
 }

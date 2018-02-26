@@ -180,6 +180,12 @@ public class DBHandler {
         if (c.moveToFirst()) {
             retVar[activity.net.SRV_NAME] = devName;
             retVar[activity.net.SRV_ADDR] = c.getString(c.getColumnIndex(table_OBJECTS.ADDRESS));
+//            retVar[mainActivity.net.SRV_PORT] = null;
+//            retVar[mainActivity.net.SRV_STAT] = null;
+//            retVar[mainActivity.net.SRV_FULLARRD] = devNetMask + retVar[mainActivity.net.SRV_ADDR];
+
+//            retVar[mainActivity.net.SRV_PORT] = null;
+//            retVar[mainActivity.net.SRV_STAT] = null;
         }
         return retVar;
     }
@@ -291,6 +297,7 @@ public class DBHandler {
             retVar[activity.net.SRV_NAME] = devName;
             retVar[activity.net.SRV_ADDR] = c.getColumnName(c.getColumnIndex(Column_OBJECTS.ADDRESS));
             retVar[activity.net.SRV_PORT] = c.getColumnName(c.getColumnIndex(Column_OBJECTS.PORT));
+            retVar[activity.net.SRV_STAT] = c.getColumnName(c.getColumnIndex(null));
         }
         return retVar;
     }
@@ -325,7 +332,7 @@ public class DBHandler {
      */
 
     public void paramStore(String paramName, String paramValue, String paramType) {
-        Log.i("paramStore","paramName="+paramName+", paramValue="+paramValue);
+        Log.i("paramStore", "paramName=" + paramName + ", paramValue=" + paramValue);
         // Если паратера в БД нет, то добавляем его
         if (paramNow(paramName) == false) {
             paramAppend(paramName, paramValue, null);

@@ -73,8 +73,12 @@ public class LoaderCommunicator {
     public LoaderCommunicator(MainActivity mainActivity) {
         this.activity =
                 mainActivity;
+        // Адрес терминала берем из конфигуратора
+        // А вот как он там оказался, надо смотреть в конфигураторе
         socketAddr =
-                activity.conf.getIPaddress(activity.conf.terminalStartAddress);
+                activity.conf.terminalAddress;
+//        socketAddr =
+//                mainActivity.conf.getIPaddress(mainActivity.conf.terminalStartAddress);
         socketPort =
                 activity.conf.terminalPort;
         buffSize =

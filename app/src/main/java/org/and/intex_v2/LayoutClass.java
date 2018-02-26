@@ -99,9 +99,9 @@ public class LayoutClass {
          * Непосредственно инициализация
          */
         // Поля
-        Log.i("***", "text= " + text);
         if (pTextText != null) {
             for (int i = 0; i < text_size; i++) {
+                Log.i("***", "text[" + i + "]=" + pTextText[i]);
                 text[i].setText(pTextText[i]);
             }
         }
@@ -123,9 +123,11 @@ public class LayoutClass {
             String[]
                     pBtnText
     ) {
-        for (int i = 0; i < text_size; i++)
-            if (pTextText[i] != null)
-                text[i].setText(pTextText[i]);
+        if (pTextText != null) {
+            for (int i = 0; i < text_size; i++)
+                if (pTextText[i] != null)
+                    text[i].setText(pTextText[i]);
+        }
         if (pBtnText != null) {
             for (int i = 0; i < btn_size; i++)
                 if (pBtnText[i] != null)

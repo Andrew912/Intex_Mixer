@@ -1,5 +1,9 @@
 package org.and.intex_v2;
 
+import android.widget.Toast;
+
+import static org.and.intex_v2.DBHandler.PARAMETER_VALUE;
+
 /**
  * Created by Андрей on 22.12.2017.
  */
@@ -19,6 +23,8 @@ public class Configuration {
 
     String
             ipAddress;                      //
+    String
+            terminalAddress;                      //
     String
             networkMask;                    //
     int
@@ -77,13 +83,24 @@ public class Configuration {
      * Обновляет значения параметров конфигурации
      */
     public void paramRefresh() {
-        terminalStartAddress
-                = 35;                  // Стартовый адрес для поиска терминала в сети
         deviceName
-                = a.db.paramGet("MixerName")[0];      //
+                = a.db.paramGet("MixerName")[PARAMETER_VALUE];      //
         terminalName
-                = a.db.paramGet("MixerName")[0];
+                = a.db.paramGet("MixerTermName")[PARAMETER_VALUE];
+        // Полный адрес терминала в сети
+        terminalAddress
+                = a.db.get_Device_Addr_from_DB(networkMask, terminalName)[a.net.SRV_ADDR];
+        Toast.makeText(a.getApplicationContext(),"Терминал:"+terminalAddress,Toast.LENGTH_LONG).show();
+    }
 
+    /**
+     * Обновить адрес весового терминала
+     */
+
+    public void termAddrRefresh() {
+        terminalAddress
+                = a.db.get_Device_Addr_from_DB(networkMask, terminalName)[a.net.SRV_ADDR];
+        Toast.makeText(a.getApplicationContext(),"Терминал:"+terminalAddress,Toast.LENGTH_LONG).show();
     }
 
 }

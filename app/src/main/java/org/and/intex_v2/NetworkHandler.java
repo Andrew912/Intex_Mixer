@@ -17,10 +17,12 @@ import static android.content.Context.WIFI_SERVICE;
 public class NetworkHandler {
 
 
-    int                         // Индексы возвращаемого значения String [] в функциях
+    public static int                         // Индексы возвращаемого значения String [] в функциях
             SRV_NAME = 0,
             SRV_ADDR = 1,
-            SRV_PORT = 2;
+            SRV_PORT = 2,
+            SRV_STAT = 3,
+            SRV_FULLARRD = 4;
 
     String
             logTag = "NetworkHandler";
@@ -181,7 +183,7 @@ public class NetworkHandler {
         activity.toStatusLineBlink("Find server = " + serverName);
 
         Log.i(getClass().getSimpleName(), "Поиск сервера: " + serverName + " at " + serverAddr);
-        String[] serverParameters = {null, null, null};
+        String[] serverParameters = {null, null, null,null,null};
 
         /**
          * Вообще сука проверяем, не пустой ли адрес (!=NULL).

@@ -30,11 +30,13 @@ import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static android.media.CamcorderProfile.get;
 import static android.view.View.VISIBLE;
 import static org.and.intex_v2.DBHelper.KEY_OPPA_OPER_ID;
 import static org.and.intex_v2.DBHelper.KEY_OPPA_PARAM_NAME;
 import static org.and.intex_v2.DBHelper.KEY_OPPA_PARAM_VALUE;
 import static org.and.intex_v2.DBHelper.KEY_OPPA_TO_DELETE;
+import static org.and.intex_v2.NetworkHandler.SRV_NAME;
 
 public class MainActivity extends AppCompatActivity {
     /* Паараметры лога */
@@ -123,7 +125,8 @@ public class MainActivity extends AppCompatActivity {
             btn_7_Cancel, btn_7_Complete, btn_7_Start,
             btn_71_Cancel, btn_71_Complete, btn_71_Start,
             btn_8_OK,
-            btn_9_Cancel, btn_9_Accept, btn_9_Refresh, btn_9_Reject;
+            btn_9_Cancel, btn_9_Accept, btn_9_Refresh, btn_9_Reject,
+            btn_11_Next, btn_11_LoaderFound;
 
     /* Кнопки служебных экранов поиска */
     Button
@@ -150,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
     static final int L0_BUTTON_PARAM_SAVE = 5;
     static final int L1_BUTTON_TO_PARAMS = 100;
     static final int L1_BUTTON_BEGIN_JOB = 101;
+    static final int L11_BUTTON_BEGIN_JOB_NEXT = 102;
     static final int L2_BUTTON_TASK_SELECT = 200;
     static final int L2_BUTTON_CANCEL = 201;
     static final int L3_BUTTON_TASK_CONTINUE = 300;
@@ -158,8 +162,9 @@ public class MainActivity extends AppCompatActivity {
     static final int L4_BUTTON_ACCEPT = 401;
     static final int L4_LIST_TASK_SELECT = 402;
     static final int L5_BUTTON_CANCEL = 500;
-    static final int L5_BUTTON_ACCEPT = 501;
-    static final int L5_LIST_OPER_SELECT = 502;
+    static final int L5_PRE_BUTTON_ACCEPT = 501;
+    static final int L5_BUTTON_ACCEPT = 502;
+    static final int L5_LIST_OPER_SELECT = 503;
     static final int L6_BUTTON_COMPLETE = 600;
     static final int L6_BUTTON_CANCEL = 601;
     static final int L7_BUTTON_COMPLETE = 701;
@@ -186,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
     static final int LAYOUT_71_LOAD_OPER = 10;
     static final int LAYOUT_8_TASK_COMPLETE = 8;
     static final int LAYOUT_9_SERV_REQUEST = 9;
+    static final int LAYOUT_11_EMPTY = 11;
 
     /* Текст экрана в лайауте */
     TextView textView[];
@@ -248,11 +254,15 @@ public class MainActivity extends AppCompatActivity {
 
     /* Параметры конфигурации */
     String
+            WiFiNet,                // Сеть WiFi
+            WiFiPass,               // Пароль досступа к сети WiFi
             MixerName,              // имя миксера
             MixerTermName,          // имя весового терминала
             MixerTermAddr;          // стартовый адрес весового терминала (для быстрого поиска в сети)
     // Поля для редактирования
     EditText
+            et_WiFiNet,
+            et_WiFiPass,
             et_MixerName,
             et_MixerTermName,
             et_MixerTermAddr;
@@ -448,16 +458,20 @@ public class MainActivity extends AppCompatActivity {
         endServerFindCondition
                 = new ArrayList<>();
 
-        for (int i = 0; i < MAX_NUM_OF_DEVICES; i++) {
-            findServerTimer
-                    .add(i, new Timer());
-            numOfServerPingClasses
-                    .add(i, new Integer(0));
-            serverFound
-                    .add(i, new String[3]);
-            endServerFindCondition
-                    .add(i, false);
-        }
+        /* Вот тут я не уверен, что именно так должно все быть:
+           Наверное, лучше все эти присваивания перенести в CheckConnection для случая, когда
+           нам попадается для поиска новое устройство */
+
+//        for (int i = 0; i < MAX_NUM_OF_DEVICES; i++) {
+//            findServerTimer
+//                    .add(i, new Timer());
+//            numOfServerPingClasses
+//                    .add(i, new Integer(0));
+//            serverFound
+//                    .add(i, new String[3]);
+//            endServerFindCondition
+//                    .add(i, false);
+//        }
 
         conf.is_Connected_to_network = net.isConnectedToNetwork();
         if (conf.is_Connected_to_network) {
@@ -584,6 +598,26 @@ public class MainActivity extends AppCompatActivity {
         buttonStatus = new boolean[NUMBER_OF_BUTTONS];
         buttonStatusDrop();
 
+        // btn_11_Next
+        btn_11_Next = (Button) findViewById(R.id.btn_11_00_Begin_job);
+        btn_11_Next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("btn_11_Next", "pressed");
+                controller.controller(L11_BUTTON_BEGIN_JOB_NEXT);
+            }
+        });
+
+        // btn_11_Next
+        btn_11_LoaderFound = (Button) findViewById(R.id.btn_11_00_Begin_job);
+        btn_11_LoaderFound.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("btn_11_LoaderFound", "pressed");
+                controller.controller(L5_BUTTON_ACCEPT);
+            }
+        });
+
         // btn_0_SendMail
         btn_0_SendMail = (Button) findViewById(R.id.button_0_SendMail);
         btn_0_SendMail.setOnClickListener(new View.OnClickListener() {
@@ -598,7 +632,7 @@ public class MainActivity extends AppCompatActivity {
         btn_ToDB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                controller.controller(L1_BUTTON_TO_PARAMS);
+                controller.controller(L11_BUTTON_BEGIN_JOB_NEXT);
             }
         });
 
@@ -842,6 +876,10 @@ public class MainActivity extends AppCompatActivity {
         /*******************************
          * Редактирование параметров
          *******************************/
+        et_WiFiNet
+                = (EditText) findViewById(R.id.editText_0_2_5);
+        et_WiFiPass
+                = (EditText) findViewById(R.id.editText_0_2_4);
         et_MixerName
                 = (EditText) findViewById(R.id.editText_0_2_0);
         et_MixerTermName
@@ -854,6 +892,10 @@ public class MainActivity extends AppCompatActivity {
          *******************************/
 
         paramInit();
+
+        conf.paramRefresh();
+
+        printServerFound();
 
         currentTask
                 .setTaskData();
@@ -896,6 +938,20 @@ public class MainActivity extends AppCompatActivity {
      */
 
     void paramInit() {
+        if (db.paramNow("WiFiNet")) {
+            WiFiNet = db.paramGet("WiFiNet")[db.PARAMETER_VALUE];
+        } else {
+            WiFiNet = "intex";
+        }
+        et_WiFiNet.setText(WiFiNet);
+
+        if (db.paramNow("WiFiPass")) {
+            WiFiPass = db.paramGet("WiFiPass")[db.PARAMETER_VALUE];
+        } else {
+            WiFiPass = "9210603060";
+        }
+        et_WiFiPass.setText(WiFiPass);
+
         if (db.paramNow("MixerName")) {
             MixerName = db.paramGet("MixerName")[db.PARAMETER_VALUE];
         } else {
@@ -925,21 +981,87 @@ public class MainActivity extends AppCompatActivity {
      * @param serverToFind - имя сервера
      */
 
-    public boolean CheckConnection(String serverToFind, LayoutClass pLayoutToReturn) {
-        /**
-         * В результате поиска адрес найденного сервера записывается в serverFound[]
-         *
-         * В данной реализации whatDeviceWeFind всегда равно 0, т.к. мы не будем запускать более
-         * одного поиска сервера одновременно.
-         * Но, в принципе, ничто не мешает запустить их несколько.
-         */
-        int whatDeviceWeFind
-                = 0;
+    public boolean CheckConnection(String serverToFind, LayoutClass pLayoutToReturn, Button btnToReturn) {
 
         // Гасим тот экран, на который будем возвращаться
         pLayoutToReturn.myLayout.setVisibility(View.INVISIBLE);
 
-        // Новая задача таймера
+        /**
+         * В результате поиска адрес найденного сервера записывается в serverFound[]
+         *
+         * Сейчас попробуем менять значение whatDeviceWeFind в зависимости от того, есть ли запись о
+         * таком сервере в serverFound или нет.
+         * Если мы такую запись нашли, то whatDeviceWeFind равно номеру найденной записи.
+         * Если записи с указанным именем нет, то ее надо моздать и whatDeviceWeFind должно быть
+         * равно номеру вновь созданной записи
+         */
+        int
+                i;
+        int
+                Result_Empty = 0,
+                Result_Found = 1,
+                Result_New = 2;
+        int
+                serverFoudFindResult = Result_Empty;
+        int
+                whatDeviceWeFind = 0;
+        // Если массив пока вообще пустой, то первым будет элемент с индексом 0
+
+        if (serverFound.size() > 0) {
+            for (i = 0; i < serverFound.size(); i++) {
+                if (serverFound.get(i)[SRV_NAME].equals(serverToFind) == true) {
+                    // Если мы такую запись нашли, то чистим все для нее
+                    whatDeviceWeFind
+                            = i;
+                    serverFoudFindResult
+                            = Result_Found;
+                    break;
+                } else {
+                    // Если такой записи нет, то создаем все по-новой
+                    whatDeviceWeFind
+                            = serverFound.size() + 1;
+                    serverFoudFindResult
+                            = Result_New;
+                }
+            }
+        }
+
+        // Добавлять связанные записи в аррайлисты будем как в случае пустого массива, так и в случае
+        // отсутствия нужной нам записи в непустом массиве
+        if (serverFoudFindResult == Result_Empty) {
+            serverFoudFindResult = Result_New;
+        }
+
+        // Если запись нашлась, то найти записи для данного сервера и уничтожить их
+        if (serverFoudFindResult == Result_Found) {
+            for (i = 0; i < serverFound.size(); i++) {
+                if (myTimerTask_watchOnServerFind.get(i).serverName == serverToFind) {
+                    myTimerTask_watchOnServerFind.remove(i);
+                    whatDeviceWeFind = i;
+                    break;
+                }
+            }
+            findServerTimer
+                    .remove(whatDeviceWeFind);
+            numOfServerPingClasses
+                    .remove(whatDeviceWeFind);
+            serverFound
+                    .remove(whatDeviceWeFind);
+            endServerFindCondition
+                    .remove(whatDeviceWeFind);
+        }
+
+        // Cоздать по-новой
+        findServerTimer
+                .add(whatDeviceWeFind, new Timer());
+        numOfServerPingClasses
+                .add(whatDeviceWeFind, new Integer(0));
+        serverFound
+                .add(whatDeviceWeFind, new String[3]);
+        endServerFindCondition
+                .add(whatDeviceWeFind, false);
+
+        // Новая задача таймера - потом создать по-новой
         myTimerTask_watchOnServerFind
                 .add(whatDeviceWeFind, new myTimerTask_WatchOnServerFind(serverToFind, whatDeviceWeFind));
 
@@ -953,7 +1075,9 @@ public class MainActivity extends AppCompatActivity {
                 layout,
                 pLayoutToReturn,
                 null
+//                btnToReturn
         );
+
 
         // Пытаемся определить параметры устройства, сохраненные в БД
         String[] terminalAddressFromDB
@@ -978,6 +1102,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // "Нажимает" кнопку b_1000_0
+
     void b_1000_0_Press() {
         b_1000_0.callOnClick();
     }
@@ -1734,18 +1859,34 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /*********************
+    /**
      * Переключение на слой
-     *********************/
+     */
     void gotoLayout(int newLayout, String pTextToInfo) {
         String textToInfo = pTextToInfo;
         layoutVisiblitySet(newLayout);                          // Установить видимость слоя
         toStatusLine("Layout=" + newLayout);
         switch (newLayout) {
+            case LAYOUT_11_EMPTY:
+                /**
+                 * "Пустой" слой для различных операций, связанных с длительным выполнением чего-нибудь
+                 */
+
+                break;
             case LAYOUT_0_PARAMS:
-                // Заполнение значений параметров
-                et_MixerTermName.setText(MixerTermName);
-                et_MixerTermAddr.setText(MixerTermAddr);
+                /**
+                 *  Заполнение экранных значений параметров
+                 */
+                et_MixerTermName
+                        .setText(MixerTermName);
+                et_MixerTermAddr
+                        .setText(MixerTermAddr);
+                et_MixerName
+                        .setText(MixerName);
+                et_WiFiNet
+                        .setText(WiFiNet);
+                et_WiFiPass
+                        .setText(WiFiPass);
                 break;
 
             case LAYOUT_1_BEGIN:
@@ -1815,8 +1956,13 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case LAYOUT_9_SERV_REQUEST:
+                // Проверяем наличие погрузчика в сети
+
+
+                // Посылаем погрузчику запрос на обслуживание
+                // Запускаем Получение показаний весов от терминала
+                weightDataFromDeviceReader_Start();
                 loader.serverServiceRequest();
-//                messenger.msg_ToLoader_ServiceRequest();
                 break;
 
         }
@@ -1981,17 +2127,17 @@ public class MainActivity extends AppCompatActivity {
          * 3. Абстрактный тайм-аут.
          */
         // 1. Найден сервер
-        if (serverFound.get(wishServerIsFind)[net.SRV_NAME] != null) {
-            Log.i(logTAG, "serverFound=" + serverFound.get(wishServerIsFind)[net.SRV_NAME]);
-            if (serverFound.get(wishServerIsFind)[net.SRV_NAME].equals(serverToFind)) {
+        if (serverFound.get(wishServerIsFind)[SRV_NAME] != null) {
+            Log.i(logTAG, "serverFound=" + serverFound.get(wishServerIsFind)[SRV_NAME]);
+            if (serverFound.get(wishServerIsFind)[SRV_NAME].equals(serverToFind)) {
                 // Если сервер - тот, который мы ищем
                 // Прекратить дальнейший поиск
-                Log.i(getClass().getSimpleName(), "serverFound!!!" + serverFound.get(wishServerIsFind)[net.SRV_NAME]);
+                Log.i(getClass().getSimpleName(), "serverFound!!!" + serverFound.get(wishServerIsFind)[SRV_NAME]);
                 endServerFindCondition.set(wishServerIsFind, true);
                 // Сохраняем данные в БД
                 db.store_Device_Addr_to_DB(
                         conf.networkMask,
-                        serverFound.get(wishServerIsFind)[net.SRV_NAME],
+                        serverFound.get(wishServerIsFind)[SRV_NAME],
                         serverFound.get(wishServerIsFind)[net.SRV_ADDR]
                 );
                 // Адрес переносим в конфигурацию
@@ -2003,7 +2149,7 @@ public class MainActivity extends AppCompatActivity {
 
             } else {
                 // Сервер оказался не тот, который нужен, сбрасываем результат
-                serverFound.get(wishServerIsFind)[net.SRV_NAME] = null;
+                serverFound.get(wishServerIsFind)[SRV_NAME] = null;
             }
         } else {
             // Сервера пока вообще нет
@@ -2069,6 +2215,37 @@ public class MainActivity extends AppCompatActivity {
 //        Beep();
 //        toStatusLineBlink("Нет подключения к серверу");
         btn_4_Cancel.callOnClick();
+    }
+
+    /**
+     * Распечатать содержимое "serverFound"
+     */
+    void printServerFound() {
+        Log.i(logTAG, "PRINT serverFound");
+        if (serverFound != null) {
+            for (int i = 0; i < serverFound.size(); i++) {
+                Log.i(logTAG, "serverFound[" + i + "]=" + serverFound.get(i)[SRV_NAME]);
+            }
+        }
+    }
+
+    /**
+     * Проверяет в serverFound есть ли в числе найденных указанный сервер
+     *
+     * @param serverName
+     * @return
+     */
+    boolean ifServerFound(String serverName) {
+        Log.i("ifServerFound", "serverFound.size()=" + serverFound.size());
+        if (serverFound.size() > 0) {
+            for (int i = 0; i < serverFound.size(); i++) {
+                if (serverFound.get(i)[0] != null && serverFound.get(i)[SRV_NAME].equals(serverName)) {
+                    Log.i("ifServerFound", "serverFound[" + i + "]=" + serverFound.get(i)[SRV_NAME]);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }
