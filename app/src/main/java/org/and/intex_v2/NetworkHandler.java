@@ -161,7 +161,7 @@ public class NetworkHandler {
         String retVar;
         Log.i("tryConnectToAllServers", "serverAddr=" + serverAddr + ", serverPort=" + serverPort);
         ServerPingClass serverPing = new ServerPingClass(activity, serverAddr, serverPort, whatFind);
-        activity.toStatusLineNoBlink("ServerPingClass=" + activity.numOfServerPingClasses);
+        activity.toStatusLineNoBlink("ServerPingClass=" + activity.sfc.numOfServerPingClasses.get(whatFind));
         if (serverPing != null) {
             retVar = serverPing.readServerName(whatFind);
             Log.i(getClass().getSimpleName(), "retVar=" + retVar);

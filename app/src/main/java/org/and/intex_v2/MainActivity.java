@@ -976,7 +976,7 @@ public class MainActivity extends AppCompatActivity {
             numOfServerPingClasses
                     .add(resI, 0);
             serverFound
-                    .add(resI, new String[]{pServerName});
+                    .add(resI, new String[]{pServerName,null});
             endServerFindCondition
                     .add(resI,false);
             // Возвращаем индекс структуры
@@ -1102,68 +1102,76 @@ public class MainActivity extends AppCompatActivity {
                 serverFoudFindResult = Result_Empty;
         int
                 whatDeviceWeFind = 0;
+
         // Если массив пока вообще пустой, то первым будет элемент с индексом 0
 
-        if (serverFound.size() > 0) {
-            for (i = 0; i < serverFound.size(); i++) {
-                if (serverFound.get(i)[SRV_NAME].equals(serverToFind) == true) {
-                    // Если мы такую запись нашли, то чистим все для нее
-                    whatDeviceWeFind
-                            = i;
-                    serverFoudFindResult
-                            = Result_Found;
-                    break;
-                } else {
-                    // Если такой записи нет, то создаем все по-новой
-                    whatDeviceWeFind
-                            = serverFound.size() + 1;
-                    serverFoudFindResult
-                            = Result_New;
-                }
-            }
-        }
-
-        // Добавлять связанные записи в аррайлисты будем как в случае пустого массива, так и в случае
-        // отсутствия нужной нам записи в непустом массиве
-        if (serverFoudFindResult == Result_Empty) {
-            serverFoudFindResult = Result_New;
-        }
-
-        // Если запись нашлась, то найти записи для данного сервера и уничтожить их
-        if (serverFoudFindResult == Result_Found) {
-            for (i = 0; i < serverFound.size(); i++) {
-                if (myTimerTask_watchOnServerFind.get(i).serverName == serverToFind) {
-                    myTimerTask_watchOnServerFind.remove(i);
-                    whatDeviceWeFind = i;
-                    break;
-                }
-            }
-            findServerTimer
-                    .remove(whatDeviceWeFind);
-            numOfServerPingClasses
-                    .remove(whatDeviceWeFind);
-            serverFound
-                    .remove(whatDeviceWeFind);
-            endServerFindCondition
-                    .remove(whatDeviceWeFind);
-        }
-
-        // Cоздать по-новой
-        findServerTimer
-                .add(whatDeviceWeFind, new Timer());
-        numOfServerPingClasses
-                .add(whatDeviceWeFind, new Integer(0));
-        serverFound
-                .add(whatDeviceWeFind, new String[3]);
-        endServerFindCondition
-                .add(whatDeviceWeFind, false);
+//        if (serverFound.size() > 0) {
+//            for (i = 0; i < serverFound.size(); i++) {
+//                if (serverFound.get(i)[SRV_NAME].equals(serverToFind) == true) {
+//                    // Если мы такую запись нашли, то чистим все для нее
+//                    whatDeviceWeFind
+//                            = i;
+//                    serverFoudFindResult
+//                            = Result_Found;
+//                    break;
+//                } else {
+//                    // Если такой записи нет, то создаем все по-новой
+//                    whatDeviceWeFind
+//                            = serverFound.size() + 1;
+//                    serverFoudFindResult
+//                            = Result_New;
+//                }
+//            }
+//        }
+//
+//        // Добавлять связанные записи в аррайлисты будем как в случае пустого массива, так и в случае
+//        // отсутствия нужной нам записи в непустом массиве
+//        if (serverFoudFindResult == Result_Empty) {
+//            serverFoudFindResult = Result_New;
+//        }
+//
+//        // Если запись нашлась, то найти записи для данного сервера и уничтожить их
+//        if (serverFoudFindResult == Result_Found) {
+//            for (i = 0; i < serverFound.size(); i++) {
+//                if (myTimerTask_watchOnServerFind.get(i).serverName == serverToFind) {
+//                    myTimerTask_watchOnServerFind.remove(i);
+//                    whatDeviceWeFind = i;
+//                    break;
+//                }
+//            }
+//            findServerTimer
+//                    .remove(whatDeviceWeFind);
+//            numOfServerPingClasses
+//                    .remove(whatDeviceWeFind);
+//            serverFound
+//                    .remove(whatDeviceWeFind);
+//            endServerFindCondition
+//                    .remove(whatDeviceWeFind);
+//        }
+//
+//        // Cоздать по-новой
+//        findServerTimer
+//                .add(whatDeviceWeFind, new Timer());
+//        numOfServerPingClasses
+//                .add(whatDeviceWeFind, new Integer(0));
+//        serverFound
+//                .add(whatDeviceWeFind, new String[3]);
+//        endServerFindCondition
+//                .add(whatDeviceWeFind, false);
 
         // Новая задача таймера - потом создать по-новой
+
+        Log.i("==CheckConnection==", "=============================");
+        Log.i("==CheckConnection==", "serverToFind=" + serverToFind);
+
+        whatDeviceWeFind = sfc.init(serverToFind);
+        Log.i("==CheckConnection==", "whatDeviceWeFind=" + whatDeviceWeFind);
+
         myTimerTask_watchOnServerFind
                 .add(whatDeviceWeFind, new myTimerTask_WatchOnServerFind(serverToFind, whatDeviceWeFind));
 
         //
-        Log.i(logTAG, "serverToFind=" + serverToFind + ", netmask=" + conf.networkMask);
+        Log.i("==CheckConnection==", "serverToFind=" + serverToFind + ", netmask=" + conf.networkMask);
 
         // Переходим в экран поиска
         L1.Activate(
@@ -1190,8 +1198,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Запускаем опрос по таймеру на предмет того, что сервер найден
-        findServerTimer.get(whatDeviceWeFind)
-                .schedule(myTimerTask_watchOnServerFind.get(whatDeviceWeFind), 100, 100);
+        sfc.findServerTimer.get(whatDeviceWeFind)
+                .schedule(sfc.findServerTimerTask.get(whatDeviceWeFind), 100, 100);
         //
         Log.i(logTAG, "L1.res=" + L1.findResult);
         //
@@ -2213,9 +2221,9 @@ public class MainActivity extends AppCompatActivity {
     void sub1(String serverToFind, int wishServerIsFind) {
         logTAG = "sub1 ";
         // Закончить
-        if (endServerFindCondition.get(wishServerIsFind) == true) {
+        if (sfc.endServerFindCondition.get(wishServerIsFind) == true) {
             Beep();
-            findServerTimer.get(wishServerIsFind).cancel();
+            sfc.findServerTimer.get(wishServerIsFind).cancel();
         }
         /**
          * Условие выхода из цикла:
@@ -2224,21 +2232,21 @@ public class MainActivity extends AppCompatActivity {
          * 3. Абстрактный тайм-аут.
          */
         // 1. Найден сервер
-        if (serverFound.get(wishServerIsFind)[SRV_NAME] != null) {
-            Log.i(logTAG, "serverFound=" + serverFound.get(wishServerIsFind)[SRV_NAME]);
-            if (serverFound.get(wishServerIsFind)[SRV_NAME].equals(serverToFind)) {
+        if (sfc.serverFound.get(wishServerIsFind)[SRV_NAME] != null) {
+            Log.i(logTAG, "serverFound=" + sfc.serverFound.get(wishServerIsFind)[SRV_NAME]);
+            if (sfc.serverFound.get(wishServerIsFind)[SRV_NAME].equals(serverToFind)) {
                 // Если сервер - тот, который мы ищем
                 // Прекратить дальнейший поиск
-                Log.i(getClass().getSimpleName(), "serverFound!!!" + serverFound.get(wishServerIsFind)[SRV_NAME]);
-                endServerFindCondition.set(wishServerIsFind, true);
+                Log.i(getClass().getSimpleName(), "serverFound!!!" + sfc.serverFound.get(wishServerIsFind)[SRV_NAME]);
+                sfc.endServerFindCondition.set(wishServerIsFind, true);
                 // Сохраняем данные в БД
                 db.store_Device_Addr_to_DB(
                         conf.networkMask,
-                        serverFound.get(wishServerIsFind)[SRV_NAME],
-                        serverFound.get(wishServerIsFind)[net.SRV_ADDR]
+                        sfc.serverFound.get(wishServerIsFind)[SRV_NAME],
+                        sfc.serverFound.get(wishServerIsFind)[net.SRV_ADDR]
                 );
                 // Адрес переносим в конфигурацию
-                conf.ipAddress = serverFound.get(wishServerIsFind)[net.SRV_ADDR];
+                conf.ipAddress = sfc.serverFound.get(wishServerIsFind)[net.SRV_ADDR];
 
                 Log.i(getClass().getSimpleName(), "ПОИСК СЕРВЕРА ОСТАНОВЛЕН: " + wishServerIsFind);
 
@@ -2246,16 +2254,16 @@ public class MainActivity extends AppCompatActivity {
 
             } else {
                 // Сервер оказался не тот, который нужен, сбрасываем результат
-                serverFound.get(wishServerIsFind)[SRV_NAME] = null;
+                sfc.serverFound.get(wishServerIsFind)[SRV_NAME] = null;
             }
         } else {
             // Сервера пока вообще нет
             // Проверяем, есть ли еще активные процессы срединения с сервером
-            if (numOfServerPingClasses.get(wishServerIsFind) > 0) {
+            if (sfc.numOfServerPingClasses.get(wishServerIsFind) > 0) {
                 // Пока поиск продолжаем
             } else {
                 // Прекратить дальнейший поиск, т.к. все равно больше ничего не найдется
-                endServerFindCondition.set(wishServerIsFind, true);
+                sfc.endServerFindCondition.set(wishServerIsFind, true);
             }
         }
     }

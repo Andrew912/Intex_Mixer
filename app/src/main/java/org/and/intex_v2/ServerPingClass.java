@@ -48,8 +48,8 @@ public class ServerPingClass {
         mainActivity =
                 activity;
         // Обозначаем свое присутствие
-        activity.numOfServerPingClasses
-                .add(whatFind, activity.numOfServerPingClasses.get(whatFind) + 1);
+        activity.sfc.numOfServerPingClasses
+                .add(whatFind, activity.sfc.numOfServerPingClasses.get(whatFind) + 1);
 
         socketAddr =
                 pAddr;
@@ -79,7 +79,7 @@ public class ServerPingClass {
 
         @Override
         protected Void doInBackground(String... params) {
-            if (mainActivity.endServerFindCondition.get(Integer.parseInt(params[2])) == false) {
+            if (mainActivity.sfc.endServerFindCondition.get(Integer.parseInt(params[2])) == false) {
                 serverName = null;
                 Log.i(logTAG, "ServerExchangeClass_getOperations: params[0]=" + params[0] + ", params[1]=" + params[1] + ", params[2]=" + params[2]);
                 whatFindParam = params[2];
@@ -108,8 +108,8 @@ public class ServerPingClass {
                          * Теоретически можно эти параметры фиксировать и при верхнем вызове класса
                          * Надо посмотреть с точки зрения оптимальности, что удалить
                          */
-                        mainActivity.serverFound.get(whatFindParamI)[mainActivity.net.SRV_ADDR] = params[0];
-                        mainActivity.serverFound.get(whatFindParamI)[mainActivity.net.SRV_PORT] = params[1];
+                        mainActivity.sfc.serverFound.get(whatFindParamI)[mainActivity.net.SRV_ADDR] = params[0];
+                        mainActivity.sfc.serverFound.get(whatFindParamI)[mainActivity.net.SRV_PORT] = params[1];
                     }
                     socket = null;
                 } catch (Exception e) {
@@ -124,7 +124,7 @@ public class ServerPingClass {
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
             // Если не объявлен стоп
-            if (mainActivity.endServerFindCondition.get(whatFindParamI) == false) {
+            if (mainActivity.sfc.endServerFindCondition.get(whatFindParamI) == false) {
                 // Разбираем входящее сообщение
                 incomingMessage = new IncomingMessage(mainActivity, rs);
                 // Пытаемся выделить имя сервера
@@ -136,12 +136,12 @@ public class ServerPingClass {
                     /**
                      * Вот тут мы фиксируем имя найденного сервера
                      */
-                    mainActivity.serverFound.get(whatFindParamI)[mainActivity.net.SRV_NAME] = serverName;
+                    mainActivity.sfc.serverFound.get(whatFindParamI)[mainActivity.net.SRV_NAME] = serverName;
                 }
             }
             if (serverName != null) {
-                mainActivity.numOfServerPingClasses
-                        .set(whatFindParamI, mainActivity.numOfServerPingClasses.get(Integer.parseInt(whatFindParam)) - 1);
+                mainActivity.sfc.numOfServerPingClasses
+                        .set(whatFindParamI, mainActivity.sfc.numOfServerPingClasses.get(Integer.parseInt(whatFindParam)) - 1);
                 /**
                  * А тут мы резко выводим на экран всякую информацию о происходящем
                  */
@@ -152,9 +152,9 @@ public class ServerPingClass {
                         .setVisibility(View.VISIBLE);
                 mainActivity.serverFindResultToStatusLine("Сервер найден");
                 mainActivity.toTextView("Сервер " +
-                        mainActivity.serverFound.get(whatFindParamI)[mainActivity.net.SRV_NAME] +
+                        mainActivity.sfc.serverFound.get(whatFindParamI)[mainActivity.net.SRV_NAME] +
                         " найден по адресу " +
-                        mainActivity.serverFound.get(whatFindParamI)[mainActivity.net.SRV_ADDR]);
+                        mainActivity.sfc.serverFound.get(whatFindParamI)[mainActivity.net.SRV_ADDR]);
                 Log.i(getClass().getSimpleName(), "Сервер найден, БЛЯ!!!");
             }
         }
