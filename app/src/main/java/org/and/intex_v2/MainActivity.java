@@ -75,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
             loader;
     NetworkHandler
             net;
+    ServerFindControlClass
+            sfc;
 
     /* Лайауты */
     LinearLayout[]
@@ -310,6 +312,8 @@ public class MainActivity extends AppCompatActivity {
                 = new LoaderCommunicator(this);
         net
                 = new NetworkHandler(this);
+        sfc
+                = new ServerFindControlClass();
 
         /***********************
          * Объявление Лайауты
@@ -461,7 +465,6 @@ public class MainActivity extends AppCompatActivity {
         /* Вот тут я не уверен, что именно так должно все быть:
            Наверное, лучше все эти присваивания перенести в CheckConnection для случая, когда
            нам попадается для поиска новое устройство */
-
 //        for (int i = 0; i < MAX_NUM_OF_DEVICES; i++) {
 //            findServerTimer
 //                    .add(i, new Timer());
@@ -472,7 +475,6 @@ public class MainActivity extends AppCompatActivity {
 //            endServerFindCondition
 //                    .add(i, false);
 //        }
-
         conf.is_Connected_to_network = net.isConnectedToNetwork();
         if (conf.is_Connected_to_network) {
             conf.ipAddress = net.get_My_IP();
@@ -892,21 +894,116 @@ public class MainActivity extends AppCompatActivity {
          *******************************/
 
         paramInit();
-
         conf.paramRefresh();
-
         printServerFound();
-
-        currentTask
-                .setTaskData();
-
-        controller
-                .controller(L__BUTTON_START);
+        currentTask.setTaskData();
+        controller.controller(L__BUTTON_START);
 
         /*******************************
          * КОНЕЦ
          *******************************/
-    }// end of onCreate
+    } /* end of onCreate */
+
+    /**
+     * Класс управления поиском сетевых устройств
+     */
+    public class ServerFindControlClass {
+        ArrayList<String>
+                serverName;                         // Имя сервера
+        ArrayList<Timer>
+                findServerTimer;                    // Таймер поиска сервера
+        ArrayList<myTimerTask_WatchOnServerFind>
+                findServerTimerTask;                // Задача таймера поиска сервера
+        public ArrayList<Integer>
+                numOfServerPingClasses;             // Количество открытых в данный момент ServerPingClass
+        public ArrayList<String[]>
+                serverFound;                        // Параметры найденного сервера
+        public ArrayList<Boolean>
+                endServerFindCondition;             // Условие выхода из цикла при поиске серверов
+
+        /**
+         * Конструктор
+         */
+        public ServerFindControlClass() {
+            serverName
+                    = new ArrayList<>();
+            findServerTimer
+                    = new ArrayList<>();
+            findServerTimerTask
+                    = new ArrayList<>();
+            numOfServerPingClasses
+                    = new ArrayList<>();
+            serverFound
+                    = new ArrayList<>();
+            endServerFindCondition
+                    = new ArrayList<>();
+        }
+
+        /**
+         * Инициализация структуры под новый поиск устройства
+         *
+         * @param pServerName
+         */
+        public int init(String pServerName) {
+            boolean
+                    resB = false;
+            int
+                    resI = 0;
+            // Смотрим, нет ли в структуре записи с таким именем сервера
+            for (int i = 0; i < serverName.size(); i++) {
+                resI = i;
+                resB = true;
+                break;
+            }
+            // Если в структуре нашлась запись для данного сервера, то удаляем эту запись
+            if (resB == true) {
+                findServerTimer
+                        .remove(resI);
+                findServerTimerTask
+                        .remove(resI);
+                numOfServerPingClasses
+                        .remove(resI);
+                serverFound
+                        .remove(resI);
+                endServerFindCondition
+                        .remove(resI);
+            }
+            // И создаем новую с таким же индексом
+            findServerTimer
+                    .add(resI, new Timer());
+            findServerTimerTask
+                    .add(resI, new myTimerTask_WatchOnServerFind(pServerName, resI));
+            numOfServerPingClasses
+                    .add(resI, 0);
+            serverFound
+                    .add(resI, new String[]{pServerName});
+            endServerFindCondition
+                    .add(resI,false);
+            // Возвращаем индекс структуры
+            return resI;
+        }
+
+        /**
+         * Возвращает индекс структуры, соответствующий заданному имени сервера
+         *
+         * @param pServerName
+         * @return
+         */
+        public int getIndex(String pServerName) {
+            // Если записей в структуре нет вообще
+            if (serverName.size() == 0) {
+                return -1;
+            }
+            // Ищем подходящую запись
+            for (int i = 0; i < serverName.size(); i++) {
+                if (serverName.get(i).equals(pServerName) == true) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+    }
 
     /**
      * Сохраняет все параметры конфигурации
