@@ -83,14 +83,19 @@ public class Configuration {
      * Обновляет значения параметров конфигурации
      */
     public void paramRefresh() {
-        deviceName
-                = a.db.paramGet("MixerName")[PARAMETER_VALUE];      //
-        terminalName
-                = a.db.paramGet("MixerTermName")[PARAMETER_VALUE];
+        String[] tmp;
+        tmp = a.db.paramGet("MixerName");      //
+        if (tmp != null) {
+            deviceName = tmp[PARAMETER_VALUE];
+        }
+        tmp = a.db.paramGet("MixerTermName");
+        if(tmp != null) {
+            terminalName = tmp[PARAMETER_VALUE];
+        }
         // Полный адрес терминала в сети
         terminalAddress
                 = a.db.get_Device_Addr_from_DB(networkMask, terminalName)[a.net.SRV_ADDR];
-        Toast.makeText(a.getApplicationContext(),"Терминал:"+terminalAddress,Toast.LENGTH_LONG).show();
+        Toast.makeText(a.getApplicationContext(), "Терминал:" + terminalAddress, Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -100,7 +105,7 @@ public class Configuration {
     public void termAddrRefresh() {
         terminalAddress
                 = a.db.get_Device_Addr_from_DB(networkMask, terminalName)[a.net.SRV_ADDR];
-        Toast.makeText(a.getApplicationContext(),"Терминал:"+terminalAddress,Toast.LENGTH_LONG).show();
+        Toast.makeText(a.getApplicationContext(), "Терминал:" + terminalAddress, Toast.LENGTH_LONG).show();
     }
 
 }

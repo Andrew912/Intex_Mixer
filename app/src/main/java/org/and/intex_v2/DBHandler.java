@@ -13,6 +13,7 @@ import static org.and.intex_v2.DBHelper.FIELD_PROP_NAME;
 import static org.and.intex_v2.DBHelper.FIELD_IS_NAME;
 import static org.and.intex_v2.DBHelper.FIELD_IS_VALUE;
 import static org.and.intex_v2.DBHelper.NONE;
+import static org.and.intex_v2.DBHelper.OBJECTS;
 import static org.and.intex_v2.DBHelper.PARAMETERS;
 import static org.and.intex_v2.DBHelper.TABLENAME;
 
@@ -153,6 +154,20 @@ public class DBHandler {
     }
 
     /**
+     * Очистка таблицы объектов
+     */
+    public void clearTableObjects() {
+        Log.i(logTag, "=====================================================================");
+        Log.i(logTag, "clearTableObjects. Deleted=" +
+                activity.db.database.delete(
+                        table_OBJECTS.TABLE_NAME,
+                        null,
+                        null
+                )
+        );
+    }
+
+    /**
      * Получить адрес и порт указанного устройства
      *
      * @param devName - имя устройства
@@ -163,9 +178,11 @@ public class DBHandler {
 
     public String[] get_Device_Addr_from_DB(String devNetMask, String devName) {
 
+        Log.i(logTag, "=====================================================================");
         Log.i(logTag, "get_Device_Addr_from_DB: devNetMask=" + devNetMask + ", devName=" + devName);
 
-        String[] retVar = {null, null};
+//        String[] retVar = {devName, devNetMask + "2", null, null};
+        String[] retVar = {devName, null, null, null};
         Cursor c = activity.db.database.query(
                 table_OBJECTS.TABLE_NAME,
                 new String[]{
@@ -178,15 +195,20 @@ public class DBHandler {
                 new String[]{devNetMask, devName},
                 null, null, null);
         if (c.moveToFirst()) {
-            retVar[activity.net.SRV_NAME] = devName;
-            retVar[activity.net.SRV_ADDR] = c.getString(c.getColumnIndex(table_OBJECTS.ADDRESS));
-//            retVar[mainActivity.net.SRV_PORT] = null;
-//            retVar[mainActivity.net.SRV_STAT] = null;
-//            retVar[mainActivity.net.SRV_FULLARRD] = devNetMask + retVar[mainActivity.net.SRV_ADDR];
-
-//            retVar[mainActivity.net.SRV_PORT] = null;
-//            retVar[mainActivity.net.SRV_STAT] = null;
+            Log.i(logTag, "get_Device_Addr_from_DB:");
+            Log.i(logTag, "========================");
+            while (c.moveToNext()) {
+                Log.i(
+                        logTag,
+                        "retVar[0]=" + c.getString(c.getColumnIndex(table_OBJECTS.NAME)) + " " + "retVar[1]=" + c.getString(c.getColumnIndex(table_OBJECTS.ADDRESS)));
+            }
         }
+        if (c.moveToFirst()) {
+            retVar[activity.net.SRV_ADDR] = c.getString(c.getColumnIndex(table_OBJECTS.ADDRESS));
+        }
+        Log.i(logTag, "get_Device_Addr_from_DB: retVar[0]=" + retVar[activity.net.SRV_NAME]);
+        Log.i(logTag, "get_Device_Addr_from_DB: retVar[1]=" + retVar[activity.net.SRV_ADDR]);
+        Log.i(logTag, "=====================================================================");
         return retVar;
     }
 
@@ -406,6 +428,55 @@ public class DBHandler {
         } else {
             Log.i("dbTableList_Parameters", "Table " + dbHelper.DBRecord[PARAMETERS][TABLENAME][NONE][NONE] + " has no records");
         }
+    }
+
+    /**
+     * Распечатка таблицы OBJECTS
+     */
+
+    void dbTableList_OBJECTS() {
+        Cursor cursor =
+                activity.db.database.query(
+                        dbHelper.DBRecord[OBJECTS][TABLENAME][NONE][NONE],
+                        new String[]{
+                                dbHelper.DBRecord[OBJECTS][FIELDINFO][FIELD_IS_ID][FIELD_PROP_NAME],
+                                dbHelper.DBRecord[OBJECTS][FIELDINFO][FIELD_IS_NAME][FIELD_PROP_NAME],
+                                dbHelper.DBRecord[OBJECTS][FIELDINFO][FIELD_IS_TYPE][FIELD_PROP_NAME],
+                                dbHelper.DBRecord[OBJECTS][FIELDINFO][3][FIELD_PROP_NAME],
+                                dbHelper.DBRecord[OBJECTS][FIELDINFO][4][FIELD_PROP_NAME],
+                                dbHelper.DBRecord[OBJECTS][FIELDINFO][5][FIELD_PROP_NAME]
+                        },
+                        null, null, null, null, null
+                );
+        int
+                recCount;
+        String[]
+                res;
+        try {
+            recCount = cursor.getCount();
+        } catch (Exception e) {
+            recCount = 0;
+        }
+        // Записей явно больше нуля
+        Log.i("dbTableList_Parameters", "===========================================================================");
+        if (recCount > 0) {
+            cursor.moveToFirst();
+            do {
+                res = new String[]{
+                        cursor.getString(cursor.getColumnIndex(dbHelper.DBRecord[OBJECTS][FIELDINFO][FIELD_IS_ID][FIELD_PROP_NAME])),
+                        cursor.getString(cursor.getColumnIndex(dbHelper.DBRecord[OBJECTS][FIELDINFO][FIELD_IS_NAME][FIELD_PROP_NAME])),
+                        cursor.getString(cursor.getColumnIndex(dbHelper.DBRecord[OBJECTS][FIELDINFO][FIELD_IS_TYPE][FIELD_PROP_NAME])),
+                        cursor.getString(cursor.getColumnIndex(dbHelper.DBRecord[OBJECTS][FIELDINFO][3][FIELD_PROP_NAME])),
+                        cursor.getString(cursor.getColumnIndex(dbHelper.DBRecord[OBJECTS][FIELDINFO][4][FIELD_PROP_NAME])),
+                        cursor.getString(cursor.getColumnIndex(dbHelper.DBRecord[OBJECTS][FIELDINFO][5][FIELD_PROP_NAME]))
+                };
+                Log.i("dbTableList_Parameters", "id=" + res[0] + ", name=" + res[1] + ", type=" + res[2] + ", address=" + res[3] + ", netmask=" + res[4] + ", port=" + res[5]);
+            } while (cursor.moveToNext());
+            Log.i("dbTableList_Parameters", "Table " + dbHelper.DBRecord[OBJECTS][TABLENAME][NONE][NONE] + " has " + cursor.getCount() + " records");
+        } else {
+            Log.i("dbTableList_Parameters", "Table " + dbHelper.DBRecord[OBJECTS][TABLENAME][NONE][NONE] + " has no records");
+        }
+        Log.i("dbTableList_Parameters", "===========================================================================");
     }
 
     /**

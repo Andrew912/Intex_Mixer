@@ -101,7 +101,7 @@ public class LayoutClass {
         // Поля
         if (pTextText != null) {
             for (int i = 0; i < text_size; i++) {
-                Log.i("***", "text[" + i + "]=" + pTextText[i]);
+                Log.i("LayoutClass ***", "text[" + i + "]=" + pTextText[i]);
                 text[i].setText(pTextText[i]);
             }
         }

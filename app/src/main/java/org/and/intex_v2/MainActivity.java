@@ -37,6 +37,7 @@ import static org.and.intex_v2.DBHelper.KEY_OPPA_PARAM_NAME;
 import static org.and.intex_v2.DBHelper.KEY_OPPA_PARAM_VALUE;
 import static org.and.intex_v2.DBHelper.KEY_OPPA_TO_DELETE;
 import static org.and.intex_v2.NetworkHandler.SRV_NAME;
+import static org.and.intex_v2.NetworkHandler.SRV_NOW;
 
 public class MainActivity extends AppCompatActivity {
     /* Паараметры лога */
@@ -113,8 +114,9 @@ public class MainActivity extends AppCompatActivity {
     TextView textView2;
 
     /* Кнопки */
-    Button btn_1_Done,
-            btn_ClearDB,
+    Button
+            btn_1_Done,
+            btn_ClearDB, btn_ClearDNS,
             btn_ToDB;
     Button
             btn_0_Back, btn_0_Task, btn_0_Task1, btn_0_Oper, btn_0_SendMail,
@@ -400,6 +402,29 @@ public class MainActivity extends AppCompatActivity {
                                 }
                 );
 
+        L[LAYOUT_9_SERV_REQUEST] =
+                new LayoutClass(
+                        (LinearLayout) findViewById(R.id.LL9_ServiceRequest),
+                        new Timer[]
+                                {},
+                        new TextView[]
+                                {
+                                        (TextView) findViewById(R.id.text_1_Info)
+                                },
+                        new String[]
+                                {
+                                        "Запрос на обслуживание"
+                                },
+                        new Button[]
+                                {
+                                        (Button) findViewById(R.id.button_9_Accept)
+                                },
+                        new String[]
+                                {
+                                        "Начать"
+                                }
+                );
+
         // Служебный экран - акивируется в момент выполнения поиска сервера в подсети
         L1 = new LayoutClass(
                 (LinearLayout) findViewById(R.id.layout_1000),
@@ -451,17 +476,17 @@ public class MainActivity extends AppCompatActivity {
         /**************************************************
          * Переменные, управляющие поиском устройств в сети
          **************************************************/
-        findServerTimer
-                = new ArrayList<>();
-        myTimerTask_watchOnServerFind
-                = new ArrayList<>();
-        numOfServerPingClasses
-                = new ArrayList<>();
-        serverFound
-                = new ArrayList<>();
-        endServerFindCondition
-                = new ArrayList<>();
-
+//        findServerTimer
+//                = new ArrayList<>();
+//        myTimerTask_watchOnServerFind
+//                = new ArrayList<>();
+//        numOfServerPingClasses
+//                = new ArrayList<>();
+//        serverFound
+//                = new ArrayList<>();
+//        endServerFindCondition
+//                = new ArrayList<>();
+//
         /* Вот тут я не уверен, что именно так должно все быть:
            Наверное, лучше все эти присваивания перенести в CheckConnection для случая, когда
            нам попадается для поиска новое устройство */
@@ -546,8 +571,7 @@ public class MainActivity extends AppCompatActivity {
         /*******************************
          * Кнопки - экран поиска сервера
          *******************************/
-
-        // Сервер найден - возврат к предыдущему экрану
+        /* Сервер найден - возврат к предыдущему экрану */
         b_1000_0 = (Button) findViewById(R.id.b_1000_0);
         b_1000_0.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -563,8 +587,7 @@ public class MainActivity extends AppCompatActivity {
                         null);
             }
         });
-
-        // ОТМЕНА - надо остановить поиск и отменить операции предыдущего экрана
+        /* ОТМЕНА - надо остановить поиск и отменить операции предыдущего экрана */
         b_1000_1 = (Button) findViewById(R.id.b_1000_1);
         b_1000_1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -634,7 +657,7 @@ public class MainActivity extends AppCompatActivity {
         btn_ToDB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                controller.controller(L11_BUTTON_BEGIN_JOB_NEXT);
+                controller.controller(L1_BUTTON_TO_PARAMS);
             }
         });
 
@@ -645,6 +668,17 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 storer.clearDB();
                 controller.controller(L__BUTTON_START);
+            }
+        });
+
+        // Кнопка btn_ClearDNS
+        btn_ClearDNS = (Button) findViewById(R.id.button_Clear_DNS);
+        btn_ClearDNS.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                db.dbTableList_OBJECTS();
+                db.clearTableObjects();
+                db.dbTableList_OBJECTS();
             }
         });
 
@@ -686,6 +720,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Кнопка btn_1_Begin (LL1)
         btn_1_Begin = (Button) findViewById(R.id.button_1_BeginJob);
+
         btn_1_Begin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -904,6 +939,18 @@ public class MainActivity extends AppCompatActivity {
          *******************************/
     } /* end of onCreate */
 
+    class ClickButton_btn_1_Begin extends TimerTask {
+        @Override
+        public void run() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    btn_1_Begin.callOnClick();
+                }
+            });
+        }
+    }
+
     /**
      * Класс управления поиском сетевых устройств
      */
@@ -951,9 +998,11 @@ public class MainActivity extends AppCompatActivity {
                     resI = 0;
             // Смотрим, нет ли в структуре записи с таким именем сервера
             for (int i = 0; i < serverName.size(); i++) {
-                resI = i;
-                resB = true;
-                break;
+                if (serverName.get(i).equals(pServerName) == true) {
+                    resI = i + 1;
+                    resB = true;
+                    break;
+                }
             }
             // Если в структуре нашлась запись для данного сервера, то удаляем эту запись
             if (resB == true) {
@@ -967,6 +1016,8 @@ public class MainActivity extends AppCompatActivity {
                         .remove(resI);
                 endServerFindCondition
                         .remove(resI);
+                serverName
+                        .remove(resI);
             }
             // И создаем новую с таким же индексом
             findServerTimer
@@ -976,9 +1027,12 @@ public class MainActivity extends AppCompatActivity {
             numOfServerPingClasses
                     .add(resI, 0);
             serverFound
-                    .add(resI, new String[]{pServerName,null});
+                    .add(resI, new String[]{pServerName, null, null, null, null, null});
             endServerFindCondition
-                    .add(resI,false);
+                    .add(resI, false);
+            serverName
+                    .add(resI, pServerName);
+
             // Возвращаем индекс структуры
             return resI;
         }
@@ -1078,7 +1132,15 @@ public class MainActivity extends AppCompatActivity {
      * @param serverToFind - имя сервера
      */
 
-    public boolean CheckConnection(String serverToFind, LayoutClass pLayoutToReturn, Button btnToReturn) {
+    public boolean CheckConnection(
+            String
+                    serverToFind,
+            String
+                    serverStartAddress,
+            LayoutClass
+                    pLayoutToReturn,
+            Button
+                    btnToReturn) {
 
         // Гасим тот экран, на который будем возвращаться
         pLayoutToReturn.myLayout.setVisibility(View.INVISIBLE);
@@ -1164,13 +1226,10 @@ public class MainActivity extends AppCompatActivity {
         Log.i("==CheckConnection==", "=============================");
         Log.i("==CheckConnection==", "serverToFind=" + serverToFind);
 
-        whatDeviceWeFind = sfc.init(serverToFind);
+        whatDeviceWeFind
+                = sfc.init(serverToFind);
+
         Log.i("==CheckConnection==", "whatDeviceWeFind=" + whatDeviceWeFind);
-
-        myTimerTask_watchOnServerFind
-                .add(whatDeviceWeFind, new myTimerTask_WatchOnServerFind(serverToFind, whatDeviceWeFind));
-
-        //
         Log.i("==CheckConnection==", "serverToFind=" + serverToFind + ", netmask=" + conf.networkMask);
 
         // Переходим в экран поиска
@@ -1180,19 +1239,19 @@ public class MainActivity extends AppCompatActivity {
                 layout,
                 pLayoutToReturn,
                 null
-//                btnToReturn
         );
-
 
         // Пытаемся определить параметры устройства, сохраненные в БД
         String[] terminalAddressFromDB
                 = db.get_Device_Addr_from_DB(conf.networkMask, serverToFind);
-        //
-        Log.i(logTAG, "Find=" + terminalAddressFromDB[0] + ", addr=" + terminalAddressFromDB[1]);
+
+        /* Где-то тут будем обрабатывать начальный адрес искомого сервера */
+
+        Log.i(logTAG, "Find=" + terminalAddressFromDB[net.SRV_NAME] + ", addr=" + terminalAddressFromDB[net.SRV_ADDR]);
 
         // Запускаем поиск интересующего нас сервера
         try {
-            net.findServerInNetwork(serverToFind, terminalAddressFromDB[1], conf.terminalPort, whatDeviceWeFind);
+            net.findServerInNetwork(serverToFind, terminalAddressFromDB[net.SRV_ADDR], conf.terminalPort, whatDeviceWeFind);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1869,7 +1928,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void run() {
             Socket socket;
-            String socketAddr = "192.168.1.113";
+            String socketAddr = conf.terminalAddress;
+//            String socketAddr = "192.168.1.113";
             int socketPort = 18080;
             InputStream is;
             OutputStream os;
@@ -1902,6 +1962,7 @@ public class MainActivity extends AppCompatActivity {
                 public void run() {
                     // Обновить данные о загрузке на экране
                     displayWeightParameters();
+                    displayWeightParameters1();
                 }
             });
 
@@ -1910,7 +1971,7 @@ public class MainActivity extends AppCompatActivity {
 
     public String extractDigits(String srcString) {
         String r = "0";
-        Pattern pattern = Pattern.compile("\\d+");
+        Pattern pattern = Pattern.compile("data=\'\\d+\'");
         Matcher matcher = pattern.matcher(srcString);
         if (matcher.find()) {
             r = (matcher.group());
@@ -1978,6 +2039,7 @@ public class MainActivity extends AppCompatActivity {
                  */
 
                 break;
+
             case LAYOUT_0_PARAMS:
                 /**
                  *  Заполнение экранных значений параметров
@@ -2005,6 +2067,14 @@ public class MainActivity extends AppCompatActivity {
                 // Остановить получение показаний весов
                 weightDataFromDeviceReader_Stop();
                 weightDataToLoaderSender_Stop();
+
+                // Запуск автонажатия кнопки
+//                Timer timer_Click_btn_1_Begin
+//                        = new Timer();
+//                ClickButton_btn_1_Begin clickButton_btn_1_begin
+//                        = new ClickButton_btn_1_Begin();
+//                timer_Click_btn_1_Begin
+//                        .schedule(clickButton_btn_1_begin,3000);
 
                 break;
 
@@ -2232,7 +2302,7 @@ public class MainActivity extends AppCompatActivity {
          * 3. Абстрактный тайм-аут.
          */
         // 1. Найден сервер
-        if (sfc.serverFound.get(wishServerIsFind)[SRV_NAME] != null) {
+        if (sfc.serverFound.get(wishServerIsFind)[SRV_NOW] != null) {
             Log.i(logTAG, "serverFound=" + sfc.serverFound.get(wishServerIsFind)[SRV_NAME]);
             if (sfc.serverFound.get(wishServerIsFind)[SRV_NAME].equals(serverToFind)) {
                 // Если сервер - тот, который мы ищем
@@ -2254,7 +2324,7 @@ public class MainActivity extends AppCompatActivity {
 
             } else {
                 // Сервер оказался не тот, который нужен, сбрасываем результат
-                sfc.serverFound.get(wishServerIsFind)[SRV_NAME] = null;
+                sfc.serverFound.get(wishServerIsFind)[SRV_NOW] = null;
             }
         } else {
             // Сервера пока вообще нет
@@ -2327,9 +2397,9 @@ public class MainActivity extends AppCompatActivity {
      */
     void printServerFound() {
         Log.i(logTAG, "PRINT serverFound");
-        if (serverFound != null) {
-            for (int i = 0; i < serverFound.size(); i++) {
-                Log.i(logTAG, "serverFound[" + i + "]=" + serverFound.get(i)[SRV_NAME]);
+        if (sfc.serverFound != null) {
+            for (int i = 0; i < sfc.serverFound.size(); i++) {
+                Log.i(logTAG, "serverFound[" + i + "]=" + sfc.serverFound.get(i)[SRV_NAME]);
             }
         }
     }
@@ -2341,11 +2411,11 @@ public class MainActivity extends AppCompatActivity {
      * @return
      */
     boolean ifServerFound(String serverName) {
-        Log.i("ifServerFound", "serverFound.size()=" + serverFound.size());
-        if (serverFound.size() > 0) {
-            for (int i = 0; i < serverFound.size(); i++) {
-                if (serverFound.get(i)[0] != null && serverFound.get(i)[SRV_NAME].equals(serverName)) {
-                    Log.i("ifServerFound", "serverFound[" + i + "]=" + serverFound.get(i)[SRV_NAME]);
+        Log.i("ifServerFound", "serverFound.size()=" + sfc.serverFound.size());
+        if (sfc.serverFound.size() > 0) {
+            for (int i = 0; i < sfc.serverFound.size(); i++) {
+                if (sfc.serverFound.get(i)[0] != null && sfc.serverFound.get(i)[SRV_NAME].equals(serverName)) {
+                    Log.i("ifServerFound", "serverFound[" + i + "]=" + sfc.serverFound.get(i)[SRV_NAME]);
                     return true;
                 }
             }

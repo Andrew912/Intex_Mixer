@@ -91,6 +91,7 @@ public class ServerPingClass {
                 try {
                     InetAddress serverAddr = InetAddress.getByName(params[0]);
                     socket = new Socket(params[0], Integer.parseInt(params[1]));
+                    Log.i(logTAG, "ServerExchangeClass_getOperations: " + 1);
                     if (socket.isConnected() == true) {
                         is = socket.getInputStream();
                         os = socket.getOutputStream();
@@ -103,13 +104,16 @@ public class ServerPingClass {
                         System.arraycopy(buffer, 0, b, 0, read);
                         rs = new String(b).replace("\"", "--");
                         socket.close();
+                        Log.i(logTAG, "ServerExchangeClass_getOperations: " + 2);
                         /**
                          * Фиксируем адрес+порт, если сервер ответил
                          * Теоретически можно эти параметры фиксировать и при верхнем вызове класса
                          * Надо посмотреть с точки зрения оптимальности, что удалить
                          */
+                        Log.i(logTAG, "ServerExchangeClass_getOperations: " + 2);
                         mainActivity.sfc.serverFound.get(whatFindParamI)[mainActivity.net.SRV_ADDR] = params[0];
                         mainActivity.sfc.serverFound.get(whatFindParamI)[mainActivity.net.SRV_PORT] = params[1];
+                        Log.i(logTAG, "ServerExchangeClass_getOperations: " + 3);
                     }
                     socket = null;
                 } catch (Exception e) {
@@ -137,6 +141,7 @@ public class ServerPingClass {
                      * Вот тут мы фиксируем имя найденного сервера
                      */
                     mainActivity.sfc.serverFound.get(whatFindParamI)[mainActivity.net.SRV_NAME] = serverName;
+                    mainActivity.sfc.serverFound.get(whatFindParamI)[mainActivity.net.SRV_NOW] = "YES";
                 }
             }
             if (serverName != null) {

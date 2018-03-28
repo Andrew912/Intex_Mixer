@@ -111,6 +111,7 @@ public class Controller {
             case L0_BUTTON_SENDMAIL:
                 // Отправка статистики по операциям
 
+                /* Надо будет включить отправку почты обратно потом */
                 mainActivity.server.sendMail();
                 break;
 
@@ -144,10 +145,11 @@ public class Controller {
                     Log.i("MAIL", "Нет почты для отправки...");
                 }
 
-                // Проверяем подключение весового терминала если он еще не подключен
+                /* Проверяем подключение весового терминала если он еще не подключен */
                 if (mainActivity.ifServerFound(mainActivity.conf.terminalName) == false) {
                     mainActivity.CheckConnection(
                             mainActivity.conf.terminalName,
+                            null,
                             mainActivity.L[LAYOUT_4_TASK_SELECT],
                             mainActivity.btn_11_Next);
                     mainActivity.conf.termAddrRefresh();
@@ -284,6 +286,7 @@ public class Controller {
                             = (int) (mainActivity.currentOper.loadValue * Float.parseFloat(mainActivity.getString(R.string.LOADING_PERCENT_WEIGHT_TOLERANCE_UP)));
                     // Параметры - на экран
                     mainActivity.displayWeightParameters();
+                    mainActivity.displayWeightParameters1();
 
                     mainActivity.gotoLayout(LAYOUT_71_LOAD_OPER, mainActivity.currentOper.getOperationInfoForView());
                     break;
@@ -297,9 +300,22 @@ public class Controller {
 
                     /* Надо проверить подключние погрузчика */
 
+                    Log.i("L5_BUTTON_ACCEPT",
+                            "servern=" + mainActivity.currentOper.getParam("servern") +
+                                    ", servera=" + mainActivity.currentOper.getParam("servera"));
+                    Log.i("L5_BUTTON_ACCEPT","==============================");
 
+                    /* Попытаемся найти погрузчик в сети */
 
+//                    mainActivity.CheckConnection(
+//                            mainActivity.currentOper.getParam("servern"),
+//                            null,
+//                            mainActivity.L[LAYOUT_9_SERV_REQUEST],
+//                            null);
+//
+//                    mainActivity.conf.termAddrRefresh();
                     mainActivity.gotoLayout(LAYOUT_9_SERV_REQUEST, mainActivity.currentOper.getOperationInfoForView());
+
                 } else {
                     mainActivity.gotoLayout(LAYOUT_6_SIMPLE_OPER, mainActivity.currentOper.getOperationInfoForView());
                 }
@@ -329,9 +345,9 @@ public class Controller {
                 loadingMayBegin = true;
                 // Начать передачу данных на погрузчик
                 mainActivity.makeOperation_Load_with_Loader();
-                // Деактивировать конпку "Начать"
+                // Деактивировать кнопку "Начать"
                 mainActivity.btn_7_Start.setVisibility(View.INVISIBLE);
-                // Активировать конпку "Закончить"
+                // Активировать кнопку "Закончить"
                 mainActivity.btn_7_Complete.setVisibility(View.VISIBLE);
                 break;
 
@@ -410,6 +426,7 @@ public class Controller {
                         (int) (mainActivity.currentOper.loadValue * Float.parseFloat(mainActivity.getString(R.string.LOADING_PERCENT_WEIGHT_TOLERANCE_UP)));
                 // Параметры - на экран
                 mainActivity.displayWeightParameters();
+                mainActivity.displayWeightParameters1();
                 //
                 if (mainActivity.currentOper.loadNoLoader == true) {
                     mainActivity.gotoLayout(LAYOUT_71_LOAD_OPER, "");

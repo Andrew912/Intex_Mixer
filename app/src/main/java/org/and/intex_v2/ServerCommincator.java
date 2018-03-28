@@ -327,7 +327,7 @@ public class ServerCommincator {
     // Статус отправки сообщения
     String statusMessageTransfer(String resivedString) {
         String r = "0";
-        Pattern pattern = Pattern.compile("st=\'\\d\'");
+        Pattern pattern = Pattern.compile("st=\'\\d+\'");
         Matcher matcher = pattern.matcher(resivedString);
         while (matcher.find()) {
             r = matcher.group().substring(4, 5);

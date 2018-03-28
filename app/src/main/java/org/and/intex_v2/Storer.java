@@ -55,9 +55,9 @@ public class Storer {
 //        dbHelper = new DBHelper(mainActivity.context);
 //        database = dbHelper.getWritableDatabase();
 
-    mainActivity.log("DATABASE: " + activity.db.database.toString() + ", " + activity.db.database.getPath());
-    currentTaskNumber = getRecCount_Task();
-}
+        mainActivity.log("DATABASE: " + activity.db.database.toString() + ", " + activity.db.database.getPath());
+        currentTaskNumber = getRecCount_Task();
+    }
 
     /**
      * Количество незавершенных задач в списке
@@ -779,7 +779,7 @@ public class Storer {
             weightIndicatorNow = true;
             weightLoaded = weightCurrent - weightStart;
         }
-        Log.i("Storer", "weightIndicatorS =" + weightIndicatorS);
+        Log.i("Storer", "weightIndicatorS =" + weightIndicatorS + ", Start=" + weightStart + ", Current=" + weightCurrent);
     }
 
     void clearDB() {

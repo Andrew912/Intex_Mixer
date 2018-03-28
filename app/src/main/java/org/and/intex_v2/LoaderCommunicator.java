@@ -76,7 +76,9 @@ public class LoaderCommunicator {
         // Адрес терминала берем из конфигуратора
         // А вот как он там оказался, надо смотреть в конфигураторе
         socketAddr =
-                activity.conf.terminalAddress;
+                "192.168.1.44";
+//        socketAddr =
+//                activity.conf.terminalAddress;
 //        socketAddr =
 //                mainActivity.conf.getIPaddress(mainActivity.conf.terminalStartAddress);
         socketPort =
@@ -98,7 +100,7 @@ public class LoaderCommunicator {
         if (timerServerRequest != null) {
             timerServerRequest.cancel();
         }
-        tryServiceRequest=true;
+        tryServiceRequest = true;
         channelFree = true;
     }
 
@@ -184,7 +186,7 @@ public class LoaderCommunicator {
     }
 
     public void send(String messageForSend) {
-        new LoaderSendMessagesClass().execute(messageForSend);
+        new LoaderSendMessagesClass().execute(messageForSend,socketAddr);
     }
 
     // Класс передачи сообщений на сервер
@@ -204,14 +206,17 @@ public class LoaderCommunicator {
             o = params;
             int oSize = o.length;
             try {
+                Log.i("LoaderSendMessagesClass", "socketAddr=" + socketAddr);
                 InetAddress serverAddr = InetAddress.getByName(socketAddr);
                 socket = new Socket(serverAddr, socketPort);
                 if (socket.isConnected() == true) {
                     is = socket.getInputStream();
                     os = socket.getOutputStream();
-                    for (int i = 0; i < oSize; i++) {
-                        Log.i(logTAG, "message to send= " + o[i]);
-                        byte[] buffer = o[i].getBytes();
+//                    for (int i = 0; i < oSize; i++) {
+//                        Log.i(logTAG, "message to send= " + o[i]);
+//                        byte[] buffer = o[i].getBytes();
+                        Log.i(logTAG, "message to send= " + o[0]);
+                        byte[] buffer = o[0].getBytes();
                         os.write(buffer);
                         os.flush();
                         buffer = new byte[buffSize];
@@ -226,7 +231,7 @@ public class LoaderCommunicator {
                         Log.i(logTAG, rs);
                         Log.i(logTAG, "-----------------------------");
                         Log.i(logTAG, "answerMessageType=" + answerMessageType);
-                    }
+//                    }
                     socket.close();
                 }
             } catch (Exception e) {
@@ -264,7 +269,7 @@ public class LoaderCommunicator {
 
                     // Если дано разрешение на начало погрузки
                     if (activity.controller.loadingMayBegin == true) {
-                    // Сообщение о начале погрузки
+                        // Сообщение о начале погрузки
                         send(msgLoadingBegin);
                     }
                 }

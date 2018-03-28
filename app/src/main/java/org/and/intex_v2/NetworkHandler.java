@@ -22,7 +22,8 @@ public class NetworkHandler {
             SRV_ADDR = 1,
             SRV_PORT = 2,
             SRV_STAT = 3,
-            SRV_FULLARRD = 4;
+            SRV_FULLARRD = 4,
+            SRV_NOW = 5;
 
     String
             logTag = "NetworkHandler";
@@ -183,6 +184,7 @@ public class NetworkHandler {
         activity.toStatusLineBlink("Find server = " + serverName);
 
         Log.i(getClass().getSimpleName(), "Поиск сервера: " + serverName + " at " + serverAddr);
+
         String[] serverParameters = {null, null, null,null,null};
 
         /**
