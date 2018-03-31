@@ -24,11 +24,11 @@ public class Messenger {
 
     public Messenger(MainActivity activity) {
         this.activity = activity;
-        messageHeader = pair("ver", this.activity.configurator.protocol()) +
-                pair("dev", this.activity.configurator.deviceid()) +
-                pair("pwd", this.activity.configurator.password());
+        messageHeader = pair("ver", this.activity.conf.getDevProtocol()) +
+                pair("dev", this.activity.conf.getDevId()) +
+                pair("pwd", this.activity.conf.getDevPassowrd());
 
-        messageHeader0 = pair("device", this.activity.configurator.deviceid());
+        messageHeader0 = pair("device", this.activity.conf.getDevId());
     }
 
     String time() {

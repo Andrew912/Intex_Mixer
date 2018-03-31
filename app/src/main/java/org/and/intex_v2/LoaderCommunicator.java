@@ -113,21 +113,29 @@ public class LoaderCommunicator {
 
     void serverServiceRequest() {
         //  Начинаем попытки
-        msgServiceRequest = activity.messenger.msg_ToLoader_ServiceRequest();
-        msgLoadingBegin = activity.messenger.msg_ToLoader_LoadBegin();
-        tryServiceRequest = true;
-        deviceWaitAnswerStatus = DeviceWaitAnswerStatus.REQUEST;
+        msgServiceRequest
+                = activity.messenger.msg_ToLoader_ServiceRequest();
+        msgLoadingBegin
+                = activity.messenger.msg_ToLoader_LoadBegin();
+        tryServiceRequest
+                = true;
+        deviceWaitAnswerStatus
+                = DeviceWaitAnswerStatus.REQUEST;
 
         // Процедура, вызываемая по таймеру
-        SendServiceRequest sendServiceRequest = new SendServiceRequest();
+        SendServiceRequest sendServiceRequest =
+                new SendServiceRequest();
 
         // Запуcк таймера 1с + 1с
-        timerServerRequest = new Timer();
-        timerServerRequest.schedule(sendServiceRequest, 1000, 1000);
+        timerServerRequest
+                = new Timer();
+        timerServerRequest
+                .schedule(sendServiceRequest, 1000, 1000);
     }
 
     void serverSendWeightStop() {
-        continueSendWeight = false;
+        continueSendWeight
+                = false;
     }
 
     void serverSendWeight() {
@@ -135,10 +143,13 @@ public class LoaderCommunicator {
         continueSendWeight = true;
         if (timerServerSendWeight == null) {
             // Процедура, вызываемая по таймеру
-            SendWeightData sendWeightData = new SendWeightData();
+            SendWeightData sendWeightData
+                    = new SendWeightData();
             // Запуcк таймера 0.5 с + 0.5 с
-            timerServerSendWeight = new Timer();
-            timerServerSendWeight.schedule(sendWeightData, 500, 500);
+            timerServerSendWeight
+                    = new Timer();
+            timerServerSendWeight
+                    .schedule(sendWeightData, 500, 500);
         }
     }
 
@@ -275,7 +286,8 @@ public class LoaderCommunicator {
                 }
                 break;
             case ACCEPT:
-                tryServiceRequest = false;
+                tryServiceRequest
+                        = false;
                 break;
             case REJECT:
                 break;

@@ -143,6 +143,116 @@
             </LinearLayout>
 
             <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/LL0_Clearing"
+                android:visibility="invisible">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <Button
+                        android:text="clear dns"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/button_Clear_DNS"
+                        android:layout_weight="1"
+                        android:background="@color/colorAccent" />
+
+                    <Button
+                        android:id="@+id/button_Clear_DB"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="очистить базу данных"
+                        tools:ignore="InefficientWeight"
+                        android:background="@android:color/holo_red_dark" />
+
+                    <Button
+                        android:id="@+id/button_Clear_Data"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="очистить задание и почту"
+                        tools:ignore="InefficientWeight"
+                        android:background="@android:color/holo_orange_dark" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="278dp">
+
+                    <ScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.83">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical" >
+
+                            <TextView
+                                android:id="@+id/text_0_Info"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1.83"
+                                android:textSize="@dimen/activity_horizontal_margin"
+                                tools:ignore="HardcodedText"
+                                android:scrollHorizontally="false"
+                                android:scrollbarAlwaysDrawVerticalTrack="false" />
+                        </LinearLayout>
+                    </ScrollView>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <Button
+                        android:id="@+id/button_00_Back"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="выход"
+                        tools:ignore="ButtonStyle,HardcodedText,NestedWeights"
+                        android:background="@android:color/holo_green_dark" />
+
+                    <Button
+                        android:id="@+id/button_0_Task"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="task"
+                        tools:ignore="ButtonStyle" />
+
+                    <Button
+                        android:id="@+id/button_0_Oper"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="oper"
+                        tools:ignore="ButtonStyle" />
+
+                    <Button
+                        android:id="@+id/button_0_Task1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="mail"
+                        tools:ignore="ButtonStyle,HardcodedText" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/LL0_Dialog"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -157,43 +267,27 @@
                     android:orientation="horizontal">
 
                     <Button
-                        android:id="@+id/button_Clear_DB"
+                        android:id="@+id/button_to_Clearing"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="очистить базу данных"
+                        android:text="очистка данных"
                         tools:ignore="InefficientWeight"
                         android:background="@android:color/holo_red_dark" />
 
-                    <Button
-                        android:text="clear dns"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/button_Clear_DNS"
-                        android:layout_weight="1"
-                        android:background="@color/colorAccent" />
                 </LinearLayout>
-
-                <TextView
-                    android:id="@+id/text_0_Info"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="TextView"
-                    android:textSize="14sp"
-                    tools:ignore="HardcodedText" />
 
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="top">
+                    android:layout_gravity="top"
+                    android:layout_weight="1.01">
 
                     <LinearLayout
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="50">
+                        android:layout_height="wrap_content">
 
                         <TextView
                             android:text="Сеть"
@@ -215,7 +309,7 @@
                     <LinearLayout
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="wrap_content">
 
                         <TextView
                             android:text="Пароль"
@@ -237,7 +331,7 @@
                     <LinearLayout
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="wrap_content">
 
                         <TextView
                             android:text="Миксер"
@@ -315,22 +409,6 @@
                     android:orientation="horizontal">
 
                     <Button
-                        android:id="@+id/button_0_SendMail"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="отправить статистику"
-                        tools:ignore="HardcodedText,InefficientWeight"
-                        android:background="@android:color/holo_orange_light" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.01"
-                    android:orientation="horizontal">
-
-                    <Button
                         android:id="@+id/button_0_Back"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -340,28 +418,22 @@
                         android:background="@android:color/holo_green_dark" />
 
                     <Button
-                        android:id="@+id/button_0_Task"
+                        android:id="@+id/button_0_SendMail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="task"
-                        tools:ignore="ButtonStyle" />
+                        android:text="отправить статистику"
+                        tools:ignore="HardcodedText,InefficientWeight"
+                        android:background="@android:color/holo_orange_light" />
 
-                    <Button
-                        android:id="@+id/button_0_Task1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Task1"
-                        tools:ignore="ButtonStyle,HardcodedText" />
+                </LinearLayout>
 
-                    <Button
-                        android:id="@+id/button_0_Oper"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="oper"
-                        tools:ignore="ButtonStyle" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.01"
+                    android:orientation="horizontal">
+
                 </LinearLayout>
             </LinearLayout>
 
@@ -542,7 +614,7 @@
                         android:layout_height="100dp"
                         android:layout_weight="1"
                         android:text="отмена"
-                        android:textSize="26sp"
+                        android:textSize="24sp"
                         tools:ignore="ButtonStyle,HardcodedText" />
 
                     <Button
@@ -551,7 +623,7 @@
                         android:layout_height="100dp"
                         android:layout_weight="1"
                         android:text="принять"
-                        android:textSize="26sp"
+                        android:textSize="24sp"
                         android:visibility="invisible"
                         tools:ignore="ButtonStyle,HardcodedText" />
                 </LinearLayout>
@@ -838,13 +910,13 @@
                 android:layout_height="match_parent"
                 android:gravity="bottom"
                 android:orientation="vertical"
-                android:visibility="visible"
+                android:visibility="invisible"
                 android:weightSum="1">
 
                 <TextView
                     android:id="@+id/text_9_Header"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="45dp"
                     android:text="Запрос на обслуживание"
                     android:textAlignment="center"
                     android:textSize="30sp" />
@@ -853,8 +925,8 @@
                     android:id="@+id/text_9_info"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textAlignment="center"
+                    android:layout_weight="0.88"
+                    android:textAlignment="viewStart"
                     android:textSize="40sp"
                     android:textColor="@android:color/holo_orange_dark" />
 

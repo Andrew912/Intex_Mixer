@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -467,7 +466,7 @@ public class ServerCommincator {
         newValues.put(DBHelper.KEY_OPER_NAME, s[3]);
         DBHelper dbh = new DBHelper(mainActivity.context);
         SQLiteDatabase db = dbh.getWritableDatabase();
-        db.insert(dbh.TABLE_OPERATION, null, newValues);
+        db.insert(dbh.TABLE_OPER, null, newValues);
         db.close();
         dbh.close();
     }

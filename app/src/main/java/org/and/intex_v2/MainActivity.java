@@ -30,7 +30,6 @@ import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static android.media.CamcorderProfile.get;
 import static android.view.View.VISIBLE;
 import static org.and.intex_v2.DBHelper.KEY_OPPA_OPER_ID;
 import static org.and.intex_v2.DBHelper.KEY_OPPA_PARAM_NAME;
@@ -116,10 +115,16 @@ public class MainActivity extends AppCompatActivity {
     /* Кнопки */
     Button
             btn_1_Done,
-            btn_ClearDB, btn_ClearDNS,
+            btn_go_Clearing,
+            btn_ClearDB,
+            btn_ClearDNS,
+            btn_ClearData,
             btn_ToDB;
     Button
-            btn_0_Back, btn_0_Task, btn_0_Task1, btn_0_Oper, btn_0_SendMail,
+
+            btn_0_Back,
+            btn_00_Back,
+            btn_0_Task, btn_0_Task1, btn_0_Oper, btn_0_SendMail,
             btn_1_Begin,
             btn_2_TaskGet, btn_2_Cancel,
             btn_3_Cancel, btn_3_Continue,
@@ -148,54 +153,60 @@ public class MainActivity extends AppCompatActivity {
     static final int NUMBER_OF_BUTTONS = 4;
 
     /* Коды - События нажатия клавиш, списков и пр. */
-    static final int L__BUTTON_START = 0;
-    static final int L0_BUTTON_SENDMAIL = 1001;
-    static final int L0_BUTTON_BACK = 1;
-    static final int L0_BUTTON_TASK = 2;
-    static final int L0_BUTTON_TASK1 = 3;
-    static final int L0_BUTTON_OPER = 4;
-    static final int L0_BUTTON_PARAM_SAVE = 5;
-    static final int L1_BUTTON_TO_PARAMS = 100;
-    static final int L1_BUTTON_BEGIN_JOB = 101;
-    static final int L11_BUTTON_BEGIN_JOB_NEXT = 102;
-    static final int L2_BUTTON_TASK_SELECT = 200;
-    static final int L2_BUTTON_CANCEL = 201;
-    static final int L3_BUTTON_TASK_CONTINUE = 300;
-    static final int L3_BUTTON_CANCEL = 301;
-    static final int L4_BUTTON_CANCEL = 400;
-    static final int L4_BUTTON_ACCEPT = 401;
-    static final int L4_LIST_TASK_SELECT = 402;
-    static final int L5_BUTTON_CANCEL = 500;
-    static final int L5_PRE_BUTTON_ACCEPT = 501;
-    static final int L5_BUTTON_ACCEPT = 502;
-    static final int L5_LIST_OPER_SELECT = 503;
-    static final int L6_BUTTON_COMPLETE = 600;
-    static final int L6_BUTTON_CANCEL = 601;
-    static final int L7_BUTTON_COMPLETE = 701;
-    static final int L7_BUTTON_CANCEL = 702;
-    static final int L7_BUTTON_START = 703;
-    static final int L71_BUTTON_COMPLETE = 7101;
-    static final int L71_BUTTON_CANCEL = 7102;
-    static final int L71_BUTTON_START = 7103;
-    static final int L8_BUTTON_OK = 801;
-    static final int L9_BUTTON_CANCEL = 901;
-    static final int L9_BUTTON_ACCEPT = 902;
-    static final int L9_BUTTON_REJECT = 903;
-    static final int L9_BUTTON_REFRESH = 904;
+    static final int
+            L00_BUTTON_BACK = 1100,
+            L0_TO_CLEARING = 1101,
+            L00_DATA_CLEAR = 1102,
+            L__BUTTON_START = 0,
+            L00_BUTTON_SENDMAIL = 1001,
+            L0_BUTTON_BACK = 1,
+            L00_BUTTON_TASK = 2,
+            L00_BUTTON_MAIL = 3,
+            L00_BUTTON_OPER = 4,
+            L0_BUTTON_PARAM_SAVE = 5,
+            L1_BUTTON_TO_PARAMS = 100,
+            L1_BUTTON_BEGIN_JOB = 101,
+            L11_BUTTON_BEGIN_JOB_NEXT = 102,
+            L2_BUTTON_TASK_SELECT = 200,
+            L2_BUTTON_CANCEL = 201,
+            L3_BUTTON_TASK_CONTINUE = 300,
+            L3_BUTTON_CANCEL = 301,
+            L4_BUTTON_CANCEL = 400,
+            L4_BUTTON_ACCEPT = 401,
+            L4_LIST_TASK_SELECT = 402,
+            L5_BUTTON_CANCEL = 500,
+            L5_PRE_BUTTON_ACCEPT = 501,
+            L5_BUTTON_ACCEPT = 502,
+            L5_LIST_OPER_SELECT = 503,
+            L6_BUTTON_COMPLETE = 600,
+            L6_BUTTON_CANCEL = 601,
+            L7_BUTTON_COMPLETE = 701,
+            L7_BUTTON_CANCEL = 702,
+            L7_BUTTON_START = 703,
+            L71_BUTTON_COMPLETE = 7101,
+            L71_BUTTON_CANCEL = 7102,
+            L71_BUTTON_START = 7103,
+            L8_BUTTON_OK = 801,
+            L9_BUTTON_CANCEL = 901,
+            L9_BUTTON_ACCEPT = 902,
+            L9_BUTTON_REJECT = 903,
+            L9_BUTTON_REFRESH = 904;
 
     /* Коды - Ссылки на лайауты для выборки из массива */
-    static final int LAYOUT_0_PARAMS = 0;
-    static final int LAYOUT_1_BEGIN = 1;
-    static final int LAYOUT_2_NO_TASK = 2;
-    static final int LAYOUT_3_DO_TASK = 3;
-    static final int LAYOUT_4_TASK_SELECT = 4;
-    static final int LAYOUT_5_OPER_SELECT = 5;
-    static final int LAYOUT_6_SIMPLE_OPER = 6;
-    static final int LAYOUT_7_COMPLEX_OPER = 7;
-    static final int LAYOUT_71_LOAD_OPER = 10;
-    static final int LAYOUT_8_TASK_COMPLETE = 8;
-    static final int LAYOUT_9_SERV_REQUEST = 9;
-    static final int LAYOUT_11_EMPTY = 11;
+    static final int
+            LAYOUT_0_PARAMS = 0,
+            LAYOUT_1_BEGIN = 1,
+            LAYOUT_2_NO_TASK = 2,
+            LAYOUT_3_DO_TASK = 3,
+            LAYOUT_4_TASK_SELECT = 4,
+            LAYOUT_5_OPER_SELECT = 5,
+            LAYOUT_6_SIMPLE_OPER = 6,
+            LAYOUT_7_COMPLEX_OPER = 7,
+            LAYOUT_8_TASK_COMPLETE = 8,
+            LAYOUT_9_SERV_REQUEST = 9,
+            LAYOUT_71_LOAD_OPER = 10,
+            LAYOUT_11_EMPTY = 11,
+            LAYOUT_00_CLEARING = 12;
 
     /* Текст экрана в лайауте */
     TextView textView[];
@@ -280,18 +291,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        /***********************
-         * Объявление объектов
-         ***********************/
+        /********************************
+         * Объявление объектов - классов
+         ********************************/
         context = MainActivity.this;
         logTAG = "MAIN: ";
         logMessage = "";
         statusLine
                 = new StatusLine();
-        configurator
-                = new Configurator(this);
         conf
                 = new Configuration(this);
+//        configurator
+//                = new Configurator(this);
         messenger
                 = new Messenger(this);
         dbHelper
@@ -326,6 +337,10 @@ public class MainActivity extends AppCompatActivity {
         // Старый вариант формирования экранов
         layout
                 = new LinearLayout[layoutStatus.numberOfLayouts];
+        layout[LAYOUT_11_EMPTY]
+                = (LinearLayout) findViewById(R.id.LL11_Empty);
+        layout[LAYOUT_00_CLEARING]
+                = (LinearLayout) findViewById(R.id.LL0_Clearing);
         layout[LAYOUT_0_PARAMS]
                 = (LinearLayout) findViewById(R.id.LL0_Dialog);
         layout[LAYOUT_1_BEGIN]
@@ -500,7 +515,8 @@ public class MainActivity extends AppCompatActivity {
 //            endServerFindCondition
 //                    .add(i, false);
 //        }
-        conf.is_Connected_to_network = net.isConnectedToNetwork();
+        conf.is_Connected_to_network
+                = net.isConnectedToNetwork();
         if (conf.is_Connected_to_network) {
             conf.ipAddress = net.get_My_IP();
             conf.networkMask = net.get_Net_Mask_from_IP(conf.ipAddress);
@@ -511,7 +527,7 @@ public class MainActivity extends AppCompatActivity {
          *******************************/
         textView = new TextView[layoutStatus.numberOfLayouts];
         textView[LAYOUT_0_PARAMS] =
-                (TextView) findViewById(R.id.text_0_Info);
+                null;
         textView[LAYOUT_1_BEGIN] =
                 (TextView) findViewById(R.id.text_1_Info);
         textView[LAYOUT_2_NO_TASK] =
@@ -532,9 +548,15 @@ public class MainActivity extends AppCompatActivity {
                 (TextView) findViewById(R.id.text_9_info);
         textView[LAYOUT_71_LOAD_OPER] =
                 (TextView) findViewById(R.id.text_71_info);
+        textView[LAYOUT_11_EMPTY] =
+                null;
+        textView[LAYOUT_00_CLEARING] =
+                (TextView) findViewById(R.id.text_0_Info);
 
-        text_7_target = (TextView) findViewById(R.id.text_7_target);
-        text_71_target = (TextView) findViewById(R.id.text_71_target);
+        text_7_target
+                = (TextView) findViewById(R.id.text_7_target);
+        text_71_target
+                = (TextView) findViewById(R.id.text_71_target);
 
         /*******************************
          * ListView: Task select
@@ -560,11 +582,16 @@ public class MainActivity extends AppCompatActivity {
         operSelect_ListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                textView2 = (TextView) view;
-                operSelect_SelectedValue = textView2.getText().toString();
-                statusLine.set(operSelect_SelectedValue);
-                setTextInLayout(LAYOUT_5_OPER_SELECT, operSelect_SelectedValue);
-                controller.controller(L5_LIST_OPER_SELECT);
+                textView2
+                        = (TextView) view;
+                operSelect_SelectedValue
+                        = textView2.getText().toString();
+                statusLine
+                        .set(operSelect_SelectedValue);
+                setTextInLayout
+                        (LAYOUT_5_OPER_SELECT, operSelect_SelectedValue);
+                controller
+                        .controller(L5_LIST_OPER_SELECT);
             }
         });
 
@@ -592,7 +619,9 @@ public class MainActivity extends AppCompatActivity {
         b_1000_1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                endServerFindCondition.set(0, true);
+                if (endServerFindCondition != null) {
+                    endServerFindCondition.set(0, true);
+                }
                 toStatusLineNoBlink("Поиск отменен");
                 L1.Deactivate(
                         layout);
@@ -620,7 +649,42 @@ public class MainActivity extends AppCompatActivity {
         /*******************************
          * Кнопки ВСЕ
          *******************************/
-        buttonStatus = new boolean[NUMBER_OF_BUTTONS];
+
+        /* Очистка текущих данных */
+        btn_ClearData
+                = (Button) findViewById(R.id.button_Clear_Data);
+        btn_ClearData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("btn_ClearData", "pressed");
+                controller.controller(L00_DATA_CLEAR);
+            }
+        });
+
+        /* Вход в экран очистки параметров */
+        btn_go_Clearing
+                = (Button) findViewById(R.id.button_to_Clearing);
+        btn_go_Clearing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("btn_go_Clearing", "pressed");
+                controller.controller(L0_TO_CLEARING);
+            }
+        });
+
+        /* Возврат из второго экрана параметров */
+        btn_00_Back
+                = (Button) findViewById(R.id.button_00_Back);
+        btn_00_Back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("btn_00_Back", "pressed");
+                controller.controller(L1_BUTTON_TO_PARAMS);
+            }
+        });
+
+        buttonStatus
+                = new boolean[NUMBER_OF_BUTTONS];
         buttonStatusDrop();
 
         // btn_11_Next
@@ -687,7 +751,7 @@ public class MainActivity extends AppCompatActivity {
         btn_0_Back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                controller.controller(L0_BUTTON_BACK);
+                controller.controller(LAYOUT_1_BEGIN);
             }
         });
 
@@ -696,7 +760,7 @@ public class MainActivity extends AppCompatActivity {
         btn_0_Task.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                controller.controller(L0_BUTTON_TASK);
+                controller.controller(L00_BUTTON_TASK);
             }
         });
 
@@ -705,7 +769,7 @@ public class MainActivity extends AppCompatActivity {
         btn_0_Task1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                controller.controller(L0_BUTTON_TASK1);
+                controller.controller(L00_BUTTON_MAIL);
             }
         });
 
@@ -714,7 +778,7 @@ public class MainActivity extends AppCompatActivity {
         btn_0_Oper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                controller.controller(L0_BUTTON_OPER);
+                controller.controller(L00_BUTTON_OPER);
             }
         });
 
@@ -1313,9 +1377,16 @@ public class MainActivity extends AppCompatActivity {
         Log.i("MAIN.LOG: ", s);
     }
 
-    //
+    /**
+     * Установка текста в лайауте
+     *
+     * @param n
+     * @param s
+     */
     void setTextInLayout(int n, String s) {
-        textView[n].setText(s);
+        if (textView[n] != null) {
+            textView[n].setText(s);
+        }
     }
 
     // Вычисление значения при выборе ListView Task select
@@ -1912,10 +1983,8 @@ public class MainActivity extends AppCompatActivity {
             for (int i = 0; i < LayoutNumberParameter; i++) {
                 status[i] = false;
             }
-
             // При старте фидим всегда первый Л
             status[1] = true;
-
         }
 
         public boolean getStatus(int p) {
@@ -2002,9 +2071,6 @@ public class MainActivity extends AppCompatActivity {
         textView[LAYOUT_71_LOAD_OPER].setText(String.valueOf(storer.weightRemain));
     }
 
-    void setTextView(int layout, String text) {
-    }
-
     public void log(boolean needLog, String toLog) {
         if (needLog) {
             logMessage += toLog + "\n";
@@ -2033,6 +2099,9 @@ public class MainActivity extends AppCompatActivity {
         layoutVisiblitySet(newLayout);                          // Установить видимость слоя
         toStatusLine("Layout=" + newLayout);
         switch (newLayout) {
+            case LAYOUT_00_CLEARING:
+
+                break;
             case LAYOUT_11_EMPTY:
                 /**
                  * "Пустой" слой для различных операций, связанных с длительным выполнением чего-нибудь
@@ -2339,7 +2408,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void toTextView(String textToTextView) {
-        textView[CurrentLayout].setText(textToTextView);
+        Log.i("toTextView", "CurrentLayout=" + CurrentLayout);
+        if (textView[CurrentLayout] != null) {
+            textView[CurrentLayout].setText(textToTextView);
+        }
     }
 
     void serverFindResultToStatusLine(String serverFindResult) {

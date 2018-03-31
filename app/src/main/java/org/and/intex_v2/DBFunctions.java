@@ -3,14 +3,6 @@ package org.and.intex_v2;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import static android.provider.Contacts.SettingsColumns.KEY;
-import static org.and.intex_v2.DBHelper.FIELDINFO;
-import static org.and.intex_v2.DBHelper.FIELD_PROP_NAME;
-import static org.and.intex_v2.DBHelper.INDEX_OPPA_ID;
-import static org.and.intex_v2.DBHelper.INDEX_OPPA_OPER_ID;
-import static org.and.intex_v2.DBHelper.INDEX_OPPA_PARAM_NAME;
-import static org.and.intex_v2.DBHelper.INDEX_OPPA_PARAM_VALUE;
-import static org.and.intex_v2.DBHelper.INDEX_OPPA_TO_DELETE;
 import static org.and.intex_v2.DBHelper.KEY_MAIL_ANSWER;
 import static org.and.intex_v2.DBHelper.KEY_MAIL_COMPLETE;
 import static org.and.intex_v2.DBHelper.KEY_MAIL_ID;
@@ -41,6 +33,10 @@ import static org.and.intex_v2.DBHelper.KEY_TASK_TO_DELETE;
 import static org.and.intex_v2.DBHelper.NONE;
 import static org.and.intex_v2.DBHelper.OPER_PARAM;
 import static org.and.intex_v2.DBHelper.TABLENAME;
+import static org.and.intex_v2.DBHelper.TABLE_MAIL;
+import static org.and.intex_v2.DBHelper.TABLE_OPER;
+import static org.and.intex_v2.DBHelper.TABLE_OPER_PARAM;
+import static org.and.intex_v2.DBHelper.TABLE_TASK;
 
 
 /**
@@ -62,10 +58,9 @@ public class DBFunctions {
                 dbHelper.getWritableDatabase();
     }
 
-    void task() {
+    String task() {
         activity.log("TASK begin");
-
-        String s = "";
+        String s = "Список задач\n\n";
         Cursor c = db.query(
                 dbHelper.TABLE_TASK,
                 new String[]{
@@ -76,31 +71,27 @@ public class DBFunctions {
                         KEY_TASK_COMPLETE,
                         KEY_TASK_TO_DELETE},
                 null, null, null, null, null);
-        s = s + "Cursor: " + c.getCount() + "\n";
+        s = s + "Записей: " + c.getCount() + "\n\n";
 
         if (c.moveToFirst()) {
-//        if (controller.getCount()>0) {
-//            controller.moveToFirst();
             do {
                 s = s +
-                        "operId=" + c.getString(c.getColumnIndex(KEY_TASK_ID))
-                        + ", taskComment=" + c.getString(c.getColumnIndex(KEY_TASK_COMMENT))
-                        + ", current=" + c.getString(c.getColumnIndex(KEY_TASK_IS_CURRENT))
-                        + ", operStatus=" + c.getString(c.getColumnIndex(KEY_TASK_STATUS))
-                        + ", complete=" + c.getString(c.getColumnIndex(KEY_TASK_COMPLETE))
-                        + ", delete=" + c.getString(c.getColumnIndex(KEY_TASK_TO_DELETE))
-                        + "\n";
+                        "taskId=" + c.getString(c.getColumnIndex(KEY_TASK_ID))
+                        + "\ntaskComment=" + c.getString(c.getColumnIndex(KEY_TASK_COMMENT))
+                        + "\ncurrent=" + c.getString(c.getColumnIndex(KEY_TASK_IS_CURRENT))
+                        + "\noperStatus=" + c.getString(c.getColumnIndex(KEY_TASK_STATUS))
+                        + "\ncomplete=" + c.getString(c.getColumnIndex(KEY_TASK_COMPLETE))
+                        + "\ndelete=" + c.getString(c.getColumnIndex(KEY_TASK_TO_DELETE))
+                        + "\n\n";
             } while (c.moveToNext() == true);
-
             activity.log(s);
-            activity.textView[0].setText(s);
             c.close();
         }
+        return s;
     }
 
-    void task1() {
+    String task1() {
         activity.log("TASK begin");
-
         String s = "";
         Cursor c = db.query(
                 dbHelper.TABLE_TASK,
@@ -114,29 +105,30 @@ public class DBFunctions {
                 "(" + KEY_TASK_IS_CURRENT + "=?) AND (" + KEY_TASK_COMPLETE + "=?)",
                 new String[]{String.valueOf(1), String.valueOf(0)},
                 null, null, null);
-        s = s + "Cursor: " + c.getCount() + "\n";
+        s = s + "Записей: " + c.getCount() + "\n\n";
         if (c.moveToFirst()) {
             do {
                 s = s +
                         "operId=" + c.getString(c.getColumnIndex(KEY_TASK_ID))
-                        + ", taskComment=" + c.getString(c.getColumnIndex(KEY_TASK_COMMENT))
-                        + ", current=" + c.getString(c.getColumnIndex(KEY_TASK_IS_CURRENT))
-                        + ", operStatus=" + c.getString(c.getColumnIndex(KEY_TASK_STATUS))
-                        + ", complete=" + c.getString(c.getColumnIndex(KEY_TASK_COMPLETE))
-                        + ", delete=" + c.getString(c.getColumnIndex(KEY_TASK_TO_DELETE))
-                        + "\n";
+                        + "\naskComment=" + c.getString(c.getColumnIndex(KEY_TASK_COMMENT))
+                        + "\nurrent=" + c.getString(c.getColumnIndex(KEY_TASK_IS_CURRENT))
+                        + "\nperStatus=" + c.getString(c.getColumnIndex(KEY_TASK_STATUS))
+                        + "\nomplete=" + c.getString(c.getColumnIndex(KEY_TASK_COMPLETE))
+                        + "\nelete=" + c.getString(c.getColumnIndex(KEY_TASK_TO_DELETE))
+                        + "\n\n";
             } while (c.moveToNext() == true);
 
             activity.log(s);
-            activity.textView[0].setText(s);
+//            activity.textView[0].setText(s);
         }
+        return s;
     }
 
-    void oper() {
+    String oper() {
         activity.log("OPER begin");
-        String s = "Task:" + activity.currentTask.taskId + " (" + activity.currentTask.taskComment + ")\n";
+        String s = "Список операций\n\n";
         Cursor c = db.query(
-                dbHelper.TABLE_OPERATION,
+                dbHelper.TABLE_OPER,
                 new String[]{
                         KEY_OPER_ID,
                         KEY_OPER_TYPE,
@@ -148,30 +140,30 @@ public class DBFunctions {
                         KEY_OPER_TO_DELETE
                 },
                 null, null, null, null, null);
-        s = s + "Cursor: " + c.getCount() + "\n";
+        s = s + "Записей: " + c.getCount() + "\n\n";
         if (c.moveToFirst()) {
             do {
                 s = s +
                         "operId=" + c.getString(c.getColumnIndex(KEY_OPER_ID))
-                        + ", task=" + c.getString(c.getColumnIndex(KEY_OPER_TASK_ID))
-                        + ", comment=" + c.getString(c.getColumnIndex(KEY_OPER_NAME))
-                        + ", type=" + c.getString(c.getColumnIndex(KEY_OPER_TYPE))
-                        + ", status=" + c.getString(c.getColumnIndex(KEY_OPER_STATUS))
-                        + ", complete=" + c.getString(c.getColumnIndex(KEY_OPER_COMPLETE))
-                        + ", current=" + c.getString(c.getColumnIndex(KEY_OPER_IS_CURRENT))
-                        + ", delete=" + c.getString(c.getColumnIndex(KEY_OPER_TO_DELETE))
-                        + "\n";
+                        + "\ntask=" + c.getString(c.getColumnIndex(KEY_OPER_TASK_ID))
+                        + "\ncomment=" + c.getString(c.getColumnIndex(KEY_OPER_NAME))
+                        + "\ntype=" + c.getString(c.getColumnIndex(KEY_OPER_TYPE))
+                        + "\nstatus=" + c.getString(c.getColumnIndex(KEY_OPER_STATUS))
+                        + "\ncomplete=" + c.getString(c.getColumnIndex(KEY_OPER_COMPLETE))
+                        + "\ncurrent=" + c.getString(c.getColumnIndex(KEY_OPER_IS_CURRENT))
+                        + "\nlete=" + c.getString(c.getColumnIndex(KEY_OPER_TO_DELETE))
+                        + "\n\n";
             } while (c.moveToNext() == true);
-
             activity.log(s);
-            activity.textView[0].setText(s);
+//            activity.textView[0].setText(s);
             c.close();
         }
+        return s;
     }
 
-    void mail() {
+    String mail() {
         activity.log("MAIL begin");
-        String s = "";
+        String s = "Список сообщений\n\n";
         Cursor c = db.query(dbHelper.TABLE_MAIL,
                 new String[]{
                         KEY_MAIL_ID,
@@ -184,41 +176,31 @@ public class DBFunctions {
                         KEY_MAIL_TO_DELETE
                 },
                 null, null, null, null, null);
-        s = s + "Cursor: " + c.getCount() + "\n";
+        s = s + "Записей: " + c.getCount() + "\n\n";
         if (c.moveToFirst()) {
             do {
                 s =
                         "operId=" + c.getString(c.getColumnIndex(KEY_MAIL_ID))
-                                + ", recipient=" + c.getString(c.getColumnIndex(KEY_MAIL_RECIPIENT))
-                                + ", message=" + c.getString(c.getColumnIndex(KEY_MAIL_MESSAGE))
-                                + ", comment=" + c.getString(c.getColumnIndex(KEY_MAIL_TIME))
-                                + ", answer=" + c.getString(c.getColumnIndex(KEY_MAIL_ANSWER))
-                                + ", report=" + c.getString(c.getColumnIndex(KEY_MAIL_REPORTED))
-                                + ", complete=" + c.getString(c.getColumnIndex(KEY_MAIL_COMPLETE))
-                                + ", delete=" + c.getString(c.getColumnIndex(KEY_MAIL_TO_DELETE))
-                                + "\n";
+                                + "\nrecipient=" + c.getString(c.getColumnIndex(KEY_MAIL_RECIPIENT))
+                                + "\nmessage=" + c.getString(c.getColumnIndex(KEY_MAIL_MESSAGE))
+                                + "\ncomment=" + c.getString(c.getColumnIndex(KEY_MAIL_TIME))
+                                + "\nanswer=" + c.getString(c.getColumnIndex(KEY_MAIL_ANSWER))
+                                + "\nreport=" + c.getString(c.getColumnIndex(KEY_MAIL_REPORTED))
+                                + "\ncomplete=" + c.getString(c.getColumnIndex(KEY_MAIL_COMPLETE))
+                                + "\ndelete=" + c.getString(c.getColumnIndex(KEY_MAIL_TO_DELETE))
+                                + "\n\n";
                 activity.log(s);
             } while (c.moveToNext() == true);
             c.close();
         }
-    }
-
-    void taskClear() {
-        activity.log(true, "TASK clear begin");
-        db.delete(dbHelper.TABLE_TASK, null, null);
-    }
-
-    void operClear() {
-        activity.log(true, "OPER clear begin");
-        db.delete(dbHelper.TABLE_OPERATION, null, null);
-        db.delete(dbHelper.TABLE_OPER_PARAM, null, null);
+        return s;
     }
 
     void operList() {
         activity.log(true, "OPER begin");
         String s = "Task: ALL\n";
         Cursor c = db.query(
-                dbHelper.TABLE_OPERATION,
+                dbHelper.TABLE_OPER,
                 new String[]{
                         KEY_OPER_ID,
                         KEY_OPER_NAME,
@@ -232,18 +214,18 @@ public class DBFunctions {
                 "(" + KEY_OPER_COMPLETE + "=?)",
                 new String[]{String.valueOf(0)},
                 null, null, null);
-        s = s + "Cursor: " + c.getCount() + "\n";
+        s = s + "Записей: " + c.getCount() + "\n";
         if (c.moveToFirst()) {
             do {
                 s = s +
                         "operId=" + c.getString(c.getColumnIndex(KEY_OPER_ID))
-                        + ", task=" + c.getString(c.getColumnIndex(KEY_OPER_TASK_ID))
-                        + ", comment=" + c.getString(c.getColumnIndex(KEY_OPER_NAME))
-                        + ", type=" + c.getString(c.getColumnIndex(KEY_OPER_TYPE))
-                        + ", status=" + c.getString(c.getColumnIndex(KEY_OPER_STATUS))
-                        + ", complete=" + c.getString(c.getColumnIndex(KEY_OPER_COMPLETE))
-                        + ", current=" + c.getString(c.getColumnIndex(KEY_OPER_IS_CURRENT))
-                        + ", delete=" + c.getString(c.getColumnIndex(KEY_OPER_TO_DELETE))
+                        + "\ntask=" + c.getString(c.getColumnIndex(KEY_OPER_TASK_ID))
+                        + "\ncomment=" + c.getString(c.getColumnIndex(KEY_OPER_NAME))
+                        + "\ntype=" + c.getString(c.getColumnIndex(KEY_OPER_TYPE))
+                        + "\nstatus=" + c.getString(c.getColumnIndex(KEY_OPER_STATUS))
+                        + "\ncomplete=" + c.getString(c.getColumnIndex(KEY_OPER_COMPLETE))
+                        + "\ncurrent=" + c.getString(c.getColumnIndex(KEY_OPER_IS_CURRENT))
+                        + "\ndelete=" + c.getString(c.getColumnIndex(KEY_OPER_TO_DELETE))
                         + "\n";
             } while (c.moveToNext() == true);
 
@@ -260,7 +242,7 @@ public class DBFunctions {
      * @return - строка-значение параметра, иначе NULL
      */
     String getOperParameter(String operId, String parameterName) {
-        activity.log(true, "getOperParameter: operId=" + operId + ", parameterName=" + parameterName + ", table=" +dbHelper.DBRecord[OPER_PARAM][TABLENAME][NONE][NONE]);
+        activity.log(true, "getOperParameter: operId=" + operId + ", parameterName=" + parameterName + ", table=" + dbHelper.DBRecord[OPER_PARAM][TABLENAME][NONE][NONE]);
         Cursor c = db.query(
                 //dbHelper.TABLE_OPER_PARAM,
                 dbHelper.DBRecord[OPER_PARAM][TABLENAME][NONE][NONE],
@@ -297,7 +279,7 @@ public class DBFunctions {
         String s = "Task:" + id + ")\n";
 
         Cursor c = db.query(
-                dbHelper.TABLE_OPERATION,
+                dbHelper.TABLE_OPER,
                 new String[]{
                         KEY_OPER_ID,
                         KEY_OPER_NAME,
@@ -332,9 +314,30 @@ public class DBFunctions {
         }
     }
 
-    void mailClear() {
-        activity.log(true, "MAIL clear begin");
-        db.delete(dbHelper.TABLE_MAIL, null, null);
+    /**
+     * Очистка ОПЕРАЦИЙ
+     */
+    void clearTask () {
+        activity.db.database
+                .delete(TABLE_TASK,null,null);
+    }
+
+    /**
+     * Очистка ОПЕРАЦИЙ
+     */
+    void clearOper () {
+        activity.db.database
+                .delete(TABLE_OPER_PARAM,null,null);
+        activity.db.database
+                .delete(TABLE_OPER,null,null);
+    }
+
+    /**
+     * Очистка ОПЕРАЦИЙ
+     */
+    void clearMail () {
+        activity.db.database
+                .delete(TABLE_MAIL,null,null);
     }
 
 }

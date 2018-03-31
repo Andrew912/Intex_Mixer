@@ -1,5 +1,7 @@
 package org.and.intex_v2;
 
+import android.util.Log;
+
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -23,118 +25,112 @@ public class DBHelper extends SQLiteOpenHelper {
             = 3;
 
     // Наименование БД
-    public static final String DATABASE_NAME
-            = "config.database";
+    public static final String DATABASE_NAME = "config.database";
 
     /**
      * Параметры таблиц данных (обратная совместимость)
      */
     // Table "TASK"
-    public static final String TABLE_TASK = "task";
-    public static final String KEY_TASK_ID = "_id";
-    public static final String KEY_TASK_COMMENT = "comment";
-    public static final String KEY_TASK_STATUS = "status";
-    public static final String KEY_TASK_COMPLETE = "complete";
-    public static final String KEY_TASK_TO_DELETE = "to_delete";
-    public static final String KEY_TASK_IS_CURRENT = "is_current";
-    public static final String KEY_TASK_REPORTED = "reported";
+    public static final String
+            TABLE_TASK = "task",
+            KEY_TASK_ID = "_id",
+            KEY_TASK_COMMENT = "comment",
+            KEY_TASK_STATUS = "status",
+            KEY_TASK_COMPLETE = "complete",
+            KEY_TASK_TO_DELETE = "to_delete",
+            KEY_TASK_IS_CURRENT = "is_current",
+            KEY_TASK_REPORTED = "reported";
 
     /**
      * Table "OPERATION"
      */
-    public static final String TABLE_OPERATION = "operation";
-    public static final String KEY_OPER_ID = "_id";
-    public static final String KEY_OPER_TASK_ID = "task_id";
-    public static final String KEY_OPER_TYPE = "type";
-    public static final String KEY_OPER_NAME = "comment";
-    public static final String KEY_OPER_STATUS = "status";
-    public static final String KEY_OPER_IS_CURRENT = "is_current";
-    public static final String KEY_OPER_COMPLETE = "complete";
-    public static final String KEY_OPER_REPORTED = "reported";
-    public static final String KEY_OPER_TO_DELETE = "to_delete";
+    public static final String
+            TABLE_OPER = "operation",
+            KEY_OPER_ID = "_id",
+            KEY_OPER_TASK_ID = "task_id",
+            KEY_OPER_TYPE = "type",
+            KEY_OPER_NAME = "comment",
+            KEY_OPER_STATUS = "status",
+            KEY_OPER_IS_CURRENT = "is_current",
+            KEY_OPER_COMPLETE = "complete",
+            KEY_OPER_REPORTED = "reported",
+            KEY_OPER_TO_DELETE = "to_delete";
 
     /**
      * Table "OPER_PARAM"
      */
-    // По старой схеме
-    public static final String TABLE_OPER_PARAM = "oper_param";
-    public static final String KEY_OPPA_ID = "_id";
-    public static final String KEY_OPPA_OPER_ID = "oper_id";
-    public static final String KEY_OPPA_PARAM_NAME = "param_name";
-    public static final String KEY_OPPA_PARAM_VALUE = "param_value";
-    public static final String KEY_OPPA_TO_DELETE = "to_delete";
+    /* По старой схеме */
+    public static final String
+            TABLE_OPER_PARAM = "oper_param",
+            KEY_OPPA_ID = "_id",
+            KEY_OPPA_OPER_ID = "oper_id",
+            KEY_OPPA_PARAM_NAME = "param_name",
+            KEY_OPPA_PARAM_VALUE = "param_value",
+            KEY_OPPA_TO_DELETE = "to_delete";
 
-    // По новой схеме
-    public static final int INDEX_OPPA_ID = 0;
-    public static final int INDEX_OPPA_OPER_ID = 1;
-    public static final int INDEX_OPPA_PARAM_NAME = 2;
-    public static final int INDEX_OPPA_PARAM_VALUE = 3;
-    public static final int INDEX_OPPA_TO_DELETE = 4;
+    /* По новой схеме */
+    public static final int
+            INDEX_OPPA_ID = 0,
+            INDEX_OPPA_OPER_ID = 1,
+            INDEX_OPPA_PARAM_NAME = 2,
+            INDEX_OPPA_PARAM_VALUE = 3,
+            INDEX_OPPA_TO_DELETE = 4;
 
     /**
      * Table "MAIL"
      */
-    public static final String TABLE_MAIL = "mail";
-    public static final String KEY_MAIL_ID = "_id";
-    public static final String KEY_MAIL_RECIPIENT = "recipient";
-    public static final String KEY_MAIL_MESSAGE = "message";
-    public static final String KEY_MAIL_ANSWER = "answer";
-    public static final String KEY_MAIL_TIME = "time";
-    public static final String KEY_MAIL_REPORTED = "reported";
-    public static final String KEY_MAIL_COMPLETE = "complete";
-    public static final String KEY_MAIL_TO_DELETE = "to_delete";
+    public static final String
+            TABLE_MAIL = "mail",
+            KEY_MAIL_ID = "_id",
+            KEY_MAIL_RECIPIENT = "recipient",
+            KEY_MAIL_MESSAGE = "message",
+            KEY_MAIL_ANSWER = "answer",
+            KEY_MAIL_TIME = "time",
+            KEY_MAIL_REPORTED = "reported",
+            KEY_MAIL_COMPLETE = "complete",
+            KEY_MAIL_TO_DELETE = "to_delete";
 
     /**
      * Ключ со значением 0
      * Применяется в зависимости от контекста там, где надо подставить 0 в параметре
      */
-    public static final int NONE
-            = 0;
-    public static final int FIRST
-            = 0;
+    public static final int
+            NONE = 0,
+            FIRST = 0;
 
     /**
      * Разделы информации о таблице
      */
-    public static final int TABLENAME
-            = 0;
-    public static final int FIELDINFO
-            = 1;
-    public static final int TABLEINFO
-            = 2;
+    public static final int
+            TABLENAME = 0,
+            FIELDINFO = 1,
+            TABLEINFO = 2;
 
     /**
      * Выбор строки в FIELDINFO для таблицы PARAMETERS
      * Для других таблиц может быть другим
      */
-    public static final int FIELD_IS_ID
-            = 0;
-    public static final int FIELD_IS_NAME
-            = 1;
-    public static final int FIELD_IS_TYPE
-            = 2;
-    public static final int FIELD_IS_VALUE
-            = 3;
+    public static final int
+            FIELD_IS_ID = 0,
+            FIELD_IS_NAME = 1,
+            FIELD_IS_TYPE = 2,
+            FIELD_IS_VALUE = 3;
 
     /**
      * Свойства конкретного поля в FIELDINFO
      */
-    public static final int FIELD_PROP_NAME
-            = 0;
-    public static final int FIELD_PROP_TYPE
-            = 1;
-    public static final int FIELD_PROP_DEFAULT
-            = 2;
+    public static final int
+            FIELD_PROP_NAME = 0,
+            FIELD_PROP_TYPE = 1,
+            FIELD_PROP_DEFAULT = 2;
 
     /**
      * Свойства конкретного поля в TABLEINFO
      */
-    public static final int TABLE_PROP_NAME
-            = 0;
-    public static final int TABLE_PROP_VALUE
-            = 1;
-    public static final int TABLE_PROP_BRACKETS
-            = 2;
+    public static final int
+            TABLE_PROP_NAME = 0,
+            TABLE_PROP_VALUE = 1,
+            TABLE_PROP_BRACKETS = 2;
 
     /**
      * Индекс: Имя таблицы в БД
@@ -365,7 +361,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        mContext = context;
+        mContext
+                = context;
     }
 
     @Override

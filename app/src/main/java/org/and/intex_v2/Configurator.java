@@ -8,22 +8,13 @@ public class Configurator {
 
     MainActivity a;
 
-    int CONTROL = 0, LOADER = 1, DEVICE = 2;
+    int
+            CONTROL = 0,
+            LOADER = 1,
+            DEVICE = 2;
 
     public Configurator(MainActivity activity) {
         this.a = activity;
-    }
-
-    public String password() {
-        return a.getString(R.string.CONFIG_PASSWORD);
-    }
-
-    public String deviceid() {
-        return a.getString(R.string.CONFIG_DEVICE_ID);
-    }
-
-    public String protocol() {
-        return a.getString(R.string.CONFIG_PROTOCOL);
     }
 
     public String CServer_Addr() {

@@ -40,6 +40,8 @@ public class Configuration {
     String
             deviceName = "mixer.001";       //
     String
+            devicePass = "mixer.001";       //
+    String
             terminalName = "mixerterm.001"; //
     int
             dataLoadBufferSize = 1024;      // Размер буфера для получения даннфх с сервера управления
@@ -89,7 +91,7 @@ public class Configuration {
             deviceName = tmp[PARAMETER_VALUE];
         }
         tmp = a.db.paramGet("MixerTermName");
-        if(tmp != null) {
+        if (tmp != null) {
             terminalName = tmp[PARAMETER_VALUE];
         }
         // Полный адрес терминала в сети
@@ -106,6 +108,45 @@ public class Configuration {
         terminalAddress
                 = a.db.get_Device_Addr_from_DB(networkMask, terminalName)[a.net.SRV_ADDR];
         Toast.makeText(a.getApplicationContext(), "Терминал:" + terminalAddress, Toast.LENGTH_LONG).show();
+    }
+
+    /**
+     * Обновить адрес погрузчика
+     */
+
+    public void loaderAddrRefresh(String deviceName) {
+        terminalAddress
+                = a.db.get_Device_Addr_from_DB(networkMask, deviceName)[a.net.SRV_ADDR];
+        Toast.makeText(a.getApplicationContext(), "Погрузчик:" + terminalAddress, Toast.LENGTH_LONG).show();
+    }
+
+    /**
+     * Пароль устройства в системе
+     *
+     * @return
+     */
+    public String getDevPassowrd() {
+        return
+                a.conf.devicePass;
+    }
+
+    /**
+     * Идентификатор устройства в системе
+     *
+     * @return
+     */
+    public String getDevId() {
+        return
+                a.conf.deviceName;
+    }
+
+    /**
+     * Версия протокола
+     *
+     * @return
+     */
+    public String getDevProtocol() {
+        return a.getString(R.string.CONFIG_PROTOCOL);
     }
 
 }

@@ -9,12 +9,15 @@ import java.util.regex.Pattern;
 
 import static org.and.intex_v2.DBHelper.KEY_MAIL_COMPLETE;
 import static org.and.intex_v2.DBHelper.TABLE_MAIL;
+import static org.and.intex_v2.MainActivity.L00_BUTTON_BACK;
+import static org.and.intex_v2.MainActivity.L00_DATA_CLEAR;
 import static org.and.intex_v2.MainActivity.L0_BUTTON_BACK;
-import static org.and.intex_v2.MainActivity.L0_BUTTON_OPER;
+import static org.and.intex_v2.MainActivity.L00_BUTTON_OPER;
 import static org.and.intex_v2.MainActivity.L0_BUTTON_PARAM_SAVE;
-import static org.and.intex_v2.MainActivity.L0_BUTTON_SENDMAIL;
-import static org.and.intex_v2.MainActivity.L0_BUTTON_TASK;
-import static org.and.intex_v2.MainActivity.L0_BUTTON_TASK1;
+import static org.and.intex_v2.MainActivity.L00_BUTTON_SENDMAIL;
+import static org.and.intex_v2.MainActivity.L00_BUTTON_TASK;
+import static org.and.intex_v2.MainActivity.L00_BUTTON_MAIL;
+import static org.and.intex_v2.MainActivity.L0_TO_CLEARING;
 import static org.and.intex_v2.MainActivity.L11_BUTTON_BEGIN_JOB_NEXT;
 import static org.and.intex_v2.MainActivity.L1_BUTTON_BEGIN_JOB;
 import static org.and.intex_v2.MainActivity.L1_BUTTON_TO_PARAMS;
@@ -41,6 +44,7 @@ import static org.and.intex_v2.MainActivity.L9_BUTTON_ACCEPT;
 import static org.and.intex_v2.MainActivity.L9_BUTTON_CANCEL;
 import static org.and.intex_v2.MainActivity.L9_BUTTON_REFRESH;
 import static org.and.intex_v2.MainActivity.L9_BUTTON_REJECT;
+import static org.and.intex_v2.MainActivity.LAYOUT_00_CLEARING;
 import static org.and.intex_v2.MainActivity.LAYOUT_0_PARAMS;
 import static org.and.intex_v2.MainActivity.LAYOUT_1_BEGIN;
 import static org.and.intex_v2.MainActivity.LAYOUT_2_NO_TASK;
@@ -103,12 +107,34 @@ public class Controller {
 //                                "rec in Oper.Par=" + mainActivity.storer.getRecCount_OperPar());
                 break;
 
+
+
+            /* Очистка данных */
+            case L00_DATA_CLEAR:
+                mainActivity.dbFunctions
+                        .clearMail();
+                mainActivity.dbFunctions
+                        .clearOper();
+                mainActivity.dbFunctions
+                        .clearTask();
+                break;
+
+            /* Возврат из экрана очистки */
+            case L00_BUTTON_BACK:
+                mainActivity.gotoLayout(LAYOUT_0_PARAMS,"");
+                break;
+
+            /* Переход в экран очистки*/
+            case L0_TO_CLEARING:
+                mainActivity.gotoLayout(LAYOUT_00_CLEARING,null);
+                break;
+
             case L0_BUTTON_PARAM_SAVE:
                 // Сохранение параметров
                 mainActivity.paramSave();
                 break;
 
-            case L0_BUTTON_SENDMAIL:
+            case L00_BUTTON_SENDMAIL:
                 // Отправка статистики по операциям
 
                 /* Надо будет включить отправку почты обратно потом */
@@ -119,16 +145,21 @@ public class Controller {
                 mainActivity.gotoLayout(LAYOUT_1_BEGIN, "");
                 break;
 
-            case L0_BUTTON_OPER:        // Вывод списка операций из БД
-                mainActivity.dbFunctions.oper();
+            /* Вывод списка ОПЕРАЦИЙ из БД */
+            case L00_BUTTON_OPER:
+                mainActivity
+                        .setTextInLayout(LAYOUT_00_CLEARING,mainActivity.dbFunctions.oper());
                 break;
 
-            case L0_BUTTON_TASK:        // Вывод списка задач из БД
-                mainActivity.dbFunctions.task();
+            /* Вывод списка ЗАДАЧ из БД */
+            case L00_BUTTON_TASK:
+                mainActivity
+                        .setTextInLayout(LAYOUT_00_CLEARING,mainActivity.dbFunctions.task());
                 break;
 
-            case L0_BUTTON_TASK1:       // Сообщения для передачи на сервер
-                mainActivity.dbFunctions.mail();
+            case L00_BUTTON_MAIL:       // Сообщения для передачи на сервер
+                mainActivity
+                        .setTextInLayout(LAYOUT_00_CLEARING,mainActivity.dbFunctions.mail());
                 break;
 
             case L1_BUTTON_TO_PARAMS:       // На экран БД
@@ -307,13 +338,14 @@ public class Controller {
 
                     /* Попытаемся найти погрузчик в сети */
 
-//                    mainActivity.CheckConnection(
-//                            mainActivity.currentOper.getParam("servern"),
-//                            null,
-//                            mainActivity.L[LAYOUT_9_SERV_REQUEST],
-//                            null);
-//
-//                    mainActivity.conf.termAddrRefresh();
+                    mainActivity.CheckConnection(
+                            mainActivity.currentOper.getParam("servern"),
+                            null,
+                            mainActivity.L[LAYOUT_9_SERV_REQUEST],
+                            null);
+
+//                    mainActivity.conf.loaderAddrRefresh(mainActivity.currentOper.getParam("servern"));
+
                     mainActivity.gotoLayout(LAYOUT_9_SERV_REQUEST, mainActivity.currentOper.getOperationInfoForView());
 
                 } else {
@@ -403,7 +435,7 @@ public class Controller {
                 break;
 
             case L8_BUTTON_OK:                          // OK - task complete
-                new DBFunctions(mainActivity).operClear();
+                new DBFunctions(mainActivity).clearOper();;
                 mainActivity.gotoLayout(LAYOUT_1_BEGIN, "");
                 break;
 
