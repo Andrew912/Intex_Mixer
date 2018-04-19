@@ -11,7 +11,8 @@ import java.util.Date;
 
 public class MessageMaker {
 
-    MainActivity a;
+    MainActivity
+            a;
 
     private static final String
             eol = "\r\n\r\n";

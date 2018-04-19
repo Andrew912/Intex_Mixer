@@ -71,27 +71,26 @@ public class LoaderCommunicator {
 
 
     public LoaderCommunicator(MainActivity mainActivity) {
-        this.activity =
-                mainActivity;
+        this.activity
+                = mainActivity;
         // Адрес терминала берем из конфигуратора
         // А вот как он там оказался, надо смотреть в конфигураторе
-        socketAddr =
-                "192.168.1.44";
-//        socketAddr =
-//                activity.conf.terminalAddress;
-//        socketAddr =
-//                mainActivity.conf.getIPaddress(mainActivity.conf.terminalStartAddress);
-        socketPort =
-                activity.conf.terminalPort;
-        buffSize =
-                activity.conf.dataLoadBufferSize;
-        deviceName =
-                activity.conf.deviceName;
+        socketAddr
+                = "192.168.1.44";
+        socketPort
+                = activity.conf.terminalPort;
+        buffSize
+                = activity.conf.dataLoadBufferSize;
+        deviceName
+                = activity.conf.deviceName;
 
         //
-        tryServiceRequest = false;
-        continueSendWeight = false;
-        channelFree = true;
+        tryServiceRequest
+                = false;
+        continueSendWeight
+                = false;
+        channelFree
+                = true;
         deviceWaitAnswerStatus = DeviceWaitAnswerStatus.NONE;
     }
 
@@ -100,8 +99,10 @@ public class LoaderCommunicator {
         if (timerServerRequest != null) {
             timerServerRequest.cancel();
         }
-        tryServiceRequest = true;
-        channelFree = true;
+        tryServiceRequest
+                = true;
+        channelFree
+                = true;
     }
 
 //    // Остановить таймер управления отправкой данных погрузчику
@@ -197,7 +198,7 @@ public class LoaderCommunicator {
     }
 
     public void send(String messageForSend) {
-        new LoaderSendMessagesClass().execute(messageForSend,socketAddr);
+        new LoaderSendMessagesClass().execute(messageForSend, socketAddr);
     }
 
     // Класс передачи сообщений на сервер
@@ -226,22 +227,22 @@ public class LoaderCommunicator {
 //                    for (int i = 0; i < oSize; i++) {
 //                        Log.i(logTAG, "message to send= " + o[i]);
 //                        byte[] buffer = o[i].getBytes();
-                        Log.i(logTAG, "message to send= " + o[0]);
-                        byte[] buffer = o[0].getBytes();
-                        os.write(buffer);
-                        os.flush();
-                        buffer = new byte[buffSize];
-                        int read = is.read(buffer, 0, buffSize);
-                        byte[] b = new byte[read];
-                        System.arraycopy(buffer, 0, b, 0, read);
-                        rs = new String(b);
-                        answerMessageType = statusReceivedMessage(rs);
-                        Log.i(logTAG, "-----------------------------");
+                    Log.i(logTAG, "message to send= " + o[0]);
+                    byte[] buffer = o[0].getBytes();
+                    os.write(buffer);
+                    os.flush();
+                    buffer = new byte[buffSize];
+                    int read = is.read(buffer, 0, buffSize);
+                    byte[] b = new byte[read];
+                    System.arraycopy(buffer, 0, b, 0, read);
+                    rs = new String(b);
+                    answerMessageType = statusReceivedMessage(rs);
+                    Log.i(logTAG, "-----------------------------");
 //                        Log.i(logTAG, "read=" + read);
 //                        Log.i(logTAG, "-----------------------------");
-                        Log.i(logTAG, rs);
-                        Log.i(logTAG, "-----------------------------");
-                        Log.i(logTAG, "answerMessageType=" + answerMessageType);
+                    Log.i(logTAG, rs);
+                    Log.i(logTAG, "-----------------------------");
+                    Log.i(logTAG, "answerMessageType=" + answerMessageType);
 //                    }
                     socket.close();
                 }
@@ -304,19 +305,6 @@ public class LoaderCommunicator {
             case END:
                 break;
         }
-
-//
-//        switch (amType) {
-//            case OK:
-//                break;
-//            case ERROR:
-//                break;
-//            case YES:
-//                break;
-//            case NO:
-//                break;
-//        }
-
     }
 
     // Статус отправки сообщения

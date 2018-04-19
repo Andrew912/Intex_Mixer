@@ -121,12 +121,12 @@ public class Controller {
 
             /* Возврат из экрана очистки */
             case L00_BUTTON_BACK:
-                mainActivity.gotoLayout(LAYOUT_0_PARAMS,"");
+                mainActivity.gotoLayout(LAYOUT_0_PARAMS, "");
                 break;
 
             /* Переход в экран очистки*/
             case L0_TO_CLEARING:
-                mainActivity.gotoLayout(LAYOUT_00_CLEARING,null);
+                mainActivity.gotoLayout(LAYOUT_00_CLEARING, null);
                 break;
 
             case L0_BUTTON_PARAM_SAVE:
@@ -148,18 +148,18 @@ public class Controller {
             /* Вывод списка ОПЕРАЦИЙ из БД */
             case L00_BUTTON_OPER:
                 mainActivity
-                        .setTextInLayout(LAYOUT_00_CLEARING,mainActivity.dbFunctions.oper());
+                        .setTextInLayout(LAYOUT_00_CLEARING, mainActivity.dbFunctions.oper());
                 break;
 
             /* Вывод списка ЗАДАЧ из БД */
             case L00_BUTTON_TASK:
                 mainActivity
-                        .setTextInLayout(LAYOUT_00_CLEARING,mainActivity.dbFunctions.task());
+                        .setTextInLayout(LAYOUT_00_CLEARING, mainActivity.dbFunctions.task());
                 break;
 
             case L00_BUTTON_MAIL:       // Сообщения для передачи на сервер
                 mainActivity
-                        .setTextInLayout(LAYOUT_00_CLEARING,mainActivity.dbFunctions.mail());
+                        .setTextInLayout(LAYOUT_00_CLEARING, mainActivity.dbFunctions.mail());
                 break;
 
             case L1_BUTTON_TO_PARAMS:       // На экран БД
@@ -227,31 +227,38 @@ public class Controller {
                 }
                 break;
 
-            case L2_BUTTON_TASK_SELECT: //
+            /*  */
+            case L2_BUTTON_TASK_SELECT:
                 mainActivity.gotoLayout(LAYOUT_4_TASK_SELECT, "Выберите задачу из списка");
                 break;
 
+            /*  */
             case L2_BUTTON_CANCEL:
                 mainActivity.gotoLayout(LAYOUT_1_BEGIN, "");
                 break;
 
+            /*  */
             case L3_BUTTON_CANCEL:
                 mainActivity.gotoLayout(LAYOUT_1_BEGIN, "");
                 break;
 
+            /*  */
             case L3_BUTTON_TASK_CONTINUE:
                 mainActivity.gotoLayout(LAYOUT_5_OPER_SELECT, "");
                 break;
 
+            /*  */
             case L4_LIST_TASK_SELECT:
                 mainActivity.btn_4_Accept.setVisibility(View.VISIBLE);
                 break;
 
+            /*  */
             case L4_BUTTON_CANCEL:
                 mainActivity.btn_4_Accept.setVisibility(View.INVISIBLE);
                 mainActivity.gotoLayout(LAYOUT_1_BEGIN, "");
                 break;
 
+            /*  */
             case L4_BUTTON_ACCEPT:
                 // Задача выбрана
                 mainActivity.btn_4_Accept
@@ -265,15 +272,18 @@ public class Controller {
                 mainActivity.gotoLayout(LAYOUT_5_OPER_SELECT, "");
                 break;
 
+            /*  */
             case L5_LIST_OPER_SELECT:
 
                 break;
 
+            /*  */
             case L5_BUTTON_CANCEL:
                 mainActivity.gotoLayout(LAYOUT_1_BEGIN, "");
                 break;
 
-            case L5_BUTTON_ACCEPT:      // Начать выполнение операций задачи
+            /* Начать выполнение операций задачи */
+            case L5_BUTTON_ACCEPT:
 
                 mainActivity.currentTask
                         .setToActive();
@@ -299,9 +309,7 @@ public class Controller {
                     mainActivity.currentOper.loadNoLoader = true;
                     // Запускаем Получение показаний весов от терминала
                     mainActivity.weightDataFromDeviceReader_Start();
-                    /**
-                     * Тут надо поменять переход сразу на начало загрузки
-                     */
+                    /* Тут надо поменять переход сразу на начало загрузки */
                     // Загруженный вес
                     mainActivity.storer.weightLoaded
                             = 0;
@@ -334,7 +342,7 @@ public class Controller {
                     Log.i("L5_BUTTON_ACCEPT",
                             "servern=" + mainActivity.currentOper.getParam("servern") +
                                     ", servera=" + mainActivity.currentOper.getParam("servera"));
-                    Log.i("L5_BUTTON_ACCEPT","==============================");
+                    Log.i("L5_BUTTON_ACCEPT", "==============================");
 
                     /* Попытаемся найти погрузчик в сети */
 
@@ -353,13 +361,15 @@ public class Controller {
                 }
                 break;
 
-            case L6_BUTTON_CANCEL:      // "Простая операция" - отмена
+            /* "Простая операция" - отмена */
+            case L6_BUTTON_CANCEL:
                 mainActivity.currentTask.setToUnactive();
                 mainActivity.currentOper.setToUnactive();
                 mainActivity.gotoLayout(LAYOUT_1_BEGIN, "");       // Возврат на начальный экран
                 break;
 
-            case L6_BUTTON_COMPLETE:    // "Простая операция" - выполнено
+            /* "Простая операция" - выполнено */
+            case L6_BUTTON_COMPLETE:
                 // Отчет о выполнении операции
                 mainActivity.currentOper.setToComplete();
                 // Проверить оставшиеся операции текущей задачи
@@ -371,7 +381,8 @@ public class Controller {
                 }
                 break;
 
-            case L7_BUTTON_START:     // Начинаем непосредственно погрузку
+            /* Начинаем непосредственно погрузку */
+            case L7_BUTTON_START:
                 mainActivity.displayWeightParameters();
                 // Можно передать на погрузчик сигнал "Начать"
                 loadingMayBegin = true;
@@ -383,11 +394,13 @@ public class Controller {
                 mainActivity.btn_7_Complete.setVisibility(View.VISIBLE);
                 break;
 
-            case L7_BUTTON_CANCEL:      // Погрузка - Отмена
+            /* Погрузка - Отмена */
+            case L7_BUTTON_CANCEL:
                 mainActivity.gotoLayout(LAYOUT_1_BEGIN, "");
                 break;
 
-            case L7_BUTTON_COMPLETE:    // Погрузка - Завершено
+            /* Погрузка - Завершено */
+            case L7_BUTTON_COMPLETE:
                 mainActivity.weightDataToLoaderSender_Stop();
                 mainActivity.weightDataFromDeviceReader_Stop();  // Остановить получение показаний весов
                 mainActivity.loader.send(mainActivity.loader.msg_LoadStop(mainActivity.currentOper.operId));
@@ -399,11 +412,17 @@ public class Controller {
                     mainActivity.gotoLayout(LAYOUT_8_TASK_COMPLETE, "");       // Все операции задачи завершены
                 } else {
                     mainActivity.gotoLayout(LAYOUT_1_BEGIN, "");               // Если есть невыполненые операции
+                    /**
+                     * Здесь пока ставим выход, т.к. по неизвестной пока причине при повторном
+                     * обращении к погрузчику он не слышит запрос на обслуживание.
+                     * Надо будет найти причину и тогда можно будет этот выход убрать.
+                     */
+                    System.exit(0);
                 }
                 break;
 
+            /* Начинаем непосредственно погрузку */
             case L71_BUTTON_START:
-                // Начинаем непосредственно погрузку
                 mainActivity.displayWeightParameters1();
                 //
                 loadingMayBegin = true;
@@ -415,11 +434,13 @@ public class Controller {
                 mainActivity.btn_71_Complete.setVisibility(View.VISIBLE);
                 break;
 
-            case L71_BUTTON_CANCEL:      // Погрузка - Отмена
+            /* Погрузка - Отмена */
+            case L71_BUTTON_CANCEL:
                 mainActivity.gotoLayout(LAYOUT_1_BEGIN, "");
                 break;
 
-            case L71_BUTTON_COMPLETE:    // Погрузка - Завершено
+            /* Погрузка - Завершено */
+            case L71_BUTTON_COMPLETE:
                 mainActivity.weightDataToLoaderSender_Stop();
                 mainActivity.weightDataFromDeviceReader_Stop();  // Остановить получение показаний весов
                 mainActivity.loader.send(mainActivity.loader.msg_LoadStop(mainActivity.currentOper.operId));
@@ -434,28 +455,35 @@ public class Controller {
                 }
                 break;
 
-            case L8_BUTTON_OK:                          // OK - task complete
-                new DBFunctions(mainActivity).clearOper();;
+            /* OK - task complete */
+            case L8_BUTTON_OK:
+                new DBFunctions(mainActivity).clearOper();
+                ;
                 mainActivity.gotoLayout(LAYOUT_1_BEGIN, "");
                 break;
 
-            case L9_BUTTON_CANCEL:                      // Отказ от обслуживания
+            /* Отказ от обслуживания */
+            case L9_BUTTON_CANCEL:
                 mainActivity.currentTask.setToUnactive();
                 mainActivity.currentOper.setToUnactive();
                 mainActivity.gotoLayout(LAYOUT_1_BEGIN, "");
                 break;
 
-            case L9_BUTTON_ACCEPT:                      // Сервер подтвердил
+            /* Сервер подтвердил */
+            case L9_BUTTON_ACCEPT:
                 // Загруженный вес
-                mainActivity.storer.weightLoaded = 0;
+                mainActivity.storer.weightLoaded
+                        = 0;
                 // Стартовый вес в миксере
-                mainActivity.storer.weightStart = mainActivity.storer.weightCurrent;
+                mainActivity.storer.weightStart
+                        = mainActivity.storer.weightCurrent;
                 // Вычислить конечный вес в погрузчике
-                mainActivity.storer.weightTarget = mainActivity.currentOper.loadValue + mainActivity.storer.weightCurrent;
+                mainActivity.storer.weightTarget
+                        = mainActivity.currentOper.loadValue + mainActivity.storer.weightCurrent;
                 Log.i(logTAG, "конечный вес в погрузчике = " + mainActivity.storer.weightTarget);
                 // Толеранс +
-                mainActivity.storer.tolerancePlus =
-                        (int) (mainActivity.currentOper.loadValue * Float.parseFloat(mainActivity.getString(R.string.LOADING_PERCENT_WEIGHT_TOLERANCE_UP)));
+                mainActivity.storer.tolerancePlus
+                        = (int) (mainActivity.currentOper.loadValue * Float.parseFloat(mainActivity.getString(R.string.LOADING_PERCENT_WEIGHT_TOLERANCE_UP)));
                 // Параметры - на экран
                 mainActivity.displayWeightParameters();
                 mainActivity.displayWeightParameters1();
@@ -467,14 +495,15 @@ public class Controller {
                 }
                 break;
 
-            case L9_BUTTON_REJECT:                      // Сервер отказал
+            /* Сервер отказал */
+            case L9_BUTTON_REJECT:
                 mainActivity.currentTask.setToUnactive();
                 mainActivity.currentOper.setToUnactive();
                 mainActivity.gotoLayout(LAYOUT_1_BEGIN, "");
                 break;
 
-            case L9_BUTTON_REFRESH:                      // Обновить экран
-
+            /* Обновить экран */
+            case L9_BUTTON_REFRESH:
                 break;
         }
     }

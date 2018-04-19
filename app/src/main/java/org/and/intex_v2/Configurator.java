@@ -1,72 +1,164 @@
 package org.and.intex_v2;
 
+import android.widget.Toast;
+
+import static org.and.intex_v2.DBHandler.PARAMETER_VALUE;
+
 /**
- * Created by Андрей on 21.07.2017.
+ * Created by Андрей on 22.12.2017.
  */
 
 public class Configurator {
 
-    MainActivity a;
+    String
+            logTag = "Configurator";
+    MainActivity
+            mainActivity;
 
+    /**
+     * ============================================================
+     * Переменные среды не запоминаемые
+     * =============================================================
+     */
+
+    String
+            ipAddress;                      //
+    String
+            terminalAddress;                //
+    String
+            networkMask;                    //
     int
-            CONTROL = 0,
-            LOADER = 1,
-            DEVICE = 2;
+            terminalPort = 18080;           // Порты подключения весовых терминалов
+    int
+            terminalFindAddr = 80;          // Адрес в сети, с которого будет начат поиск терминала
+    int
+            mixerPort = 28080;              // Порты подключения миксеров
+    boolean
+            is_Connected_to_network;        //
+    int
+            terminalStartAddress = 35;      // Стартовый адрес для поиска терминала в сети
+    String
+            deviceName = "mixer.001";       //
+    String
+            devicePass = "mixer.001";       //
+    String
+            terminalName = "mixerterm.001"; //
+    int
+            dataLoadBufferSize = 1024;      // Размер буфера для получения даннфх с сервера управления
 
-    public Configurator(MainActivity activity) {
-        this.a = activity;
+    /**============================================================
+     * Переменные среды, запоминаемые при приостановке приложения
+     *=============================================================
+     */
+
+    /**
+     * ============================================================
+     * Переменные, знвачения которых показывают состояние системы,
+     * которое надо будет восстановить по окнчании работы программы
+     * =============================================================
+     */
+
+    boolean
+            current_WiFi_status;            // Текущий системный статус Wi-Fi соединения
+
+    /**
+     * Конструктор
+     *
+     * @param mainActivity
+     */
+    public Configurator(MainActivity mainActivity) {
+        this.mainActivity
+                = mainActivity;
     }
 
-    public String CServer_Addr() {
-        return new Param_Server(CONTROL).getIP();
+    /**
+     * Устанавливает значения параметров конфигурации
+     */
+    public void setSystemParameters() {
+        String[] tmp;
+
+        /* Проверяем и загружаем параметр "WiFiNet" */
+        tmp = mainActivity.db.paramGet("WiFiNet");
+        if (tmp != null) {
+            deviceName = tmp[PARAMETER_VALUE];
+        }
+
+        /* Проверяем и загружаем параметр "WiFiPass" */
+        tmp = mainActivity.db.paramGet("WiFiPass");
+        if (tmp != null) {
+            deviceName = tmp[PARAMETER_VALUE];
+        }
+
+        /* Проверяем и загружаем параметр "MixerTermName" */
+        tmp = mainActivity.db.paramGet("MixerTermName");
+        if (tmp != null) {
+            terminalName = tmp[PARAMETER_VALUE];
+        }
+
+        /* Проверяем и загружаем параметр "MixerName" */
+        tmp = mainActivity.db.paramGet("MixerName");
+        if (tmp != null) {
+            deviceName = tmp[PARAMETER_VALUE];
+        }
+
+        /* Проверяем и загружаем параметр "MixerTermAddr" */
+        tmp = mainActivity.db.paramGet("MixerTermAddr");
+        if (tmp != null) {
+            terminalAddress = tmp[PARAMETER_VALUE];
+        }
+
+        /* Вычисляем полный адрес терминала в сети */
+        termAddrRefresh();
+
     }
 
-    public int CServer_Port() {
-        return new Param_Server(CONTROL).getPort();
+    /**
+     * Обновить адрес весового терминала
+     */
+    public void termAddrRefresh() {
+        terminalAddress
+                = mainActivity.db.getDeviceAddrfromDB(networkMask, terminalName, terminalAddress)[mainActivity.net.NET_DEVICE_ADDR];
+        Toast
+                .makeText(mainActivity.getApplicationContext(), "Терминал:" + terminalAddress, Toast.LENGTH_LONG).show();
     }
 
-    public int CServer_Buff() {
-        return new Param_Server(CONTROL).getBuffSize();
+    /**
+     * Обновить адрес погрузчика
+     */
+    public void loaderAddrRefresh(String deviceName) {
+        terminalAddress
+                = mainActivity.db.getDeviceAddrfromDB(networkMask, deviceName, terminalAddress)[mainActivity.net.NET_DEVICE_ADDR];
+        Toast
+                .makeText(mainActivity.getApplicationContext(), "Погрузчик:" + terminalAddress, Toast.LENGTH_LONG).show();
     }
 
-    public int CServer_Time() {
-        return new Param_Server(CONTROL).getTime();
+    /**
+     * Пароль устройства в системе
+     *
+     * @return
+     */
+    public String getDevPassowrd() {
+        return
+                devicePass;
     }
 
-    public int CServer_Ping() {
-        return new Param_Server(CONTROL).getPing();
+    /**
+     * Идентификатор устройства в системе
+     *
+     * @return
+     */
+    public String getDevId() {
+        return
+                mainActivity.conf.deviceName;
     }
 
-    public String Loader_Addr() {
-        return new Param_Server(LOADER).getIP();
-    }
-
-    public int Loader_Port() {
-        return new Param_Server(LOADER).getPort();
-    }
-
-    public int Loader_Buff() {
-        return new Param_Server(LOADER).getBuffSize();
-    }
-
-    public int Loader_Time() {
-        return new Param_Server(LOADER).getTime();
-    }
-
-    public String Device_Addr() {
-        return new Param_Server(DEVICE).getIP();
-    }
-
-    public int Device_Port() {
-        return new Param_Server(DEVICE).getPort();
-    }
-
-    public int Device_Buff() {
-        return new Param_Server(DEVICE).getBuffSize();
-    }
-
-    public int Device_Time() {
-        return new Param_Server(DEVICE).getTime();
+    /**
+     * Версия протокола
+     *
+     * @return
+     */
+    public String getDevProtocol() {
+        return mainActivity.getString(R.string.CONFIG_PROTOCOL);
     }
 
 }

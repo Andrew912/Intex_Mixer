@@ -49,7 +49,12 @@ public class Storer {
     boolean
             weightIndicatorNow = false;
     int
-            weightStart, weightLoaded, weightTarget, weightRemain, tolerancePlus, toleranceMinus;
+            weightStart,
+            weightLoaded,
+            weightTarget,
+            weightRemain,
+            tolerancePlus,
+            toleranceMinus;
     int
             currentTaskNumber = 0;
 

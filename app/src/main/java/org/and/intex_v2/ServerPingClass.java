@@ -111,8 +111,8 @@ public class ServerPingClass {
                          * Надо посмотреть с точки зрения оптимальности, что удалить
                          */
                         Log.i(logTAG, "ServerExchangeClass_getOperations: " + 2);
-                        mainActivity.sfc.serverFound.get(whatFindParamI)[mainActivity.net.SRV_ADDR] = params[0];
-                        mainActivity.sfc.serverFound.get(whatFindParamI)[mainActivity.net.SRV_PORT] = params[1];
+                        mainActivity.sfc.serverFound.get(whatFindParamI)[mainActivity.net.NET_DEVICE_ADDR] = params[0];
+                        mainActivity.sfc.serverFound.get(whatFindParamI)[mainActivity.net.NET_DEVICE_PORT] = params[1];
                         Log.i(logTAG, "ServerExchangeClass_getOperations: " + 3);
                     }
                     socket = null;
@@ -140,8 +140,10 @@ public class ServerPingClass {
                     /**
                      * Вот тут мы фиксируем имя найденного сервера
                      */
-                    mainActivity.sfc.serverFound.get(whatFindParamI)[mainActivity.net.SRV_NAME] = serverName;
-                    mainActivity.sfc.serverFound.get(whatFindParamI)[mainActivity.net.SRV_NOW] = "YES";
+                    mainActivity.sfc.serverFound.get(whatFindParamI)[mainActivity.net.NET_DEVICE_NAME]
+                            = serverName;
+                    mainActivity.sfc.serverFound.get(whatFindParamI)[mainActivity.net.NET_DEVICE_NOW]
+                            = "YES";
                 }
             }
             if (serverName != null) {
@@ -157,9 +159,9 @@ public class ServerPingClass {
                         .setVisibility(View.VISIBLE);
                 mainActivity.serverFindResultToStatusLine("Сервер найден");
                 mainActivity.toTextView("Сервер " +
-                        mainActivity.sfc.serverFound.get(whatFindParamI)[mainActivity.net.SRV_NAME] +
+                        mainActivity.sfc.serverFound.get(whatFindParamI)[mainActivity.net.NET_DEVICE_NAME] +
                         " найден по адресу " +
-                        mainActivity.sfc.serverFound.get(whatFindParamI)[mainActivity.net.SRV_ADDR]);
+                        mainActivity.sfc.serverFound.get(whatFindParamI)[mainActivity.net.NET_DEVICE_ADDR]);
                 Log.i(getClass().getSimpleName(), "Сервер найден, БЛЯ!!!");
             }
         }

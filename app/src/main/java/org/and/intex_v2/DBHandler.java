@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import static org.and.intex_v2.DBHelper.FIELDINFO;
 import static org.and.intex_v2.DBHelper.FIELD_IS_ID;
 import static org.and.intex_v2.DBHelper.FIELD_IS_TYPE;
@@ -87,7 +90,8 @@ public class DBHandler {
      * @param context
      */
     public DBHandler(MainActivity mainActivity, Context context) {
-        this.activity = mainActivity;
+        this.activity
+                = mainActivity;
         dbHelper
                 = new DBHelper(context);
         database =
@@ -176,14 +180,16 @@ public class DBHandler {
      * [1] - адрес
      */
 
-    public String[] get_Device_Addr_from_DB(String devNetMask, String devName) {
+    public String[] getDeviceAddrfromDB(String devNetMask, String devName, String devNameStartAddr) {
 
         Log.i(logTag, "=====================================================================");
-        Log.i(logTag, "get_Device_Addr_from_DB: devNetMask=" + devNetMask + ", devName=" + devName);
+        Log.i(logTag, "getDeviceAddrfromDB: devNetMask=" + devNetMask + ", devName=" + devName);
 
-//        String[] retVar = {devName, devNetMask + "2", null, null};
-        String[] retVar = {devName, null, null, null};
-        Cursor c = activity.db.database.query(
+        /*  */
+        String[] retVar
+                = {devName, devNetMask + devNameStartAddr, null, null};
+        Cursor c
+                = activity.db.database.query(
                 table_OBJECTS.TABLE_NAME,
                 new String[]{
                         table_OBJECTS.ID,
@@ -195,21 +201,42 @@ public class DBHandler {
                 new String[]{devNetMask, devName},
                 null, null, null);
         if (c.moveToFirst()) {
-            Log.i(logTag, "get_Device_Addr_from_DB:");
+            Log.i(logTag, "\ngetDeviceAddrfromDB:");
             Log.i(logTag, "========================");
             while (c.moveToNext()) {
-                Log.i(
-                        logTag,
-                        "retVar[0]=" + c.getString(c.getColumnIndex(table_OBJECTS.NAME)) + " " + "retVar[1]=" + c.getString(c.getColumnIndex(table_OBJECTS.ADDRESS)));
+                Log.i(logTag,
+                        "retVar[0]=" + c.getString(c.getColumnIndex(table_OBJECTS.NAME)) + " " +
+                                "retVar[1]=" + c.getString(c.getColumnIndex(table_OBJECTS.ADDRESS)));
             }
         }
         if (c.moveToFirst()) {
-            retVar[activity.net.SRV_ADDR] = c.getString(c.getColumnIndex(table_OBJECTS.ADDRESS));
+            retVar[activity.net.NET_DEVICE_ADDR]
+                    = extractPatternFromString(c.getString(c.getColumnIndex(table_OBJECTS.ADDRESS)),"\\d+.\\d+.\\d+.\\d+$");
         }
-        Log.i(logTag, "get_Device_Addr_from_DB: retVar[0]=" + retVar[activity.net.SRV_NAME]);
-        Log.i(logTag, "get_Device_Addr_from_DB: retVar[1]=" + retVar[activity.net.SRV_ADDR]);
+
+        /* Отрезаем лишнее у IP-адреса */
+        retVar[activity.net.NET_DEVICE_ADDR]
+                = extractPatternFromString(retVar[activity.net.NET_DEVICE_ADDR],"\\d+.\\d+.\\d+.\\d+$");
+
+        Log.i(logTag, "getDeviceAddrfromDB: retVar[0]=" + retVar[activity.net.NET_DEVICE_NAME]);
+        Log.i(logTag, "getDeviceAddrfromDB: retVar[1]=" + retVar[activity.net.NET_DEVICE_ADDR]);
         Log.i(logTag, "=====================================================================");
         return retVar;
+    }
+
+    /**
+     * Выделяет из строки подстроку по паттерну
+     *
+     * @return
+     */
+    String extractPatternFromString(String sourceAddr, String findPattern) {
+        String rv = "";
+        Pattern pattern = Pattern.compile(findPattern);
+        Matcher m = pattern.matcher(sourceAddr);
+        if (m.find()) {
+            rv = m.group();
+        }
+        return rv;
     }
 
     /**
@@ -223,11 +250,31 @@ public class DBHandler {
      */
 
     public void store_Device_Addr_to_DB(String devNetMask, String devName, String devAddr) {
-        if (get_Device_Addr_from_DB(devNetMask, devName)[1] != null) {
-            update_Device_Addr_in_DB(devNetMask, devName, devAddr);
+        Log.i("store_Device_Addr_to_DB", "СТАРТ: devAddr=" + devAddr);
+        /* Выделяем последнюю группу цифр из адреса */
+        String newAddr;
+        newAddr = extractLastDigitGroup(devAddr);
+
+        if (getDeviceAddrfromDB(devNetMask, devName, activity.conf.terminalAddress)[1] != null) {
+            update_Device_Addr_in_DB(devNetMask, devName, newAddr);
         } else {
-            append_Device_Addr_in_DB(devNetMask, devName, devAddr);
+            append_Device_Addr_in_DB(devNetMask, devName, newAddr);
         }
+    }
+
+    /**
+     * Выделяет в IP-адресе последнюю группу цифр
+     *
+     * @return
+     */
+    String extractLastDigitGroup(String sourceAddr) {
+        String rv = "0";
+        Pattern pattern = Pattern.compile("\\d+$");
+        Matcher m = pattern.matcher(sourceAddr);
+        if (m.find()) {
+            rv = m.group();
+        }
+        return rv;
     }
 
     /**
@@ -262,17 +309,22 @@ public class DBHandler {
 
     public void update_Device_Addr_in_DB(String devNetMask, String devName, String devAddr) {
 //
+        /* Попа */
         Log.i(logTag, "update_Device_Addr_in_DB: " + devName + "=" + devAddr);
 //
-        ContentValues newValues = new ContentValues();
-        newValues.put(table_OBJECTS.ADDRESS, devAddr);
+        ContentValues newValues
+                = new ContentValues();
+        newValues
+                .put(table_OBJECTS.ADDRESS, devAddr);
+        activity.db.database
+                .update(
+                        table_OBJECTS.TABLE_NAME,
+                        newValues,
+                        "(" + table_OBJECTS.NETMASK + "=?) AND (" + table_OBJECTS.NAME + "=?)",
+                        new String[]{devNetMask, devName});
 
-        activity.db.database.update(
-                table_OBJECTS.TABLE_NAME,
-                newValues,
-                "(" + table_OBJECTS.NETMASK + "=?) AND (" + table_OBJECTS.NAME + "=?)",
-                new String[]{devNetMask, devName});
-
+        paramStore("MixerTermAddr", devAddr, null);
+        Log.i(logTag, "update_Device_Addr_in_DB: Store: " + paramGet("MixerTermAddr"));
     }
 
     /**
@@ -316,10 +368,10 @@ public class DBHandler {
                 new String[]{devName},
                 null, null, null);
         if (c.moveToFirst()) {
-            retVar[activity.net.SRV_NAME] = devName;
-            retVar[activity.net.SRV_ADDR] = c.getColumnName(c.getColumnIndex(Column_OBJECTS.ADDRESS));
-            retVar[activity.net.SRV_PORT] = c.getColumnName(c.getColumnIndex(Column_OBJECTS.PORT));
-            retVar[activity.net.SRV_STAT] = c.getColumnName(c.getColumnIndex(null));
+            retVar[activity.net.NET_DEVICE_NAME] = devName;
+            retVar[activity.net.NET_DEVICE_ADDR] = c.getColumnName(c.getColumnIndex(Column_OBJECTS.ADDRESS));
+            retVar[activity.net.NET_DEVICE_PORT] = c.getColumnName(c.getColumnIndex(Column_OBJECTS.PORT));
+            retVar[activity.net.NET_DEVICE_STAT] = c.getColumnName(c.getColumnIndex(null));
         }
         return retVar;
     }
@@ -350,7 +402,6 @@ public class DBHandler {
      *
      * @param paramName
      * @param paramValue
-     * @param paramType
      */
 
     public void paramStore(String paramName, String paramValue, String paramType) {

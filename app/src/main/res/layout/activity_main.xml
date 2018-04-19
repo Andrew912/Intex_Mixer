@@ -277,122 +277,155 @@
 
                 </LinearLayout>
 
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" >
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                android:text="Сеть"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/textView_0_2_5"
+                                android:layout_weight="50" />
+
+                            <EditText
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:inputType="textPersonName"
+                                android:ems="10"
+                                android:id="@+id/editText_0_2_5"
+                                android:layout_weight="1"
+                                android:text="intex" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                android:text="Пароль"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/textView_0_2_4"
+                                android:layout_weight="50" />
+
+                            <EditText
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:inputType="textPersonName"
+                                android:ems="10"
+                                android:id="@+id/editText_0_2_4"
+                                android:layout_weight="1"
+                                android:text="921063060" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                android:text="Миксер"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/textView_0_2_0"
+                                android:layout_weight="50" />
+
+                            <EditText
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:inputType="textPersonName"
+                                android:ems="10"
+                                android:id="@+id/editText_0_2_0"
+                                android:layout_weight="1"
+                                android:text="mixer.001" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                android:text="Пароль"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/textView_0_2_6"
+                                android:layout_weight="50" />
+
+                            <EditText
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:inputType="textPersonName"
+                                android:ems="10"
+                                android:id="@+id/editText_0_2_6"
+                                android:layout_weight="1"
+                                android:text="mixer.001" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                android:text="Терминал"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/textView_0_2_1"
+                                android:layout_weight="50" />
+
+                            <EditText
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:inputType="textPersonName"
+                                android:ems="10"
+                                android:id="@+id/editText_0_2_1"
+                                android:layout_weight="1"
+                                android:text="mixerterm.002" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                android:text="Адрес"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/textView_0_2_2"
+                                android:layout_weight="50" />
+
+                            <EditText
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:inputType="textPersonName"
+                                android:ems="10"
+                                android:id="@+id/editText_0_2_2"
+                                android:layout_weight="1"
+                                android:text="20" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </ScrollView>
+
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="top"
                     android:layout_weight="1.01">
-
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:text="Сеть"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/textView_0_2_5"
-                            android:layout_weight="50" />
-
-                        <EditText
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:inputType="textPersonName"
-                            android:ems="10"
-                            android:id="@+id/editText_0_2_5"
-                            android:layout_weight="1"
-                            android:text="intex" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:text="Пароль"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/textView_0_2_4"
-                            android:layout_weight="50" />
-
-                        <EditText
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:inputType="textPersonName"
-                            android:ems="10"
-                            android:id="@+id/editText_0_2_4"
-                            android:layout_weight="1"
-                            android:text="921063060" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:text="Миксер"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/textView_0_2_0"
-                            android:layout_weight="50" />
-
-                        <EditText
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:inputType="textPersonName"
-                            android:ems="10"
-                            android:id="@+id/editText_0_2_0"
-                            android:layout_weight="1"
-                            android:text="mixer.002" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:text="Терминал"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/textView_0_2_1"
-                            android:layout_weight="50" />
-
-                        <EditText
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:inputType="textPersonName"
-                            android:ems="10"
-                            android:id="@+id/editText_0_2_1"
-                            android:layout_weight="1"
-                            android:text="mixerterm.002" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:text="Адрес"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/textView_0_2_2"
-                            android:layout_weight="50" />
-
-                        <EditText
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:inputType="textPersonName"
-                            android:ems="10"
-                            android:id="@+id/editText_0_2_2"
-                            android:layout_weight="1"
-                            android:text="20" />
-                    </LinearLayout>
 
                     <Button
                         android:text="Сохранить параметры"
@@ -441,7 +474,7 @@
                 android:id="@+id/LL1_Begin"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:elevation="1dp"
+                android:elevation="0dp"
                 android:gravity="bottom"
                 android:orientation="vertical"
                 android:visibility="invisible"
@@ -916,7 +949,7 @@
                 <TextView
                     android:id="@+id/text_9_Header"
                     android:layout_width="match_parent"
-                    android:layout_height="45dp"
+                    android:layout_height="wrap_content"
                     android:text="Запрос на обслуживание"
                     android:textAlignment="center"
                     android:textSize="30sp" />
@@ -925,7 +958,7 @@
                     android:id="@+id/text_9_info"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.88"
+                    android:layout_weight="0.93"
                     android:textAlignment="viewStart"
                     android:textSize="40sp"
                     android:textColor="@android:color/holo_orange_dark" />
@@ -933,7 +966,7 @@
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1">
+                    android:layout_weight="0.05">
 
                     <Button
                         android:id="@+id/button_9_Refresh"
@@ -962,10 +995,11 @@
                     <Button
                         android:id="@+id/button_9_Cancel"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="89dp"
                         android:text="отменить запрос"
                         android:textSize="30sp"
-                        tools:ignore="HardcodedText" />
+                        tools:ignore="HardcodedText"
+                        android:gravity="center_horizontal" />
                 </FrameLayout>
 
             </LinearLayout>

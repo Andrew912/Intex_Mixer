@@ -35,8 +35,8 @@ import static org.and.intex_v2.DBHelper.KEY_OPPA_OPER_ID;
 import static org.and.intex_v2.DBHelper.KEY_OPPA_PARAM_NAME;
 import static org.and.intex_v2.DBHelper.KEY_OPPA_PARAM_VALUE;
 import static org.and.intex_v2.DBHelper.KEY_OPPA_TO_DELETE;
-import static org.and.intex_v2.NetworkHandler.SRV_NAME;
-import static org.and.intex_v2.NetworkHandler.SRV_NOW;
+import static org.and.intex_v2.NetworkHandler.NET_DEVICE_NAME;
+import static org.and.intex_v2.NetworkHandler.NET_DEVICE_NOW;
 
 public class MainActivity extends AppCompatActivity {
     /* Паараметры лога */
@@ -53,10 +53,8 @@ public class MainActivity extends AppCompatActivity {
             db;
     Controller
             controller;
-    Configuration
-            conf;
     Configurator
-            configurator;
+            conf;
     StatusLine
             statusLine;
     DBFunctions
@@ -272,6 +270,7 @@ public class MainActivity extends AppCompatActivity {
             WiFiNet,                // Сеть WiFi
             WiFiPass,               // Пароль досступа к сети WiFi
             MixerName,              // имя миксера
+            MixerPass,              // Пароль миксера
             MixerTermName,          // имя весового терминала
             MixerTermAddr;          // стартовый адрес весового терминала (для быстрого поиска в сети)
     // Поля для редактирования
@@ -279,6 +278,7 @@ public class MainActivity extends AppCompatActivity {
             et_WiFiNet,
             et_WiFiPass,
             et_MixerName,
+            et_MixerPass,
             et_MixerTermName,
             et_MixerTermAddr;
 
@@ -300,9 +300,7 @@ public class MainActivity extends AppCompatActivity {
         statusLine
                 = new StatusLine();
         conf
-                = new Configuration(this);
-//        configurator
-//                = new Configurator(this);
+                = new Configurator(this);
         messenger
                 = new Messenger(this);
         dbHelper
@@ -516,7 +514,7 @@ public class MainActivity extends AppCompatActivity {
 //                    .add(i, false);
 //        }
         conf.is_Connected_to_network
-                = net.isConnectedToNetwork();
+                = net.terminalConnectedToNetwork();
         if (conf.is_Connected_to_network) {
             conf.ipAddress = net.get_My_IP();
             conf.networkMask = net.get_Net_Mask_from_IP(conf.ipAddress);
@@ -561,8 +559,10 @@ public class MainActivity extends AppCompatActivity {
         /*******************************
          * ListView: Task select
          *******************************/
-        taskSelect_ListView = (ListView) findViewById(R.id.list_Task_Select);
-        taskSelect_SelectedValue = "";
+        taskSelect_ListView
+                = (ListView) findViewById(R.id.list_Task_Select);
+        taskSelect_SelectedValue
+                = "";
         taskSelect_ListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -638,7 +638,8 @@ public class MainActivity extends AppCompatActivity {
         /*******************************
          * Кнопка сохранения параметров
          *******************************/
-        b_ParamSave = (Button) findViewById(R.id.button_0_2);
+        b_ParamSave
+                = (Button) findViewById(R.id.button_0_2);
         b_ParamSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -688,7 +689,8 @@ public class MainActivity extends AppCompatActivity {
         buttonStatusDrop();
 
         // btn_11_Next
-        btn_11_Next = (Button) findViewById(R.id.btn_11_00_Begin_job);
+        btn_11_Next
+                = (Button) findViewById(R.id.btn_11_00_Begin_job);
         btn_11_Next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -698,7 +700,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // btn_11_Next
-        btn_11_LoaderFound = (Button) findViewById(R.id.btn_11_00_Begin_job);
+        btn_11_LoaderFound
+                = (Button) findViewById(R.id.btn_11_00_Begin_job);
         btn_11_LoaderFound.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -708,43 +711,51 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // btn_0_SendMail
-        btn_0_SendMail = (Button) findViewById(R.id.button_0_SendMail);
-        btn_0_SendMail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                server.sendMail();
-            }
-        });
+        btn_0_SendMail
+                = (Button) findViewById(R.id.button_0_SendMail);
+        btn_0_SendMail
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        server.sendMail();
+                    }
+                });
 
         // Кнопка btn_ToDB
-        btn_ToDB = (Button) findViewById(R.id.button_LoadDB);
-        btn_ToDB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                controller.controller(L1_BUTTON_TO_PARAMS);
-            }
-        });
+        btn_ToDB
+                = (Button) findViewById(R.id.button_LoadDB);
+        btn_ToDB
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        controller.controller(L1_BUTTON_TO_PARAMS);
+                    }
+                });
 
         // Кнопка btn_ClearDB
-        btn_ClearDB = (Button) findViewById(R.id.button_Clear_DB);
-        btn_ClearDB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                storer.clearDB();
-                controller.controller(L__BUTTON_START);
-            }
-        });
+        btn_ClearDB
+                = (Button) findViewById(R.id.button_Clear_DB);
+        btn_ClearDB
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        storer.clearDB();
+                        controller.controller(L__BUTTON_START);
+                    }
+                });
 
         // Кнопка btn_ClearDNS
-        btn_ClearDNS = (Button) findViewById(R.id.button_Clear_DNS);
-        btn_ClearDNS.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                db.dbTableList_OBJECTS();
-                db.clearTableObjects();
-                db.dbTableList_OBJECTS();
-            }
-        });
+        btn_ClearDNS
+                = (Button) findViewById(R.id.button_Clear_DNS);
+        btn_ClearDNS
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        db.dbTableList_OBJECTS();
+                        db.clearTableObjects();
+                        db.dbTableList_OBJECTS();
+                    }
+                });
 
         // Кнопка btn_0_Back (LL0)
         btn_0_Back = (Button) findViewById(R.id.button_0_Back);         // Response Yes
@@ -983,6 +994,8 @@ public class MainActivity extends AppCompatActivity {
                 = (EditText) findViewById(R.id.editText_0_2_4);
         et_MixerName
                 = (EditText) findViewById(R.id.editText_0_2_0);
+        et_MixerPass
+                = (EditText) findViewById(R.id.editText_0_2_6);
         et_MixerTermName
                 = (EditText) findViewById(R.id.editText_0_2_1);
         et_MixerTermAddr
@@ -993,7 +1006,7 @@ public class MainActivity extends AppCompatActivity {
          *******************************/
 
         paramInit();
-        conf.paramRefresh();
+        conf.setSystemParameters();
         printServerFound();
         currentTask.setTaskData();
         controller.controller(L__BUTTON_START);
@@ -1127,21 +1140,55 @@ public class MainActivity extends AppCompatActivity {
      * Сохраняет все параметры конфигурации
      */
 
+    /* Надо переписать в виде процедуры.
+     * Или класса, в котором будет все */
+
     void paramSave() {
         if (MixerTermName.equals(et_MixerTermName.getText()) == false) {
-            MixerTermName = et_MixerTermName.getText().toString();
-            db.paramStore("MixerTermName", MixerTermName, null);
+            MixerTermName
+                    = et_MixerTermName.getText().toString();
+            db.paramStore
+                    ("MixerTermName", MixerTermName, null);
         }
         if (MixerTermAddr.equals(et_MixerTermAddr.getText()) == false) {
-            MixerTermAddr = et_MixerTermAddr.getText().toString();
-            db.paramStore("MixerTermAddr", MixerTermAddr, null);
+            MixerTermAddr
+                    = et_MixerTermAddr.getText().toString();
+            db.paramStore
+                    ("MixerTermAddr", MixerTermAddr, null);
         }
-        if (MixerTermAddr.equals(et_MixerName.getText()) == false) {
-            MixerName = et_MixerName.getText().toString();
-            db.paramStore("MixerName", MixerName, null);
+
+        if (MixerName.equals(et_MixerName.getText()) == false) {
+            MixerName
+                    = et_MixerName.getText().toString();
+            db.paramStore
+                    ("MixerName", MixerName, null);
         }
+        if (MixerPass.equals(et_MixerPass.getText()) == false) {
+            MixerPass
+                    = et_MixerPass.getText().toString();
+            db.paramStore
+                    ("MixerPass", MixerPass, null);
+        }
+        if (WiFiNet.equals(et_WiFiNet.getText()) == false) {
+            WiFiNet
+                    = et_WiFiNet.getText().toString();
+            db.paramStore
+                    ("WiFiNet", WiFiNet, null);
+        }
+        if (WiFiPass.equals(et_WiFiPass.getText()) == false) {
+            WiFiPass
+                    = et_WiFiPass.getText().toString();
+            db.paramStore
+                    ("WiFiPass", WiFiPass, null);
+        }
+//        if (MixerTermAddr.equals(et_MixerName.getText()) == false) {
+//            MixerName
+//                    = et_MixerName.getText().toString();
+//            db.paramStore
+//                    ("MixerName", MixerName, null);
+//        }
         // Обновляет параметры из конфигурации
-        conf.paramRefresh();
+        conf.setSystemParameters();
     }
 
     /**
@@ -1174,6 +1221,15 @@ public class MainActivity extends AppCompatActivity {
         }
         et_MixerName.setText(MixerName);
 
+        /* MixerPass */
+        if (db.paramNow("MixerPass")) {
+            MixerPass = db.paramGet("MixerPass")[db.PARAMETER_VALUE];
+        } else {
+            MixerPass = "mixer.001";
+        }
+        et_MixerPass.setText(MixerPass);
+
+        /* MixerTermName */
         if (db.paramNow("MixerTermName")) {
             MixerTermName = db.paramGet("MixerTermName")[db.PARAMETER_VALUE];
         } else {
@@ -1233,7 +1289,7 @@ public class MainActivity extends AppCompatActivity {
 
 //        if (serverFound.size() > 0) {
 //            for (i = 0; i < serverFound.size(); i++) {
-//                if (serverFound.get(i)[SRV_NAME].equals(serverToFind) == true) {
+//                if (serverFound.get(i)[NET_DEVICE_NAME].equals(serverToFind) == true) {
 //                    // Если мы такую запись нашли, то чистим все для нее
 //                    whatDeviceWeFind
 //                            = i;
@@ -1307,15 +1363,15 @@ public class MainActivity extends AppCompatActivity {
 
         // Пытаемся определить параметры устройства, сохраненные в БД
         String[] terminalAddressFromDB
-                = db.get_Device_Addr_from_DB(conf.networkMask, serverToFind);
+                = db.getDeviceAddrfromDB(conf.networkMask, serverToFind, conf.terminalAddress);
 
         /* Где-то тут будем обрабатывать начальный адрес искомого сервера */
 
-        Log.i(logTAG, "Find=" + terminalAddressFromDB[net.SRV_NAME] + ", addr=" + terminalAddressFromDB[net.SRV_ADDR]);
+        Log.i(logTAG, "Find=" + terminalAddressFromDB[net.NET_DEVICE_NAME] + ", addr=" + terminalAddressFromDB[net.NET_DEVICE_ADDR]);
 
         // Запускаем поиск интересующего нас сервера
         try {
-            net.findServerInNetwork(serverToFind, terminalAddressFromDB[net.SRV_ADDR], conf.terminalPort, whatDeviceWeFind);
+            net.findServerInNetwork(serverToFind, terminalAddressFromDB[net.NET_DEVICE_ADDR], conf.terminalPort, whatDeviceWeFind);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -2034,7 +2090,6 @@ public class MainActivity extends AppCompatActivity {
                     displayWeightParameters1();
                 }
             });
-
         }
     }
 
@@ -2051,7 +2106,7 @@ public class MainActivity extends AppCompatActivity {
 
     void displayWeightParameters() {
 
-        // Вычислить отставщийся вес
+        /* Вычислить оставщийся вес */
         storer.weightRemain = storer.weightTarget - storer.weightCurrent;
 
         // ПОказания весов
@@ -2113,12 +2168,15 @@ public class MainActivity extends AppCompatActivity {
                 /**
                  *  Заполнение экранных значений параметров
                  */
+paramInit();
                 et_MixerTermName
                         .setText(MixerTermName);
                 et_MixerTermAddr
                         .setText(MixerTermAddr);
                 et_MixerName
                         .setText(MixerName);
+                et_MixerPass
+                        .setText(MixerPass);
                 et_WiFiNet
                         .setText(WiFiNet);
                 et_WiFiPass
@@ -2196,7 +2254,15 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case LAYOUT_8_TASK_COMPLETE:
-
+                /**
+                 * Пока ставим выход из программы полностью при завершении задачи, т.к. есть
+                 * какой-то косяк с повторным обращением к погрузчику - погрузчик "не слышит"
+                 * запросов на обслуживание.
+                 * При перезапуске все нормально.
+                 * Надо будет найти причину этой фигни и потом выход из системы здесь можно
+                 * будет убрать.
+                 */
+                System.exit(0);
                 break;
 
             case LAYOUT_9_SERV_REQUEST:
@@ -2371,21 +2437,21 @@ public class MainActivity extends AppCompatActivity {
          * 3. Абстрактный тайм-аут.
          */
         // 1. Найден сервер
-        if (sfc.serverFound.get(wishServerIsFind)[SRV_NOW] != null) {
-            Log.i(logTAG, "serverFound=" + sfc.serverFound.get(wishServerIsFind)[SRV_NAME]);
-            if (sfc.serverFound.get(wishServerIsFind)[SRV_NAME].equals(serverToFind)) {
+        if (sfc.serverFound.get(wishServerIsFind)[NET_DEVICE_NOW] != null) {
+            Log.i(logTAG, "serverFound=" + sfc.serverFound.get(wishServerIsFind)[NET_DEVICE_NAME]);
+            if (sfc.serverFound.get(wishServerIsFind)[NET_DEVICE_NAME].equals(serverToFind)) {
                 // Если сервер - тот, который мы ищем
                 // Прекратить дальнейший поиск
-                Log.i(getClass().getSimpleName(), "serverFound!!!" + sfc.serverFound.get(wishServerIsFind)[SRV_NAME]);
+                Log.i(getClass().getSimpleName(), "serverFound!!!" + sfc.serverFound.get(wishServerIsFind)[NET_DEVICE_NAME]);
                 sfc.endServerFindCondition.set(wishServerIsFind, true);
                 // Сохраняем данные в БД
                 db.store_Device_Addr_to_DB(
                         conf.networkMask,
-                        sfc.serverFound.get(wishServerIsFind)[SRV_NAME],
-                        sfc.serverFound.get(wishServerIsFind)[net.SRV_ADDR]
+                        sfc.serverFound.get(wishServerIsFind)[NET_DEVICE_NAME],
+                        sfc.serverFound.get(wishServerIsFind)[net.NET_DEVICE_ADDR]
                 );
                 // Адрес переносим в конфигурацию
-                conf.ipAddress = sfc.serverFound.get(wishServerIsFind)[net.SRV_ADDR];
+                conf.ipAddress = sfc.serverFound.get(wishServerIsFind)[net.NET_DEVICE_ADDR];
 
                 Log.i(getClass().getSimpleName(), "ПОИСК СЕРВЕРА ОСТАНОВЛЕН: " + wishServerIsFind);
 
@@ -2393,7 +2459,7 @@ public class MainActivity extends AppCompatActivity {
 
             } else {
                 // Сервер оказался не тот, который нужен, сбрасываем результат
-                sfc.serverFound.get(wishServerIsFind)[SRV_NOW] = null;
+                sfc.serverFound.get(wishServerIsFind)[NET_DEVICE_NOW] = null;
             }
         } else {
             // Сервера пока вообще нет
@@ -2471,7 +2537,7 @@ public class MainActivity extends AppCompatActivity {
         Log.i(logTAG, "PRINT serverFound");
         if (sfc.serverFound != null) {
             for (int i = 0; i < sfc.serverFound.size(); i++) {
-                Log.i(logTAG, "serverFound[" + i + "]=" + sfc.serverFound.get(i)[SRV_NAME]);
+                Log.i(logTAG, "serverFound[" + i + "]=" + sfc.serverFound.get(i)[NET_DEVICE_NAME]);
             }
         }
     }
@@ -2486,8 +2552,8 @@ public class MainActivity extends AppCompatActivity {
         Log.i("ifServerFound", "serverFound.size()=" + sfc.serverFound.size());
         if (sfc.serverFound.size() > 0) {
             for (int i = 0; i < sfc.serverFound.size(); i++) {
-                if (sfc.serverFound.get(i)[0] != null && sfc.serverFound.get(i)[SRV_NAME].equals(serverName)) {
-                    Log.i("ifServerFound", "serverFound[" + i + "]=" + sfc.serverFound.get(i)[SRV_NAME]);
+                if (sfc.serverFound.get(i)[0] != null && sfc.serverFound.get(i)[NET_DEVICE_NAME].equals(serverName)) {
+                    Log.i("ifServerFound", "serverFound[" + i + "]=" + sfc.serverFound.get(i)[NET_DEVICE_NAME]);
                     return true;
                 }
             }
