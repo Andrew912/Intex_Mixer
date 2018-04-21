@@ -58,6 +58,38 @@ public class DBFunctions {
                 dbHelper.getWritableDatabase();
     }
 
+    String dns() {
+        activity.log("DNS begin");
+        String s = "Список задач\n\n";
+        Cursor c = db.query(
+                dbHelper.TABLE_TASK,
+                new String[]{
+                        KEY_TASK_ID,
+                        KEY_TASK_COMMENT,
+                        KEY_TASK_STATUS,
+                        KEY_TASK_IS_CURRENT,
+                        KEY_TASK_COMPLETE,
+                        KEY_TASK_TO_DELETE},
+                null, null, null, null, null);
+        s = s + "Записей: " + c.getCount() + "\n\n";
+
+        if (c.moveToFirst()) {
+            do {
+                s = s +
+                        "taskId=" + c.getString(c.getColumnIndex(KEY_TASK_ID))
+                        + "\ntaskComment=" + c.getString(c.getColumnIndex(KEY_TASK_COMMENT))
+                        + "\ncurrent=" + c.getString(c.getColumnIndex(KEY_TASK_IS_CURRENT))
+                        + "\noperStatus=" + c.getString(c.getColumnIndex(KEY_TASK_STATUS))
+                        + "\ncomplete=" + c.getString(c.getColumnIndex(KEY_TASK_COMPLETE))
+                        + "\ndelete=" + c.getString(c.getColumnIndex(KEY_TASK_TO_DELETE))
+                        + "\n\n";
+            } while (c.moveToNext() == true);
+            activity.log(s);
+            c.close();
+        }
+        return s;
+    }
+
     String task() {
         activity.log("TASK begin");
         String s = "Список задач\n\n";

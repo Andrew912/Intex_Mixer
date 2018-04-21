@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import static org.and.intex_v2.DBHelper.KEY_MAIL_COMPLETE;
 import static org.and.intex_v2.DBHelper.TABLE_MAIL;
+import static org.and.intex_v2.MainActivity.L00_BUTTON_DNS;
 import static org.and.intex_v2.MainActivity.L00_BUTTON_BACK;
 import static org.and.intex_v2.MainActivity.L00_DATA_CLEAR;
 import static org.and.intex_v2.MainActivity.L0_BUTTON_BACK;
@@ -107,7 +108,12 @@ public class Controller {
 //                                "rec in Oper.Par=" + mainActivity.storer.getRecCount_OperPar());
                 break;
 
+            /* Распечатка таблицы DNS */
+            case L00_BUTTON_DNS:
 
+                mainActivity.db.dbTableList_OBJECTS();
+
+                break;
 
             /* Очистка данных */
             case L00_DATA_CLEAR:

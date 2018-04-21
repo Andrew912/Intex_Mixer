@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
             btn_ClearData,
             btn_ToDB;
     Button
-
+            btn_0_DNS,
             btn_0_Back,
             btn_00_Back,
             btn_0_Task, btn_0_Task1, btn_0_Oper, btn_0_SendMail,
@@ -152,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
 
     /* Коды - События нажатия клавиш, списков и пр. */
     static final int
+            L00_BUTTON_DNS = 1103,
             L00_BUTTON_BACK = 1100,
             L0_TO_CLEARING = 1101,
             L00_DATA_CLEAR = 1102,
@@ -763,6 +764,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 controller.controller(LAYOUT_1_BEGIN);
+            }
+        });
+
+
+        btn_0_DNS = (Button) findViewById(R.id.button_0_DNS);
+        btn_0_DNS.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                controller.controller(L00_BUTTON_DNS);
             }
         });
 
@@ -2231,13 +2241,17 @@ paramInit();
                  * для исполнения всегда выбирается первая из списка операция
                  */
                 if (storer.getNumberOperForExecution() > 0) {
-                    operSelect_ListItems = storer.getListOperationsForExecution();
-                    operSelect_ListAdapter = new ArrayAdapter<String>(
+                    operSelect_ListItems
+                            = storer.getListOperationsForExecution();
+                    operSelect_ListAdapter
+                            = new ArrayAdapter<String>(
                             context,
                             android.R.layout.simple_list_item_1,
                             operSelect_ListItems);
-                    operSelect_ListView.setAdapter(operSelect_ListAdapter);
-                    textToInfo = operSelect_ListItems[0];
+                    operSelect_ListView
+                            .setAdapter(operSelect_ListAdapter);
+                    textToInfo
+                            = operSelect_ListItems[0];
                 }
                 break;
 

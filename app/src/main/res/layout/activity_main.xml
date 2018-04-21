@@ -223,7 +223,17 @@
                         android:layout_weight="1"
                         android:text="выход"
                         tools:ignore="ButtonStyle,HardcodedText,NestedWeights"
-                        android:background="@android:color/holo_green_dark" />
+                        android:background="@android:color/holo_green_dark"
+                        android:textSize="12sp" />
+
+                    <Button
+                        android:text="dns"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/button_0_DNS"
+                        android:layout_weight="1"
+                        android:keyboardNavigationCluster="true"
+                        android:textSize="12sp" />
 
                     <Button
                         android:id="@+id/button_0_Task"
@@ -231,7 +241,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="task"
-                        tools:ignore="ButtonStyle" />
+                        tools:ignore="ButtonStyle"
+                        android:textSize="12sp" />
 
                     <Button
                         android:id="@+id/button_0_Oper"
@@ -239,7 +250,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="oper"
-                        tools:ignore="ButtonStyle" />
+                        tools:ignore="ButtonStyle"
+                        android:textSize="12sp" />
 
                     <Button
                         android:id="@+id/button_0_Task1"
@@ -247,7 +259,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="mail"
-                        tools:ignore="ButtonStyle,HardcodedText" />
+                        tools:ignore="ButtonStyle,HardcodedText"
+                        android:textSize="12sp" />
 
                 </LinearLayout>
             </LinearLayout>
