@@ -2013,6 +2013,7 @@ public class MainActivity extends AppCompatActivity {
             Log.i(logTAG + ": weightData", "timer deviceReadTimer not null");
             deviceReadTimer.purge();
             deviceReadTimer.cancel();
+            deviceReadTimer = null;
         } else {
             Log.i(logTAG + ": weightData", "timer deviceReadTimer IS NULL");
         }
