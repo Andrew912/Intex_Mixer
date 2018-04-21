@@ -262,9 +262,9 @@ public class MainActivity extends AppCompatActivity {
 
     /* Таймеры */
     private Timer
-            deviceReadTimer;        // Таймер опроса весового терминала
-    private MyTimerTask
-            myTimerTask;            // Задача для опроса весового терминала
+            myTerminalDataReadTimer;        // Таймер опроса весового терминала
+    private TerminalDataReadTimerTask
+            myTerminalDataReadTask;            // Задача для опроса весового терминала
 
     /* Параметры конфигурации */
     String
@@ -1997,25 +1997,32 @@ public class MainActivity extends AppCompatActivity {
 
     public void weightDataToLoaderSender_Stop() {
         Log.i(logTAG + ": weightData: ", "stop");
-        loader.serverSendWeightStop();
+        loader
+                .serverSendWeightStop();
     }
 
     public void weightDataFromDeviceReader_Start() {
         Log.i(logTAG + ": weightData: ", "start");
-        deviceReadTimer = new Timer();
-        myTimerTask = new MyTimerTask();
-        deviceReadTimer.schedule(myTimerTask, 500, 500);
+        myTerminalDataReadTimer
+                = new Timer();
+        myTerminalDataReadTask
+                = new TerminalDataReadTimerTask();
+        myTerminalDataReadTimer
+                .schedule(myTerminalDataReadTask, 500, 500);
     }
 
     public void weightDataFromDeviceReader_Stop() {
         Log.i(logTAG + ": weightData: ", "stop");
-        if (deviceReadTimer != null) {
-            Log.i(logTAG + ": weightData", "timer deviceReadTimer not null");
-            deviceReadTimer.purge();
-            deviceReadTimer.cancel();
-            deviceReadTimer = null;
+        if (myTerminalDataReadTimer != null) {
+            Log.i(logTAG + ": weightData", "timer myTerminalDataReadTimer not null");
+            myTerminalDataReadTimer
+                    .purge();
+            myTerminalDataReadTimer
+                    .cancel();
+            myTerminalDataReadTimer
+                    = null;
         } else {
-            Log.i(logTAG + ": weightData", "timer deviceReadTimer IS NULL");
+            Log.i(logTAG + ": weightData", "timer myTerminalDataReadTimer IS NULL");
         }
     }
 
@@ -2060,7 +2067,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Задача для опроса весового терминала
-    class MyTimerTask extends TimerTask {
+    class TerminalDataReadTimerTask extends TimerTask {
         @Override
         public void run() {
             Socket socket;
