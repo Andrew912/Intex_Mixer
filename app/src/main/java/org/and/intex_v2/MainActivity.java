@@ -524,33 +524,34 @@ public class MainActivity extends AppCompatActivity {
         /*******************************
          * TextViews
          *******************************/
-        textView = new TextView[layoutStatus.numberOfLayouts];
-        textView[LAYOUT_0_PARAMS] =
-                null;
-        textView[LAYOUT_1_BEGIN] =
-                (TextView) findViewById(R.id.text_1_Info);
-        textView[LAYOUT_2_NO_TASK] =
-                (TextView) findViewById(R.id.text_2_info);
-        textView[LAYOUT_3_DO_TASK] =
-                (TextView) findViewById(R.id.text_3_Info);
-        textView[LAYOUT_4_TASK_SELECT] =
-                (TextView) findViewById(R.id.text_4_Info);
-        textView[LAYOUT_5_OPER_SELECT] =
-                (TextView) findViewById(R.id.text_5_Info);
-        textView[LAYOUT_6_SIMPLE_OPER] =
-                (TextView) findViewById(R.id.text_6_info);
-        textView[LAYOUT_7_COMPLEX_OPER] =
-                (TextView) findViewById(R.id.text_7_info);
-        textView[LAYOUT_8_TASK_COMPLETE] =
-                (TextView) findViewById(R.id.text_8_info);
-        textView[LAYOUT_9_SERV_REQUEST] =
-                (TextView) findViewById(R.id.text_9_info);
-        textView[LAYOUT_71_LOAD_OPER] =
-                (TextView) findViewById(R.id.text_71_info);
-        textView[LAYOUT_11_EMPTY] =
-                null;
-        textView[LAYOUT_00_CLEARING] =
-                (TextView) findViewById(R.id.text_0_Info);
+        textView
+                = new TextView[layoutStatus.numberOfLayouts];
+        textView[LAYOUT_0_PARAMS]
+                = null;
+        textView[LAYOUT_1_BEGIN]
+                = (TextView) findViewById(R.id.text_1_Info);
+        textView[LAYOUT_2_NO_TASK]
+                = (TextView) findViewById(R.id.text_2_info);
+        textView[LAYOUT_3_DO_TASK]
+                = (TextView) findViewById(R.id.text_3_Info);
+        textView[LAYOUT_4_TASK_SELECT]
+                = (TextView) findViewById(R.id.text_4_Info);
+        textView[LAYOUT_5_OPER_SELECT]
+                = (TextView) findViewById(R.id.text_5_Info);
+        textView[LAYOUT_6_SIMPLE_OPER]
+                = (TextView) findViewById(R.id.text_6_info);
+        textView[LAYOUT_7_COMPLEX_OPER]
+                = (TextView) findViewById(R.id.text_7_info);
+        textView[LAYOUT_8_TASK_COMPLETE]
+                = (TextView) findViewById(R.id.text_8_info);
+        textView[LAYOUT_9_SERV_REQUEST]
+                = (TextView) findViewById(R.id.text_9_info);
+        textView[LAYOUT_71_LOAD_OPER]
+                = (TextView) findViewById(R.id.text_71_info);
+        textView[LAYOUT_11_EMPTY]
+                = null;
+        textView[LAYOUT_00_CLEARING]
+                = (TextView) findViewById(R.id.text_0_Info);
 
         text_7_target
                 = (TextView) findViewById(R.id.text_7_target);
@@ -578,75 +579,83 @@ public class MainActivity extends AppCompatActivity {
         /*******************************
          * ListView: CurrentOper select
          *******************************/
-        operSelect_ListView = (ListView) findViewById(R.id.list_Oper_Select);
-        operSelect_SelectedValue = "";
-        operSelect_ListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                textView2
-                        = (TextView) view;
-                operSelect_SelectedValue
-                        = textView2.getText().toString();
-                statusLine
-                        .set(operSelect_SelectedValue);
-                setTextInLayout
-                        (LAYOUT_5_OPER_SELECT, operSelect_SelectedValue);
-                controller
-                        .controller(L5_LIST_OPER_SELECT);
-            }
-        });
+        operSelect_ListView
+                = (ListView) findViewById(R.id.list_Oper_Select);
+        operSelect_SelectedValue
+                = "";
+        operSelect_ListView
+                .setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        textView2
+                                = (TextView) view;
+                        operSelect_SelectedValue
+                                = textView2.getText().toString();
+                        statusLine
+                                .set(operSelect_SelectedValue);
+                        setTextInLayout
+                                (LAYOUT_5_OPER_SELECT, operSelect_SelectedValue);
+                        controller
+                                .controller(L5_LIST_OPER_SELECT);
+                    }
+                });
 
         /*******************************
          * Кнопки - экран поиска сервера
          *******************************/
         /* Сервер найден - возврат к предыдущему экрану */
-        b_1000_0 = (Button) findViewById(R.id.b_1000_0);
-        b_1000_0.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                L1.Deactivate(
-                        layout);
-                // Экран возврата
-                L[LAYOUT_1_BEGIN].Activate(
-                        null,
-                        null,
-                        layout,
-                        null,
-                        null);
-            }
-        });
+        b_1000_0
+                = (Button) findViewById(R.id.b_1000_0);
+        b_1000_0
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        L1.Deactivate(
+                                layout);
+                        // Экран возврата
+                        L[LAYOUT_1_BEGIN].Activate(
+                                null,
+                                null,
+                                layout,
+                                null,
+                                null);
+                    }
+                });
         /* ОТМЕНА - надо остановить поиск и отменить операции предыдущего экрана */
-        b_1000_1 = (Button) findViewById(R.id.b_1000_1);
-        b_1000_1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (endServerFindCondition != null) {
-                    endServerFindCondition.set(0, true);
-                }
-                toStatusLineNoBlink("Поиск отменен");
-                L1.Deactivate(
-                        layout);
-                // Экран возврата
-                L[LAYOUT_1_BEGIN].Activate(
-                        null,
-                        null,
-                        layout,
-                        null,
-                        btn_1_Done);
-            }
-        });
+        b_1000_1
+                = (Button) findViewById(R.id.b_1000_1);
+        b_1000_1
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (endServerFindCondition != null) {
+                            endServerFindCondition.set(0, true);
+                        }
+                        toStatusLineNoBlink("Поиск отменен");
+                        L1.Deactivate(
+                                layout);
+                        // Экран возврата
+                        L[LAYOUT_1_BEGIN].Activate(
+                                null,
+                                null,
+                                layout,
+                                null,
+                                btn_1_Done);
+                    }
+                });
 
         /*******************************
          * Кнопка сохранения параметров
          *******************************/
         b_ParamSave
                 = (Button) findViewById(R.id.button_0_2);
-        b_ParamSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                controller.controller(L0_BUTTON_PARAM_SAVE);
-            }
-        });
+        b_ParamSave
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        controller.controller(L0_BUTTON_PARAM_SAVE);
+                    }
+                });
 
         /*******************************
          * Кнопки ВСЕ
@@ -655,35 +664,38 @@ public class MainActivity extends AppCompatActivity {
         /* Очистка текущих данных */
         btn_ClearData
                 = (Button) findViewById(R.id.button_Clear_Data);
-        btn_ClearData.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i("btn_ClearData", "pressed");
-                controller.controller(L00_DATA_CLEAR);
-            }
-        });
+        btn_ClearData
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.i("btn_ClearData", "pressed");
+                        controller.controller(L00_DATA_CLEAR);
+                    }
+                });
 
         /* Вход в экран очистки параметров */
         btn_go_Clearing
                 = (Button) findViewById(R.id.button_to_Clearing);
-        btn_go_Clearing.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i("btn_go_Clearing", "pressed");
-                controller.controller(L0_TO_CLEARING);
-            }
-        });
+        btn_go_Clearing
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.i("btn_go_Clearing", "pressed");
+                        controller.controller(L0_TO_CLEARING);
+                    }
+                });
 
         /* Возврат из второго экрана параметров */
         btn_00_Back
                 = (Button) findViewById(R.id.button_00_Back);
-        btn_00_Back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i("btn_00_Back", "pressed");
-                controller.controller(L1_BUTTON_TO_PARAMS);
-            }
-        });
+        btn_00_Back
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.i("btn_00_Back", "pressed");
+                        controller.controller(L1_BUTTON_TO_PARAMS);
+                    }
+                });
 
         buttonStatus
                 = new boolean[NUMBER_OF_BUTTONS];
@@ -1086,8 +1098,10 @@ public class MainActivity extends AppCompatActivity {
             // Смотрим, нет ли в структуре записи с таким именем сервера
             for (int i = 0; i < serverName.size(); i++) {
                 if (serverName.get(i).equals(pServerName) == true) {
-                    resI = i + 1;
-                    resB = true;
+                    resI
+                            = i + 1;
+                    resB
+                            = true;
                     break;
                 }
             }
@@ -2186,7 +2200,7 @@ public class MainActivity extends AppCompatActivity {
                 /**
                  *  Заполнение экранных значений параметров
                  */
-paramInit();
+                paramInit();
                 et_MixerTermName
                         .setText(MixerTermName);
                 et_MixerTermAddr
@@ -2293,7 +2307,7 @@ paramInit();
 
                 // Посылаем погрузчику запрос на обслуживание
                 // Запускаем Получение показаний весов от терминала
-                weightDataFromDeviceReader_Start();
+//                weightDataFromDeviceReader_Start();
                 loader.serverServiceRequest();
                 break;
 
@@ -2582,5 +2596,21 @@ paramInit();
         }
         return false;
     }
+
+    /**
+     * Выделяет из строки подстроку по паттерну
+     *
+     * @return
+     */
+    String extractPatternFromString(String sourceAddr, String findPattern) {
+        String rv = "";
+        Pattern pattern = Pattern.compile(findPattern);
+        Matcher m = pattern.matcher(sourceAddr);
+        if (m.find()) {
+            rv = m.group();
+        }
+        return rv;
+    }
+
 
 }

@@ -490,7 +490,7 @@
                 android:elevation="0dp"
                 android:gravity="bottom"
                 android:orientation="vertical"
-                android:visibility="invisible"
+                android:visibility="visible"
                 android:weightSum="1">
 
                 <LinearLayout

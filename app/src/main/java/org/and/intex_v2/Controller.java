@@ -96,13 +96,19 @@ public class Controller {
     void controller(int btn) {
 
         switch (btn) {
-            case L__BUTTON_START:       //
-//                mainActivity.server.sendMail();
 
+            case L__BUTTON_START:       //
+
+                /* Для начала надо распечатать все параметры... */
+
+                Log.i("controller", "L__BUTTON_START: Let's begin!");
+                mainActivity.db.dbTableList_OBJECTS();
+
+//                mainActivity.server.sendMail();
                 // Начальная установка. Активируем первый экран
-                mainActivity.gotoLayout(
-                        LAYOUT_1_BEGIN,
-                        "Терминал миксера");
+
+                mainActivity.gotoLayout(LAYOUT_1_BEGIN, "Терминал миксера");
+
 //                        "rec in Task=" + mainActivity.storer.getRecCount_Task() + "\n " +
 //                                "rec in Oper=" + mainActivity.storer.getRecCount_Oper() + "\n " +
 //                                "rec in Oper.Par=" + mainActivity.storer.getRecCount_OperPar());
@@ -172,7 +178,8 @@ public class Controller {
                 mainActivity.gotoLayout(LAYOUT_0_PARAMS, "");
                 break;
 
-            case L1_BUTTON_BEGIN_JOB:   // Начало работы
+            /* Начало работы самое что ни на есть */
+            case L1_BUTTON_BEGIN_JOB:
 
                 // Отправляем почту, если есть, что отправлять
                 if (dbMailRecNotEmpty()) {
@@ -313,8 +320,10 @@ public class Controller {
                 if (mainActivity.currentOper.operIsLoadNoLoader() == true) {
                     // Погрузка будет без испольщования погрузчика
                     mainActivity.currentOper.loadNoLoader = true;
-                    // Запускаем Получение показаний весов от терминала
+
+                    /* Запускаем Получение показаний весов от терминала */
                     mainActivity.weightDataFromDeviceReader_Start();
+
                     /* Тут надо поменять переход сразу на начало загрузки */
                     // Загруженный вес
                     mainActivity.storer.weightLoaded
