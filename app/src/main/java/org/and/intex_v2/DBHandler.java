@@ -9,6 +9,8 @@ import android.util.Log;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static android.R.attr.name;
+import static android.R.attr.type;
 import static org.and.intex_v2.DBHelper.FIELDINFO;
 import static org.and.intex_v2.DBHelper.FIELD_IS_ID;
 import static org.and.intex_v2.DBHelper.FIELD_IS_TYPE;
@@ -688,5 +690,83 @@ public class DBHandler {
             return null;
         }
     }
+
+    /**
+     * Список столбцов таблицы
+     *
+     * @param tableName
+     * @return
+     */
+    public String[] getTableColumns(String tableName) {
+        String[]
+                retVar;
+        String
+                query = "pragma table_info('" + tableName + "')";
+
+        Cursor catCursor
+                = activity.db.database.rawQuery(query, null);
+
+//        Log.i("getTableColumns", "==================");
+//        Log.i("getTableColumns", "Table: " + tableName);
+//        Log.i("getTableColumns", "==================");
+//
+        catCursor.moveToFirst();
+        retVar = new String[catCursor.getCount() - 1];
+//        Log.i("getTableColumns", "catCursor.getCount() = " + catCursor.getCount() );
+        int i = 0;
+        while (catCursor.moveToNext()) {
+            retVar[i] = catCursor.getString(catCursor.getColumnIndex("name"));
+//            Log.i("getTableColumns", (i + 1) + ". " + retVar[i]);
+            i++;
+        }
+//        Log.i("getTableColumns", "==================");
+//        Log.i("getTableColumns", catCursor.getCount() + " intems total");
+        return retVar;
+    }
+
+    /**
+     * Распечатывает данные таблицы БД
+     *
+     * @param tableName
+     */
+
+    public String printTableData(String tableName) {
+        String delimiter
+                = "==============================";
+        String retVar
+                = "\n" + delimiter + "\nTable: " + tableName + "\n" + delimiter + "\n";
+        String[] tableColumns
+                = getTableColumns(tableName);
+        String query
+                = "select * from '" + tableName + "'";
+        Cursor catCursor
+                = activity.db.database.rawQuery(query, null);
+
+//        Log.i("getTableColumns", "\n==================");
+//        Log.i("getTableColumns", "\nTable: " + tableName);
+//        Log.i("getTableColumns", "\n==================");
+//        Log.i("getTableColumns", "\nColumns (" + tableColumns.length + ")");
+//        for (int a = 0; a < tableColumns.length; a++) {
+//            Log.i("getTableColumns", (a + 1) + ". " + tableColumns[a]);
+//        }
+
+        catCursor.moveToFirst();
+        int i, j;
+        j = 1;
+        do {
+            retVar = retVar + j + ". ";
+            i = 0;
+            while (i < tableColumns.length) {
+                retVar = retVar + tableColumns[i] + "=" + catCursor.getString(catCursor.getColumnIndex(tableColumns[i])) + " ";
+                i++;
+            }
+            j++;
+            retVar = retVar + "\n";
+        } while (catCursor.moveToNext());
+        retVar = retVar + delimiter + "\nTotal " + catCursor.getCount() + " records" + "\n" + delimiter;
+
+        return retVar;
+    }
+
 
 }

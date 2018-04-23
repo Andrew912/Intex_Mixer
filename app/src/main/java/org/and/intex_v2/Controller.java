@@ -100,18 +100,15 @@ public class Controller {
             case L__BUTTON_START:       //
 
                 /* Для начала надо распечатать все параметры... */
-
-                Log.i("controller", "L__BUTTON_START: Let's begin!");
-                mainActivity.db.dbTableList_OBJECTS();
+//                mainActivity.db.getTableColumns("objects");
+//                Log.i("printTableData", mainActivity.db.printTableData("PARAMETERS"));
+//                Log.i("printTableData", mainActivity.db.printTableData("objects"));
+//                mainActivity.db.dbTableList_OBJECTS();
 
 //                mainActivity.server.sendMail();
-                // Начальная установка. Активируем первый экран
 
+                Log.i("controller", "L__BUTTON_START: Let's begin!");
                 mainActivity.gotoLayout(LAYOUT_1_BEGIN, "Терминал миксера");
-
-//                        "rec in Task=" + mainActivity.storer.getRecCount_Task() + "\n " +
-//                                "rec in Oper=" + mainActivity.storer.getRecCount_Oper() + "\n " +
-//                                "rec in Oper.Par=" + mainActivity.storer.getRecCount_OperPar());
                 break;
 
             /* Распечатка таблицы DNS */
