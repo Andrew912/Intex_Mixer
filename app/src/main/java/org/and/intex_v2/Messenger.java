@@ -3,6 +3,8 @@ package org.and.intex_v2;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static android.R.attr.y;
+
 /**
  * Created by Андрей on 22.07.2017.
  */
@@ -160,6 +162,7 @@ public class Messenger {
 
     /**
      * Отчет о загрузке
+     *
      * @param operId
      * @return
      */
@@ -214,10 +217,10 @@ public class Messenger {
                 pair("server", activity.currentOper.getParam("server"));
     }
 
+    /**
+     * Запрос на обслуживание сервером (погрузчиком)
+     */
     public String msg_ToLoader_ServiceRequest() {
-        /**
-         * Запрос на обслуживание сервером (погрузчиком)
-         */
         String retVar;
         retVar = messageHeader0
                 + pair("cmd", "load")
@@ -268,6 +271,23 @@ public class Messenger {
                 + pair(activity.getString(R.string.MESSAGE_COMMAND_TYPE), "weight")
         ;
 
+        return retVar;
+    }
+
+    /**
+     * Протокол показаний погузчика в Демо-режиме
+     *
+     * @return
+     */
+    public String msg_Protocol(float weight, float posX, float posY) {
+        String retVar;
+        retVar = messageHeader
+                + pair("cmd", "stat")
+                + pair("sensor", "weight")
+                + pair("time", time())
+                + pair("value", String.valueOf(weight))
+                + pair("lat", String.valueOf(posX))
+                + pair("long", String.valueOf(posY));
         return retVar;
     }
 

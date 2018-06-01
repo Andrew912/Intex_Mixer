@@ -46,6 +46,8 @@ public class Storer {
             weightIndicatorS = "";
     int
             weightCurrent = 0;
+    int
+            currentWeight = 0;          // Текущее хранимое значение показаний весов
     boolean
             weightIndicatorNow = false;
     int
@@ -66,6 +68,19 @@ public class Storer {
                 .log("DATABASE: " + activity.db.database.toString() + ", " + activity.db.database.getPath());
         currentTaskNumber
                 = getRecCount_Task();
+    }
+
+    public void storeCurrentWeightToProtocol(String cv) {
+        int newWeight
+                = Integer.parseInt(cv);
+
+        Log.i("storeToProtocol", "cv=" + cv);
+
+        if (currentWeight != newWeight) {
+            currentWeight = newWeight;
+            /* Запись в протокол показаний весового терминала */
+            sendMessageToControlServer(activity.messenger.msg_Protocol(currentWeight, 0, 0));
+        }
     }
 
     /**
@@ -725,8 +740,12 @@ public class Storer {
         return cursor.getCount();
     }
 
-    // Запись сообщения для отправки серверу управления
-    void messageSendTo_CServer(String message) {
+    /**
+     * Запись сообщения для отправки серверу управления
+     *
+     * @param message
+     */
+    void sendMessageToControlServer(String message) {
         ContentValues cv = new ContentValues();
         cv.put(KEY_MAIL_RECIPIENT, "CONTROL");
         cv.put(KEY_MAIL_MESSAGE, message);

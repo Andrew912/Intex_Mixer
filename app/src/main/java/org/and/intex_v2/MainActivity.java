@@ -75,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
             net;
     ServerFindControlClass
             sfc;
+//    GPSTracker
+//            gps;
 
     /* Лайауты */
     LinearLayout[]
@@ -122,7 +124,10 @@ public class MainActivity extends AppCompatActivity {
             btn_0_DNS,
             btn_0_Back,
             btn_00_Back,
-            btn_0_Task, btn_0_Task1, btn_0_Oper, btn_0_SendMail,
+            btn_0_Task,
+            btn_0_Mail,                                                // Печать протокола работы
+            btn_0_Oper,
+            btn_0_SendMail,
             btn_1_Begin,
             btn_2_TaskGet, btn_2_Cancel,
             btn_3_Cancel, btn_3_Continue,
@@ -326,7 +331,9 @@ public class MainActivity extends AppCompatActivity {
                 = new NetworkHandler(this);
         sfc
                 = new ServerFindControlClass();
-
+//        gps
+//                = new GPSTracker(this);
+//
         /***********************
          * Объявление Лайауты
          ***********************/
@@ -798,8 +805,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Кнопка "Печать таблицы TASK"
-        btn_0_Task1 = (Button) findViewById(R.id.button_0_Task1);           // Response No
-        btn_0_Task1.setOnClickListener(new View.OnClickListener() {
+        btn_0_Mail = (Button) findViewById(R.id.button_0_Task1);           // Response No
+        btn_0_Mail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 controller.controller(L00_BUTTON_MAIL);
@@ -833,6 +840,7 @@ public class MainActivity extends AppCompatActivity {
 //                layoutsVisiblityRestore();
 //                Toast.makeText(getApplicationContext(),"Работа завершена",Toast.LENGTH_LONG).show();
 //                MainActivity.this.finish();
+                Log.i("STOP",db.printTableData("mail"));
                 System.exit(0);
             }
         });
@@ -1528,12 +1536,12 @@ public class MainActivity extends AppCompatActivity {
             switch (taskStatus) {
                 case "undef":
                     taskStatus = "begin";
-                    storer.messageSendTo_CServer(messenger.msg_TaskReport_begin(taskId));
+                    storer.sendMessageToControlServer(messenger.msg_TaskReport_begin(taskId));
                     Log.i(logTAG, "Status: undef->begin");
                     break;
                 case "begin":
                     taskStatus = "begin";
-                    //storer.messageSendTo_CServer(messendger.msg_TaskReport_resume(operId));
+                    //storer.sendMessageToControlServer(messendger.msg_TaskReport_resume(operId));
                     Log.i(logTAG, "Status: begin->begin");
                     break;
                 case "end":
@@ -1544,12 +1552,12 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "suspend":
                     taskStatus = "resume";
-                    storer.messageSendTo_CServer(messenger.msg_TaskReport_resume(taskId));
+                    storer.sendMessageToControlServer(messenger.msg_TaskReport_resume(taskId));
                     Log.i(logTAG, "Status: suspend->resume");
                     break;
                 case "resume":
                     taskStatus = "resume";
-                    storer.messageSendTo_CServer(messenger.msg_TaskReport_resume(taskId));
+                    storer.sendMessageToControlServer(messenger.msg_TaskReport_resume(taskId));
                     Log.i(logTAG, "Status: resume->resume");
                     break;
             }
@@ -1562,12 +1570,12 @@ public class MainActivity extends AppCompatActivity {
             switch (taskStatus) {
                 case "undef":
                     taskStatus = "undef";
-//                    storer.messageSendTo_CServer(messendger.msg_TaskReport_suspend(operId));
+//                    storer.sendMessageToControlServer(messendger.msg_TaskReport_suspend(operId));
                     Log.i(logTAG, "Status: undef->undef");
                     break;
                 case "begin":
                     taskStatus = "suspend";
-                    storer.messageSendTo_CServer(messenger.msg_TaskReport_suspend(taskId));
+                    storer.sendMessageToControlServer(messenger.msg_TaskReport_suspend(taskId));
                     Log.i(logTAG, "Status: begin->suspend");
                     break;
                 case "end":
@@ -1581,7 +1589,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "resume":
                     taskStatus = "suspend";
-                    storer.messageSendTo_CServer(messenger.msg_TaskReport_suspend(taskId));
+                    storer.sendMessageToControlServer(messenger.msg_TaskReport_suspend(taskId));
                     Log.i(logTAG, "Status: resume->suspend");
                     break;
             }
@@ -1598,7 +1606,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "begin":
                     taskStatus = "end";
-                    storer.messageSendTo_CServer(messenger.msg_TaskReport_end(taskId));
+                    storer.sendMessageToControlServer(messenger.msg_TaskReport_end(taskId));
                     Log.i(logTAG, "Status: begin->end");
                     break;
                 case "end":
@@ -1612,7 +1620,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "resume":
                     taskStatus = "suspend";
-                    storer.messageSendTo_CServer(messenger.msg_TaskReport_end(taskId));
+                    storer.sendMessageToControlServer(messenger.msg_TaskReport_end(taskId));
                     Log.i(logTAG, "Status: resume->end");
                     break;
             }
@@ -1738,12 +1746,12 @@ public class MainActivity extends AppCompatActivity {
             switch (operStatus) {
                 case "undef":
                     operStatus = "begin";
-                    storer.messageSendTo_CServer(messenger.msg_OperReport_begin(operId));
+                    storer.sendMessageToControlServer(messenger.msg_OperReport_begin(operId));
                     Log.i(logTAG, "Status: undef->begin");
                     break;
                 case "begin":
                     operStatus = "resume";
-                    storer.messageSendTo_CServer(messenger.msg_OperReport_resume(operId));
+                    storer.sendMessageToControlServer(messenger.msg_OperReport_resume(operId));
                     Log.i(logTAG, "Status: begin->resume");
                     break;
                 case "end":
@@ -1754,7 +1762,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "suspend":
                     operStatus = "resume";
-                    storer.messageSendTo_CServer(messenger.msg_OperReport_resume(operId));
+                    storer.sendMessageToControlServer(messenger.msg_OperReport_resume(operId));
                     Log.i(logTAG, "Status: suspend->resume");
                     break;
                 case "resume":
@@ -1773,7 +1781,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "begin":
                     operStatus = "suspend";
-                    storer.messageSendTo_CServer(messenger.msg_OperReport_suspend(operId));
+                    storer.sendMessageToControlServer(messenger.msg_OperReport_suspend(operId));
                     Log.i(logTAG, "Status: begin->suspend");
                     break;
                 case "end":
@@ -1787,7 +1795,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "resume":
                     operStatus = "suspend";
-                    storer.messageSendTo_CServer(messenger.msg_OperReport_suspend(operId));
+                    storer.sendMessageToControlServer(messenger.msg_OperReport_suspend(operId));
                     Log.i(logTAG, "Status: resume->suspend");
                     break;
             }
@@ -1803,7 +1811,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "begin":
                     operStatus = "end";
-                    storer.messageSendTo_CServer(messenger.msg_OperReport_end(operId));
+                    storer.sendMessageToControlServer(messenger.msg_OperReport_end(operId));
                     Log.i(logTAG, "Status: begin->end");
                     break;
                 case "end":
@@ -1817,7 +1825,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "resume":
                     operStatus = "end";
-                    storer.messageSendTo_CServer(messenger.msg_OperReport_end(operId));
+                    storer.sendMessageToControlServer(messenger.msg_OperReport_end(operId));
                     Log.i(logTAG, "Status: resume->end");
                     break;
             }
@@ -2080,7 +2088,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Задача для опроса весового терминала
+    /**
+     * Задача для опроса весового терминала
+     *
+     */
     class TerminalDataReadTimerTask extends TimerTask {
         @Override
         public void run() {
@@ -2106,7 +2117,10 @@ public class MainActivity extends AppCompatActivity {
                     res = new String(buffer).substring(0, read);
                     Log.i(logTAG, "FROM DEVICE=" + res);
                     res = extractDigits(res);
+                    Log.i(logTAG, "FROM DEVICE=" + res);
                     socket.close();
+                    /* Пытаемся сохранить показания терминала в протокол, как - см. описание функции */
+                    storer.storeCurrentWeightToProtocol(extractData(res));
 //                    storer.setWeightIndicatorData(res);
                 }
             } catch (Exception e) {
@@ -2125,10 +2139,40 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public String extractData(String srcString) {
+        String r = "0";
+        Pattern pattern
+                = Pattern.compile("data=\'\\d+\'");
+        Matcher matcher
+                = pattern.matcher(srcString);
+        if (matcher.find()) {
+            r = (matcher.group());
+            Log.i(logTAG, "!!!! matcher.find()=" + r);
+        }
+
+        pattern
+                = Pattern.compile("\\d+");
+        matcher
+                = pattern.matcher(r);
+        if (matcher.find()) {
+            r = (matcher.group());
+            Log.i(logTAG, "find()=" + r);
+        }
+
+        return r;
+    }
+
+    /**
+     *
+     * @param srcString
+     * @return
+     */
     public String extractDigits(String srcString) {
         String r = "0";
-        Pattern pattern = Pattern.compile("data=\'\\d+\'");
-        Matcher matcher = pattern.matcher(srcString);
+        Pattern pattern
+                = Pattern.compile("data=\'\\d+\'");
+        Matcher matcher
+                = pattern.matcher(srcString);
         if (matcher.find()) {
             r = (matcher.group());
             Log.i(logTAG, "!!!! matcher.find()=" + r);
@@ -2136,26 +2180,29 @@ public class MainActivity extends AppCompatActivity {
         return r;
     }
 
+    /**
+     *
+     */
     void displayWeightParameters() {
 
-        /* Вычислить оставщийся вес */
-        storer.weightRemain = storer.weightTarget - storer.weightCurrent;
+//        /* Вычислить оставщийся вес */
+//        storer.weightRemain = storer.weightTarget - storer.weightCurrent;
 
         // ПОказания весов
         text_7_target.setText(String.valueOf(storer.weightCurrent));
         // Остаток для погрузки
-        textView[LAYOUT_7_COMPLEX_OPER].setText(String.valueOf(storer.weightRemain));
+//        textView[LAYOUT_7_COMPLEX_OPER].setText(String.valueOf(storer.weightRemain));
     }
 
     void displayWeightParameters1() {
 
         // Вычислить отставщийся вес
-        storer.weightRemain = storer.weightTarget - storer.weightCurrent;
+//        storer.weightRemain = storer.weightTarget - storer.weightCurrent;
 
         // ПОказания весов
         text_71_target.setText(String.valueOf(storer.weightCurrent));
         // Остаток для погрузки
-        textView[LAYOUT_71_LOAD_OPER].setText(String.valueOf(storer.weightRemain));
+//        textView[LAYOUT_71_LOAD_OPER].setText(String.valueOf(storer.weightRemain));
     }
 
     public void log(boolean needLog, String toLog) {
@@ -2286,7 +2333,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case LAYOUT_71_LOAD_OPER:
-
+                /*  */
                 break;
 
             case LAYOUT_8_TASK_COMPLETE:
@@ -2298,6 +2345,7 @@ public class MainActivity extends AppCompatActivity {
                  * Надо будет найти причину этой фигни и потом выход из системы здесь можно
                  * будет убрать.
                  */
+                Log.i("STOP",db.printTableData("mail"));
                 System.exit(0);
                 break;
 

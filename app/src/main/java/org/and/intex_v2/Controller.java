@@ -3,7 +3,10 @@ package org.and.intex_v2;
 import android.database.Cursor;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -78,9 +81,11 @@ public class Controller {
             currentOperParam;
     Messenger
             messenger;
-
     boolean
             loadingMayBegin;
+
+    Timer
+            startButtonPresser;
 
     /**
      * Конструктор
@@ -88,9 +93,26 @@ public class Controller {
      * @param activity
      */
     public Controller(MainActivity activity) {
-        this.mainActivity = activity;
-        messenger = new Messenger(this.mainActivity);
-        loadingMayBegin = false;
+        this.mainActivity
+                = activity;
+        messenger
+                = new Messenger(this.mainActivity);
+        loadingMayBegin
+                = false;
+        startButtonPresser
+                = new Timer();
+    }
+
+    class TimerTask_PressStartButton extends TimerTask {
+        @Override
+        public void run() {
+            mainActivity.runOnUiThread(new Runnable() {
+               @Override
+                public void run(){
+                   mainActivity.btn_1_Begin.callOnClick();
+               }
+            });
+        }
     }
 
     void controller(int btn) {
@@ -99,13 +121,54 @@ public class Controller {
 
             case L__BUTTON_START:       //
 
+                startButtonPresser.schedule(new TimerTask_PressStartButton(),4000);
+                startButtonPresser.schedule(new TimerTask_PressStartButton(),9000);
+
                 /* Для начала надо распечатать все параметры... */
 //                mainActivity.db.getTableColumns("objects");
 //                Log.i("printTableData", mainActivity.db.printTableData("PARAMETERS"));
 //                Log.i("printTableData", mainActivity.db.printTableData("objects"));
 //                mainActivity.db.dbTableList_OBJECTS();
 
+                /* Отправить на сервер протокол */
 //                mainActivity.server.sendMail();
+
+                /* Проверим координаты */
+                // check if GPS enabled
+//                if(mainActivity.gps.canGetLocation()){
+//
+//                    double latitude = mainActivity.gps.getLatitude();
+//                    double longitude = mainActivity.gps.getLongitude();
+//                    double altitude = mainActivity.gps.getAltitude();
+//                    double speed = mainActivity.gps.getSpeed();
+//                    double bearing = mainActivity.gps.getBearing();
+//                    double speedLimitA = ((10*1000)/(60*60));
+//
+//                    // \n is for new line
+//
+//                    Log.i("GPS", "Your Location is - \nLat: " + latitude
+//                            + "\nLong: " + longitude
+//                            + "\nAlt:" + altitude);
+//
+//                    Toast.makeText(mainActivity.getApplicationContext(), "Your Location is - \nLat: " + latitude
+//                            + "\nLong: " + longitude
+//                            + "\nAlt:" + altitude, Toast.LENGTH_LONG).show();
+////                    Intent intent = new Intent(this, Logik_Activity.class);
+////                    intent.putExtra("alt",altitude);
+////                    intent.putExtra("speed",speed);
+////                    intent.putExtra("bearing",bearing);
+////                    if (speed < speedLimitA){
+////                        startActivity(intent);
+////                    }
+//                    // if speed > 0 then AAA else BBB
+//
+//                }else{
+//                    // can't get location
+//                    // GPS or Network is not enabled
+//                    // Ask user to enable GPS/network in settings
+//                    mainActivity.gps.showSettingsAlert();
+//                }
+
 
                 Log.i("controller", "L__BUTTON_START: Let's begin!");
                 mainActivity.gotoLayout(LAYOUT_1_BEGIN, "Терминал миксера");
@@ -168,10 +231,12 @@ public class Controller {
 
             case L00_BUTTON_MAIL:       // Сообщения для передачи на сервер
                 mainActivity
-                        .setTextInLayout(LAYOUT_00_CLEARING, mainActivity.dbFunctions.mail());
+                        .setTextInLayout(LAYOUT_00_CLEARING, mainActivity.db.printTableData("mail"));
+//                        .setTextInLayout(LAYOUT_00_CLEARING, mainActivity.dbFunctions.mail());
                 break;
 
             case L1_BUTTON_TO_PARAMS:       // На экран БД
+                startButtonPresser.cancel();
                 mainActivity.gotoLayout(LAYOUT_0_PARAMS, "");
                 break;
 
@@ -200,41 +265,57 @@ public class Controller {
                 }
 
             case L11_BUTTON_BEGIN_JOB_NEXT:
-                // Если весовой терминал подключен, то работаем дальше как положено
-                mainActivity.currentTask.setTaskData();
+                /* Если весовой терминал подключен, то работаем дальше как положено
+                *
+                * 1. Включить получение данных от весового терминала.
+                * 2. Включить получение геоданных.
+                * 3. Запустить "обход" каждые 10 с - проверка изменения параметров и запись в протокол
+                *
+                * */
 
-                if (mainActivity.currentTask.now) {
-                    currentOper = mainActivity.storer.getCurrentOperId(String.valueOf(mainActivity.currentTask.taskId));
-                    if (currentOper != null) {
-                        mainActivity.currentTask.setToActive();
-                        mainActivity.currentOper.setToActive();
-                        mainActivity.gotoLayout(LAYOUT_6_SIMPLE_OPER, mainActivity.currentOper.getOperationInfoForView());
-                        /**
-                         * currentOper.operNow() определяет, есть ли в БД операция с признаком
-                         * "текущая".
-                         * И, кстати, тут же сохраняет параметры текущей операции в объект...
-                         *
-                         * Если есть текущая операция, то сразу переходим на нее,
-                         * если текущей операции нет, то переходим на экран выбора операции.
-                         * Хотя какого хрена туда переходить, все равно будет выбрана
-                         * первая по списку операция.
-                         */
-                    } else {
-                        mainActivity.gotoLayout(LAYOUT_3_DO_TASK, "Текущая задача: " + mainActivity.currentTask.taskComment);
-                        /**
-                         * Задача есть, операция не выбрана.
-                         * Переход на экран списка операций текущей задачи.
-                         */
-                    }
-                } else {
-                    mainActivity.gotoLayout(LAYOUT_2_NO_TASK, "Нет текущей задачи, получите задание от диспетчера");
-                    /**
-                     * Нет ни текущей задачи, ни операции.
-                     * ??? Переходим на экран выбора задачи.
-                     * Скорее, пытаемся прочитать список задач с сервера
-                     */
-                    mainActivity.server.readTask();
-                }
+                // Запускаем Получение показаний весов от терминала
+                mainActivity.weightDataFromDeviceReader_Start();
+
+                // Параметры - на экран
+                mainActivity.displayWeightParameters();
+                mainActivity.displayWeightParameters1();
+
+                mainActivity.gotoLayout(LAYOUT_71_LOAD_OPER, "Миксер");
+
+//                mainActivity.currentTask.setTaskData();
+//
+//                if (mainActivity.currentTask.now) {
+//                    currentOper = mainActivity.storer.getCurrentOperId(String.valueOf(mainActivity.currentTask.taskId));
+//                    if (currentOper != null) {
+//                        mainActivity.currentTask.setToActive();
+//                        mainActivity.currentOper.setToActive();
+//                        mainActivity.gotoLayout(LAYOUT_6_SIMPLE_OPER, mainActivity.currentOper.getOperationInfoForView());
+//                        /**
+//                         * currentOper.operNow() определяет, есть ли в БД операция с признаком
+//                         * "текущая".
+//                         * И, кстати, тут же сохраняет параметры текущей операции в объект...
+//                         *
+//                         * Если есть текущая операция, то сразу переходим на нее,
+//                         * если текущей операции нет, то переходим на экран выбора операции.
+//                         * Хотя какого хрена туда переходить, все равно будет выбрана
+//                         * первая по списку операция.
+//                         */
+//                    } else {
+//                        mainActivity.gotoLayout(LAYOUT_3_DO_TASK, "Текущая задача: " + mainActivity.currentTask.taskComment);
+//                        /**
+//                         * Задача есть, операция не выбрана.
+//                         * Переход на экран списка операций текущей задачи.
+//                         */
+//                    }
+//                } else {
+//                    mainActivity.gotoLayout(LAYOUT_2_NO_TASK, "Нет текущей задачи, получите задание от диспетчера");
+//                    /**
+//                     * Нет ни текущей задачи, ни операции.
+//                     * ??? Переходим на экран выбора задачи.
+//                     * Скорее, пытаемся прочитать список задач с сервера
+//                     */
+//                    mainActivity.server.readTask();
+//                }
                 break;
 
             /*  */
@@ -294,83 +375,82 @@ public class Controller {
 
             /* Начать выполнение операций задачи */
             case L5_BUTTON_ACCEPT:
-
-                mainActivity.currentTask
-                        .setToActive();
-                currentOperParam
-                        = new String[4];
-                currentOperParam
-                        = mainActivity.storer.getFirstOperationForExecution();
-                mainActivity.currentOper
-                        .set(
-                                currentOperParam[0],
-                                currentOperParam[1],
-                                currentOperParam[2],
-                                mainActivity.storer.getOperData(currentOperParam[0])[4]
-                        );
-                mainActivity.currentOper
-                        .setCurrent();
-                mainActivity.currentOper
-                        .setToActive();
-
-                // Если операция - "загрузка без погрузчика", то на экран ???, иначе - проверить "простая" погрузка
-                if (mainActivity.currentOper.operIsLoadNoLoader() == true) {
-                    // Погрузка будет без испольщования погрузчика
-                    mainActivity.currentOper.loadNoLoader = true;
-
-                    /* Запускаем Получение показаний весов от терминала */
-                    mainActivity.weightDataFromDeviceReader_Start();
-
-                    /* Тут надо поменять переход сразу на начало загрузки */
-                    // Загруженный вес
-                    mainActivity.storer.weightLoaded
-                            = 0;
-                    // Стартовый вес в миксере
-                    mainActivity.storer.weightStart
-                            = mainActivity.storer.weightCurrent;
-                    // Вычислить конечный вес в погрузчике
-                    mainActivity.storer.weightTarget
-                            = mainActivity.currentOper.loadValue + mainActivity.storer.weightCurrent;
-                    Log.i(logTAG, "конечный вес в погрузчике = " + mainActivity.storer.weightTarget);
-                    // Толеранс +
-                    mainActivity.storer.tolerancePlus
-                            = (int) (mainActivity.currentOper.loadValue * Float.parseFloat(mainActivity.getString(R.string.LOADING_PERCENT_WEIGHT_TOLERANCE_UP)));
-                    // Параметры - на экран
-                    mainActivity.displayWeightParameters();
-                    mainActivity.displayWeightParameters1();
-
-                    mainActivity.gotoLayout(LAYOUT_71_LOAD_OPER, mainActivity.currentOper.getOperationInfoForView());
-                    break;
-                }
-
-                // Погрузка будет с использованием погрузчика
-                mainActivity.currentOper.loadNoLoader = false;
-
-                // Если оперция - загрузка, то на экран 8, иначе - 6
-                if (mainActivity.currentOper.operIsLoad() == true) {
-
-                    /* Надо проверить подключние погрузчика */
-
-                    Log.i("L5_BUTTON_ACCEPT",
-                            "servern=" + mainActivity.currentOper.getParam("servern") +
-                                    ", servera=" + mainActivity.currentOper.getParam("servera"));
-                    Log.i("L5_BUTTON_ACCEPT", "==============================");
-
-                    /* Попытаемся найти погрузчик в сети */
-
-                    mainActivity.CheckConnection(
-                            mainActivity.currentOper.getParam("servern"),
-                            null,
-                            mainActivity.L[LAYOUT_9_SERV_REQUEST],
-                            null);
-
-//                    mainActivity.conf.loaderAddrRefresh(mainActivity.currentOper.getParam("servern"));
-
-                    mainActivity.gotoLayout(LAYOUT_9_SERV_REQUEST, mainActivity.currentOper.getOperationInfoForView());
-
-                } else {
-                    mainActivity.gotoLayout(LAYOUT_6_SIMPLE_OPER, mainActivity.currentOper.getOperationInfoForView());
-                }
+//                mainActivity.currentTask
+//                        .setToActive();
+//                currentOperParam
+//                        = new String[4];
+//                currentOperParam
+//                        = mainActivity.storer.getFirstOperationForExecution();
+//                mainActivity.currentOper
+//                        .set(
+//                                currentOperParam[0],
+//                                currentOperParam[1],
+//                                currentOperParam[2],
+//                                mainActivity.storer.getOperData(currentOperParam[0])[4]
+//                        );
+//                mainActivity.currentOper
+//                        .setCurrent();
+//                mainActivity.currentOper
+//                        .setToActive();
+//
+//                // Если операция - "загрузка без погрузчика", то на экран ???, иначе - проверить "простая" погрузка
+//                if (mainActivity.currentOper.operIsLoadNoLoader() == true) {
+//                    // Погрузка будет без испольщования погрузчика
+//                    mainActivity.currentOper.loadNoLoader = true;
+//
+//                    /* Запускаем Получение показаний весов от терминала */
+//                    mainActivity.weightDataFromDeviceReader_Start();
+//
+//                    /* Тут надо поменять переход сразу на начало загрузки */
+//                    // Загруженный вес
+//                    mainActivity.storer.weightLoaded
+//                            = 0;
+//                    // Стартовый вес в миксере
+//                    mainActivity.storer.weightStart
+//                            = mainActivity.storer.weightCurrent;
+//                    // Вычислить конечный вес в погрузчике
+//                    mainActivity.storer.weightTarget
+//                            = mainActivity.currentOper.loadValue + mainActivity.storer.weightCurrent;
+//                    Log.i(logTAG, "конечный вес в погрузчике = " + mainActivity.storer.weightTarget);
+//                    // Толеранс +
+//                    mainActivity.storer.tolerancePlus
+//                            = (int) (mainActivity.currentOper.loadValue * Float.parseFloat(mainActivity.getString(R.string.LOADING_PERCENT_WEIGHT_TOLERANCE_UP)));
+//                    // Параметры - на экран
+//                    mainActivity.displayWeightParameters();
+//                    mainActivity.displayWeightParameters1();
+//
+//                    mainActivity.gotoLayout(LAYOUT_71_LOAD_OPER, mainActivity.currentOper.getOperationInfoForView());
+//                    break;
+//                }
+//
+//                // Погрузка будет с использованием погрузчика
+//                mainActivity.currentOper.loadNoLoader = false;
+//
+//                // Если оперция - загрузка, то на экран 8, иначе - 6
+//                if (mainActivity.currentOper.operIsLoad() == true) {
+//
+//                    /* Надо проверить подключние погрузчика */
+//
+//                    Log.i("L5_BUTTON_ACCEPT",
+//                            "servern=" + mainActivity.currentOper.getParam("servern") +
+//                                    ", servera=" + mainActivity.currentOper.getParam("servera"));
+//                    Log.i("L5_BUTTON_ACCEPT", "==============================");
+//
+//                    /* Попытаемся найти погрузчик в сети */
+//
+//                    mainActivity.CheckConnection(
+//                            mainActivity.currentOper.getParam("servern"),
+//                            null,
+//                            mainActivity.L[LAYOUT_9_SERV_REQUEST],
+//                            null);
+//
+////                    mainActivity.conf.loaderAddrRefresh(mainActivity.currentOper.getParam("servern"));
+//
+//                    mainActivity.gotoLayout(LAYOUT_9_SERV_REQUEST, mainActivity.currentOper.getOperationInfoForView());
+//
+//                } else {
+//                    mainActivity.gotoLayout(LAYOUT_6_SIMPLE_OPER, mainActivity.currentOper.getOperationInfoForView());
+//                }
                 break;
 
             /* "Простая операция" - отмена */
@@ -453,17 +533,23 @@ public class Controller {
 
             /* Погрузка - Завершено */
             case L71_BUTTON_COMPLETE:
-                mainActivity.weightDataToLoaderSender_Stop();
-                mainActivity.weightDataFromDeviceReader_Stop();  // Остановить получение показаний весов
-                mainActivity.loader.send(mainActivity.loader.msg_LoadStop(mainActivity.currentOper.operId));
+                mainActivity
+                        .weightDataToLoaderSender_Stop();
+                mainActivity
+                        .weightDataFromDeviceReader_Stop();  // Остановить получение показаний весов
+                mainActivity.loader
+                        .send(mainActivity.loader.msg_LoadStop(mainActivity.currentOper.operId));
                 // Отчет о выполнении операции
                 mainActivity.currentOper.setToComplete();
                 // Проверить оставшиеся операции текущей задачи
                 if (mainActivity.storer.getListOperationsForExecution() == null) {
-                    mainActivity.currentTask.setToComplete();
-                    mainActivity.gotoLayout(LAYOUT_8_TASK_COMPLETE, "");       // Все операции задачи завершены
+                    mainActivity
+                            .currentTask.setToComplete();
+                    mainActivity
+                            .gotoLayout(LAYOUT_8_TASK_COMPLETE, "");       // Все операции задачи завершены
                 } else {
-                    mainActivity.gotoLayout(LAYOUT_1_BEGIN, "");               // Если есть невыполненые операции
+                    mainActivity
+                            .gotoLayout(LAYOUT_1_BEGIN, "");               // Если есть невыполненые операции
                 }
                 break;
 

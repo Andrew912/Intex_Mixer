@@ -158,7 +158,8 @@ public class LoaderCommunicator {
 
         @Override
         public void run() {
-            msgSendWeight = activity.messenger.msg_ToLoader_SendWeight();
+            msgSendWeight
+                    = activity.messenger.msg_ToLoader_SendWeight();
             // Если можно продолжать попытки отправки запроса, то
             if (continueSendWeight == true) {
                 // Отправить

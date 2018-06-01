@@ -705,7 +705,6 @@ public class DBHandler {
 
         Cursor catCursor
                 = activity.db.database.rawQuery(query, null);
-
 //        Log.i("getTableColumns", "==================");
 //        Log.i("getTableColumns", "Table: " + tableName);
 //        Log.i("getTableColumns", "==================");
@@ -741,7 +740,6 @@ public class DBHandler {
                 = "select * from '" + tableName + "'";
         Cursor catCursor
                 = activity.db.database.rawQuery(query, null);
-
 //        Log.i("getTableColumns", "\n==================");
 //        Log.i("getTableColumns", "\nTable: " + tableName);
 //        Log.i("getTableColumns", "\n==================");
@@ -749,20 +747,21 @@ public class DBHandler {
 //        for (int a = 0; a < tableColumns.length; a++) {
 //            Log.i("getTableColumns", (a + 1) + ". " + tableColumns[a]);
 //        }
-
-        catCursor.moveToFirst();
-        int i, j;
-        j = 1;
-        do {
-            retVar = retVar + j + ". ";
-            i = 0;
-            while (i < tableColumns.length) {
-                retVar = retVar + tableColumns[i] + "=" + catCursor.getString(catCursor.getColumnIndex(tableColumns[i])) + " ";
-                i++;
-            }
-            j++;
-            retVar = retVar + "\n";
-        } while (catCursor.moveToNext());
+        if (catCursor.moveToFirst()) {
+            int i, j;
+            j = 1;
+            do {
+                retVar = retVar + j + ". ";
+                i = 0;
+                while (i < tableColumns.length) {
+//                    Log.i("printTableData", "tableColumns[i]=" + tableColumns[i]);
+                    retVar = retVar + tableColumns[i] + "=" + catCursor.getString(catCursor.getColumnIndex(tableColumns[i])) + " ";
+                    i++;
+                }
+                j++;
+                retVar = retVar + "\n";
+            } while (catCursor.moveToNext());
+        }
         retVar = retVar + delimiter + "\nTotal " + catCursor.getCount() + " records" + "\n" + delimiter;
 
         return retVar;
