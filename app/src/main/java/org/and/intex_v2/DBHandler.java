@@ -198,12 +198,16 @@ public class DBHandler {
         /* Если стартовый адрес не пустой */
         if (devNameStartAddr != null) {
             retVar[activity.net.NET_DEVICE_ADDR]
-                    = retVar[activity.net.NET_DEVICE_ADDR] + activity.extractPatternFromString(devNameStartAddr, "\\d+$");
+                    = retVar[activity.net.NET_DEVICE_ADDR] +
+                    activity.extractPatternFromString(devNameStartAddr, "\\d+$") +
+                    "(devNameStartAddr != null)";
         }
         /* Если пустой, то дергаем адрес из параметров */
         else {
             retVar[activity.net.NET_DEVICE_ADDR]
-                    = retVar[activity.net.NET_DEVICE_ADDR] + paramGet("MixerTermAddr");
+                    = retVar[activity.net.NET_DEVICE_ADDR] +
+                    paramGet("MixerTermAddr") +
+                    "(devNameStartAddr == null)";
         }
 
         /*  */
