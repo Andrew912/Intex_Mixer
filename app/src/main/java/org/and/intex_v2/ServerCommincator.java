@@ -276,6 +276,7 @@ public class ServerCommincator {
                     os = socket.getOutputStream();
 
                     for (int i = 0; i < oSize; i++) {
+
                         Log.i(logTAG, "message to send= " + o[i]);
                         byte[] buffer = (o[i] + eol).getBytes();
                         os.write(buffer);
@@ -504,10 +505,14 @@ public class ServerCommincator {
 
     // Список сообщений из таблицы mail, которые еще не отправлены
     String[] dbMailGetMessages() {
-        String[] r;
-        DBHelper dbh = new DBHelper(mainActivity.context);
-        SQLiteDatabase db = dbh.getWritableDatabase();
-        Cursor cursor = db.query(TABLE_MAIL,
+        String[]
+                r;
+        DBHelper dbh
+                = new DBHelper(mainActivity.context);
+        SQLiteDatabase db
+                = dbh.getWritableDatabase();
+        Cursor cursor
+                = db.query(TABLE_MAIL,
                 new String[]{KEY_MAIL_MESSAGE},
                 KEY_MAIL_COMPLETE + "=?",
                 new String[]{String.valueOf(0)},

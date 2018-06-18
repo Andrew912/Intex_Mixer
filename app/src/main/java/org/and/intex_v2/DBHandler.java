@@ -199,15 +199,14 @@ public class DBHandler {
         if (devNameStartAddr != null) {
             retVar[activity.net.NET_DEVICE_ADDR]
                     = retVar[activity.net.NET_DEVICE_ADDR] +
-                    activity.extractPatternFromString(devNameStartAddr, "\\d+$") +
-                    "(devNameStartAddr != null)";
+                    activity.extractPatternFromString(devNameStartAddr, "\\d+$");
+            return retVar;
         }
         /* Если пустой, то дергаем адрес из параметров */
         else {
             retVar[activity.net.NET_DEVICE_ADDR]
                     = retVar[activity.net.NET_DEVICE_ADDR] +
-                    paramGet("MixerTermAddr") +
-                    "(devNameStartAddr == null)";
+                    paramGet("MixerTermAddr");
         }
 
         /*  */
