@@ -213,7 +213,8 @@ public class MainActivity extends AppCompatActivity {
             LAYOUT_00_CLEARING = 12;
 
     /* Текст экрана в лайауте */
-    TextView textView[];
+    TextView
+            textView[];
 
     /* Текст статусной строки */
     TextView
