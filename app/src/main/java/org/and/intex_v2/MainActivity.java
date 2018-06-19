@@ -1037,10 +1037,17 @@ public class MainActivity extends AppCompatActivity {
          *******************************/
 
         paramInit();
-        conf.setSystemParameters();
+
+        conf
+                .setSystemParameters();
+
         printServerFound();
-        currentTask.setTaskData();
-        controller.controller(L__BUTTON_START);
+
+        currentTask
+                .setTaskData();
+
+        controller
+                .controller(L__BUTTON_START);
 
         /*******************************
          * КОНЕЦ

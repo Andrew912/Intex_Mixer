@@ -210,7 +210,7 @@ public class Controller {
                 // Отправка статистики по операциям
 
                 /* Надо будет включить отправку почты обратно потом */
-                mainActivity.server.sendMail();
+//                mainActivity.server.sendMail();
                 break;
 
             case L0_BUTTON_BACK:        //
@@ -244,12 +244,12 @@ public class Controller {
             case L1_BUTTON_BEGIN_JOB:
 
                 // Отправляем почту, если есть, что отправлять
-                if (dbMailRecNotEmpty()) {
-                    mainActivity.server.sendMail();
-                    Log.i("MAIL", "Почта отправлена!");
-                } else {
-                    Log.i("MAIL", "Нет почты для отправки...");
-                }
+//                if (dbMailRecNotEmpty()) {
+//                    mainActivity.server.sendMail();
+//                    Log.i("MAIL", "Почта отправлена!");
+//                } else {
+//                    Log.i("MAIL", "Нет почты для отправки...");
+//                }
 
                 /* Проверяем подключение весового терминала если он еще не подключен */
                 if (mainActivity.ifServerFound(mainActivity.conf.terminalName) == false) {

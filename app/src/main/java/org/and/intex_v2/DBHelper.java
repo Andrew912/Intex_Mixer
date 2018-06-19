@@ -22,7 +22,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     // Данный параметр надо исправить для автоматического обновления структуры БД
     public static final int DATABASE_VERSION
-            = 3;
+            = 25;
 
     // Наименование БД
     public static final String DATABASE_NAME = "config.database";
@@ -355,6 +355,23 @@ public class DBHelper extends SQLiteOpenHelper {
                     },
                     {
                             {"PRIMARY KEY", "_id", "1"}
+                    }},
+            /**
+             * 7. MAILTOSEND - записи для отправки на сервер
+            */
+            {
+                    {
+                            {"MAILTOSEND"}
+                    },
+                    {
+                            {"mid", "INTEGER", ""},         // Идентификатор записи
+                            {"message", "TEXT", ""},        // Текст сообщения
+                            {"reported", "INTEGER", "0"},   //
+                            {"complete", "INTEGER", "0"},   //
+                            {"to_delete", "INTEGER", "0"}   // Пометка на удаление
+                    },
+                    {
+                            {"PRIMARY KEY", "mid", "1"}
                     }}
     };
 
