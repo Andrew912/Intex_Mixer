@@ -49,15 +49,29 @@ public class ServerCommincator {
     boolean
             dataFromServerReaded;
 
+    /**
+     * Конструктор
+     *
+     * @param activity
+     */
     public ServerCommincator(MainActivity activity) {
         this.mainActivity
                 = activity;
+
+        /* Установка параметров сервера управления */
         socketAddr
-                = "91.218.229.25";
+                = mainActivity.conf.controlServer.socketAddr;
         socketPort
-                = 60001;
+                = mainActivity.conf.controlServer.socketPort;
         buffSize
-                = 1024;
+                = mainActivity.conf.controlServer.buffSize;
+
+//        socketAddr
+//                = "91.218.229.25";
+//        socketPort
+//                = 60001;
+//        buffSize
+//                = 1024;
     }
 
     // Главная запускалка - отсюда запускаем все, что надо

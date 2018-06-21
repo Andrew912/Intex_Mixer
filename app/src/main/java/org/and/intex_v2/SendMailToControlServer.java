@@ -35,22 +35,21 @@ public class SendMailToControlServer {
             public void run() {
                 /*  Тут типа происходит все действие */
                 while (true) {
+
+
+
                     Log.i(
                             "****** sendMail ******",
-                            "Address=" + mainActivity.conf.controlServer.socketAddr +
-                                    ", Port=" + mainActivity.conf.controlServer.socketPort
+                            "\nAddress=" + mainActivity.conf.controlServer.socketAddr +
+                                    ", Port=" + mainActivity.conf.controlServer.socketPort + "\n"
                     );
 
                 /* Задержка выполнения потока на 10 минут */
                     try {
                         Thread.sleep(mailSendDelay);
-//                        Log.i(
-//                                "****** sendMail ******",
-//                                "Поток был остановлен");
                     } catch (InterruptedException e) {
                         Log.i(
-                                "****** sendMail ******",
-                                "ОШИБКА при попытке усыпить поток");
+                                "****** sendMail ******", "ОШИБКА при попытке усыпить поток");
                         e.printStackTrace();
                     }
                 }
