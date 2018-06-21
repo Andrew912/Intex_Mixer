@@ -247,7 +247,9 @@ public class ServerCommincator {
     }
 
 
-    // Передача сообщений на сервер (из таблицы MAIL)
+    /**
+     * Передача сообщений на сервер (из таблицы MAIL)
+     */
     public void sendMail() {
 
         Log.i(logTAG, "SEND mail");
@@ -263,11 +265,12 @@ public class ServerCommincator {
         new ServerSendMailMessagesClass().execute(dbMailGetMessages());
     }
 
-    // Класс передачи сообщений на сервер
+    /**
+     * Класс передачи сообщений на сервер
+     */
     class ServerSendMailMessagesClass extends AsyncTask<String, Void, Void> {
-        int bufferSize = 10;
-        String[] o;
-//        CycleBuffer sourceInputLineBuffer = new CycleBuffer(bufferSize);
+        String[]
+                o;
 
         @Override
         protected Void doInBackground(String... params) {
@@ -281,11 +284,9 @@ public class ServerCommincator {
 
             Log.i(logTAG, "===========================================");
             for (int i = 0; i < oSize; i++) {
-//                o[i]+=eol;
                 Log.i(logTAG, "PARAMS(o)=" + o[i]);
             }
             Log.i(logTAG, "===========================================");
-
             try {
                 InetAddress serverAddr = InetAddress.getByName(socketAddr);
                 socket = new Socket(serverAddr, socketPort);
@@ -294,7 +295,6 @@ public class ServerCommincator {
                     os = socket.getOutputStream();
 
                     for (int i = 0; i < oSize; i++) {
-
                         Log.i(logTAG, "message to send= " + o[i]);
                         byte[] buffer = (o[i] + eol).getBytes();
                         os.write(buffer);
@@ -342,7 +342,12 @@ public class ServerCommincator {
         }
     }
 
-    // Статус отправки сообщения
+    /**
+     * Статус отправки сообщения
+     *
+     * @param resivedString
+     * @return
+     */
     String statusMessageTransfer(String resivedString) {
         String r = "0";
         Pattern pattern = Pattern.compile("st=\'\\d+\'");

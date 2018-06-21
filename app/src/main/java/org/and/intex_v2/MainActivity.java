@@ -742,7 +742,7 @@ public class MainActivity extends AppCompatActivity {
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        server.sendMail();
+//                        server.sendMail();
                     }
                 });
 
@@ -1050,7 +1050,10 @@ public class MainActivity extends AppCompatActivity {
         currentTask
                 .setTaskData();
 
-        sendMailToControlServer.sendMail();
+
+        /* ========== */
+//        sendMailToControlServer.sendMail();
+        sendMailToControlServer.test();
 
         controller
                 .controller(L__BUTTON_START);

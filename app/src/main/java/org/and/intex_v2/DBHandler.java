@@ -271,7 +271,7 @@ public class DBHandler {
 //        newAddr = devAddr;
 //        Log.i("store_Device_Addr_to_DB", "getDevAddrFrimDB = " + getDeviceAddrfromDB(devNetMask, devName, activity.conf.terminalAddress)[1]);
 
-        if (deviceDataNowInDB(devName, devNetMask)>0) {
+        if (deviceDataNowInDB(devName, devNetMask) > 0) {
             update_Device_Addr_in_DB(devNetMask, devName, newAddr);
         } else {
             append_Device_Addr_in_DB(devNetMask, devName, newAddr);
@@ -835,8 +835,8 @@ public class DBHandler {
                 = getTableColumns(tableName);
         String query
                 = "select * from " + tableName;
-        Cursor catCursor
-                = activity.dbHandler.database.rawQuery(query, null);
+        Cursor cursor
+                = database.rawQuery(query, null);
 //        Log.i("getTableColumns", "\n==================");
 //        Log.i("getTableColumns", "\nTable: " + tableName);
 //        Log.i("getTableColumns", "\n==================");
@@ -844,7 +844,7 @@ public class DBHandler {
 //        for (int a = 0; a < tableColumns.length; a++) {
 //            Log.i("getTableColumns", (a + 1) + ". " + tableColumns[a]);
 //        }
-        if (catCursor.moveToFirst()) {
+        if (cursor.moveToFirst()) {
             int i, j;
             j = 1;
             do {
@@ -853,18 +853,27 @@ public class DBHandler {
                 while (i < tableColumns.length) {
 //                    Log.i("printTableData", "tableColumns[i]=" + tableColumns[i]);
                     retVar = retVar +
-                            tableColumns[i] + "=[" + catCursor.getString(catCursor.getColumnIndex(tableColumns[i])) + "] ";
+                            tableColumns[i] + "=[" + cursor.getString(cursor.getColumnIndex(tableColumns[i])) + "] ";
                     i++;
                 }
                 j++;
                 retVar = retVar + "\n";
-            } while (catCursor.moveToNext());
+            } while (cursor.moveToNext());
         }
         retVar = retVar +
-                delimiter + "\nTotal " + catCursor.getCount() + " records" + "\n" + delimiter;
+                delimiter + "\nTotal " + cursor.getCount() + " records" + "\n" + delimiter;
 
         return retVar;
     }
 
-
+    /**
+     * Копирует записи из mail в mailtosend
+     */
+    public void copyMail() {
+        database.execSQL(
+                "delete from mailtosend"
+        );
+        database.execSQL(
+                "insert into mailtosend (mailid,message) select _id as mailid,message from mail where to_delete=0");
+    }
 }

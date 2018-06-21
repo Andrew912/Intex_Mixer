@@ -21,7 +21,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     // Данный параметр надо исправить для автоматического обновления структуры БД
     public static final int DATABASE_VERSION
-            = 25;
+            = 26;
 
     // Наименование БД
     public static final String DATABASE_NAME = "config.database";
