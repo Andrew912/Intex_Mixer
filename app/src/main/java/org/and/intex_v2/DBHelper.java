@@ -5,7 +5,6 @@ import android.util.Log;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 /**
  * Created by Андрей on 10.07.2017.
@@ -364,14 +363,14 @@ public class DBHelper extends SQLiteOpenHelper {
                             {"MAILTOSEND"}
                     },
                     {
-                            {"mid", "INTEGER", ""},         // Идентификатор записи
+                            {"mailid", "INTEGER", ""},         // Идентификатор записи
                             {"message", "TEXT", ""},        // Текст сообщения
                             {"reported", "INTEGER", "0"},   //
                             {"complete", "INTEGER", "0"},   //
                             {"to_delete", "INTEGER", "0"}   // Пометка на удаление
                     },
                     {
-                            {"PRIMARY KEY", "mid", "1"}
+                            {"PRIMARY KEY", "mailid", "1"}
                     }}
     };
 

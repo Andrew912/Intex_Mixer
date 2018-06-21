@@ -28,9 +28,6 @@ import static org.and.intex_v2.DBHelper.KEY_TASK_IS_CURRENT;
 import static org.and.intex_v2.DBHelper.KEY_TASK_REPORTED;
 import static org.and.intex_v2.DBHelper.KEY_TASK_STATUS;
 import static org.and.intex_v2.DBHelper.KEY_TASK_TO_DELETE;
-import static org.and.intex_v2.DBHelper.TABLE_MAIL;
-import static org.and.intex_v2.DBHelper.TABLE_OPER;
-import static org.and.intex_v2.DBHelper.TABLE_TASK;
 
 /**
  * Created by Андрей on 14.07.2017.
@@ -65,7 +62,7 @@ public class Storer {
         activity
                 = mainActivity;
         mainActivity
-                .log("DATABASE: " + activity.db.database.toString() + ", " + activity.db.database.getPath());
+                .log("DATABASE: " + activity.dbHandler.database.toString() + ", " + activity.dbHandler.database.getPath());
         currentTaskNumber
                 = getRecCount_Task();
     }
@@ -89,7 +86,7 @@ public class Storer {
      * @return
      */
     public int getNumberTaskForExecution() {
-        Cursor c = activity.db.database.query(
+        Cursor c = activity.dbHandler.database.query(
                 activity.dbHelper.TABLE_TASK,
                 new String[]{
                         KEY_TASK_ID,
@@ -110,7 +107,7 @@ public class Storer {
      * @return
      */
     public int getNumberOperForExecution() {
-        Cursor c = activity.db.database.query(
+        Cursor c = activity.dbHandler.database.query(
                 activity.dbHelper.TABLE_OPER,
                 new String[]{
                         KEY_OPER_ID,
@@ -139,7 +136,7 @@ public class Storer {
      */
     public String[] getListOperationsForExecution() {
         activity.log("getListOperationsForExecution");
-        Cursor c = activity.db.database.query(
+        Cursor c = activity.dbHandler.database.query(
                 activity.dbHelper.TABLE_OPER,
                 new String[]{
                         KEY_OPER_ID,
@@ -234,7 +231,7 @@ public class Storer {
      */
     public String getOperParam(String operId, String paramName) {
         Log.i("getOperParam", "operId=" + operId + ", paramName=" + paramName);
-        Cursor c = activity.db.database.query(
+        Cursor c = activity.dbHandler.database.query(
                 activity.dbHelper.TABLE_OPER_PARAM,
                 new String[]{
                         KEY_OPPA_PARAM_VALUE
@@ -256,7 +253,7 @@ public class Storer {
      */
     public String[] getFirstOperationForExecution() {
         activity.log("getFirstOperationForExecution");
-        Cursor c = activity.db.database.query(
+        Cursor c = activity.dbHandler.database.query(
                 activity.dbHelper.TABLE_OPER,
                 new String[]{
                         KEY_OPER_ID,
@@ -295,7 +292,7 @@ public class Storer {
      * @return
      */
     public String[] getListTasksForExecution() {
-        Cursor c = activity.db.database.query(
+        Cursor c = activity.dbHandler.database.query(
                 activity.dbHelper.TABLE_TASK,
                 new String[]{
                         KEY_TASK_ID,
@@ -351,7 +348,7 @@ public class Storer {
         if (taskId != null) {
             ContentValues newValues = new ContentValues();
             newValues.put(KEY_TASK_IS_CURRENT, String.valueOf(1));
-            activity.db.database.update(activity.dbHelper.TABLE_TASK,
+            activity.dbHandler.database.update(activity.dbHelper.TABLE_TASK,
                     newValues,
                     KEY_TASK_ID + "=" + taskId,
                     null);
@@ -367,7 +364,7 @@ public class Storer {
      * @return
      */
     public String getCurrentTask() {
-        Cursor c = activity.db.database.query(
+        Cursor c = activity.dbHandler.database.query(
                 activity.dbHelper.TABLE_TASK,
                 new String[]{
                         KEY_TASK_ID
@@ -392,7 +389,7 @@ public class Storer {
 
     public String[] takeCurrentTaskData() {
         /* А неплохо бы еще сразу проверить и на наличие текущей активной (приторможенной) операции */
-        Cursor c = activity.db.database.query(
+        Cursor c = activity.dbHandler.database.query(
                 activity.dbHelper.TABLE_TASK,
                 new String[]{
                         KEY_TASK_ID,
@@ -424,7 +421,7 @@ public class Storer {
         if (taskId == null) {
             return null;
         }
-        Cursor c = activity.db.database.query(
+        Cursor c = activity.dbHandler.database.query(
                 activity.dbHelper.TABLE_OPER,
                 new String[]{
                         KEY_OPER_ID,
@@ -455,7 +452,7 @@ public class Storer {
      * @return
      */
     public String[] getTaskData(String taskId) {
-        Cursor c = activity.db.database.query(
+        Cursor c = activity.dbHandler.database.query(
                 activity.dbHelper.TABLE_TASK,
                 new String[]{
                         KEY_TASK_ID,
@@ -491,7 +488,7 @@ public class Storer {
      */
 
     public String[] getOperData(String operId) {
-        Cursor c = activity.db.database.query(
+        Cursor c = activity.dbHandler.database.query(
                 activity.dbHelper.TABLE_OPER,
                 new String[]{
                         KEY_OPER_ID,
@@ -537,7 +534,7 @@ public class Storer {
          * Находит при наличии в БД запись о текущей операции.
          * Ограничение - задача, которой должна принадлежать данная операция.
          */
-        Cursor c = activity.db.database.query(
+        Cursor c = activity.dbHandler.database.query(
                 activity.dbHelper.TABLE_OPER,
                 new String[]{
                         KEY_OPER_ID},
@@ -562,7 +559,7 @@ public class Storer {
     public void setTaskProperty_Complete(String taskId) {
         ContentValues cv = new ContentValues();
         cv.put(KEY_TASK_COMPLETE, String.valueOf(1));
-        int c = activity.db.database.update(
+        int c = activity.dbHandler.database.update(
                 activity.dbHelper.TABLE_TASK,
                 cv,
                 KEY_TASK_ID + "=?",
@@ -579,7 +576,7 @@ public class Storer {
     public void setTaskProperty_Delete(String taskId) {
         ContentValues cv = new ContentValues();
         cv.put(KEY_TASK_TO_DELETE, String.valueOf(1));
-        int c = activity.db.database.update(
+        int c = activity.dbHandler.database.update(
                 activity.dbHelper.TABLE_TASK,
                 cv,
                 KEY_TASK_ID + "=?",
@@ -596,7 +593,7 @@ public class Storer {
     public void setTaskProperty_Reported(String taskId) {
         ContentValues cv = new ContentValues();
         cv.put(KEY_TASK_REPORTED, String.valueOf(1));
-        int c = activity.db.database.update(
+        int c = activity.dbHandler.database.update(
                 activity.dbHelper.TABLE_TASK,
                 cv,
                 KEY_TASK_ID + "=?",
@@ -614,7 +611,7 @@ public class Storer {
     public void setTaskProperty_Current(String taskId, int value) {
         ContentValues cv = new ContentValues();
         cv.put(KEY_TASK_IS_CURRENT, String.valueOf(value));
-        int c = activity.db.database.update(
+        int c = activity.dbHandler.database.update(
                 activity.dbHelper.TABLE_TASK,
                 cv,
                 KEY_TASK_ID + "=?",
@@ -632,7 +629,7 @@ public class Storer {
     public void setTaskProperty_Status(String taskId, String status) {
         ContentValues cv = new ContentValues();
         cv.put(KEY_TASK_STATUS, status);
-        int c = activity.db.database.update(
+        int c = activity.dbHandler.database.update(
                 activity.dbHelper.TABLE_TASK,
                 cv,
                 KEY_TASK_ID + "=?",
@@ -648,7 +645,7 @@ public class Storer {
     public void setOperProperty_Complete(String operId) {
         ContentValues cv = new ContentValues();
         cv.put(KEY_OPER_COMPLETE, String.valueOf(1));
-        int c = activity.db.database.update(
+        int c = activity.dbHandler.database.update(
                 activity.dbHelper.TABLE_OPER,
                 cv,
                 KEY_TASK_ID + "=?",
@@ -664,7 +661,7 @@ public class Storer {
     public void setOperProperty_Delete(String operId) {
         ContentValues cv = new ContentValues();
         cv.put(KEY_OPER_TO_DELETE, String.valueOf(1));
-        int c = activity.db.database.update(
+        int c = activity.dbHandler.database.update(
                 activity.dbHelper.TABLE_OPER,
                 cv,
                 KEY_TASK_ID + "=?",
@@ -680,7 +677,7 @@ public class Storer {
     public void setOperProperty_Reported(String operId) {
         ContentValues cv = new ContentValues();
         cv.put(KEY_OPER_REPORTED, String.valueOf(1));
-        int c = activity.db.database.update(activity.dbHelper.TABLE_OPER,
+        int c = activity.dbHandler.database.update(activity.dbHelper.TABLE_OPER,
                 cv,
                 KEY_TASK_ID + "=?",
                 new String[]{operId}
@@ -696,7 +693,7 @@ public class Storer {
     public void setOperProperty_Current(String operId, int value) {
         ContentValues cv = new ContentValues();
         cv.put(KEY_OPER_IS_CURRENT, String.valueOf(value));
-        int c = activity.db.database.update(
+        int c = activity.dbHandler.database.update(
                 activity.dbHelper.TABLE_OPER,
                 cv,
                 KEY_TASK_ID + "=?",
@@ -713,7 +710,7 @@ public class Storer {
     public void setOperProperty_Status(String operId, String status) {
         ContentValues cv = new ContentValues();
         cv.put(KEY_OPER_STATUS, status);
-        int c = activity.db.database.update(
+        int c = activity.dbHandler.database.update(
                 activity.dbHelper.TABLE_OPER,
                 cv,
                 KEY_TASK_ID + "=?",
@@ -723,19 +720,19 @@ public class Storer {
 
     //
     int getRecCount_Task() {
-        Cursor cursor = activity.db.database.rawQuery("select * from task", null);
+        Cursor cursor = activity.dbHandler.database.rawQuery("select * from task", null);
 //        mainActivity.log("TASK rec=" + cursor.getCount());
         return cursor.getCount();
     }
 
     int getRecCount_Oper() {
-        Cursor cursor = activity.db.database.rawQuery("select * from operation", null);
+        Cursor cursor = activity.dbHandler.database.rawQuery("select * from operation", null);
 //        mainActivity.log("OPER rec=" + cursor.getCount());
         return cursor.getCount();
     }
 
     int getRecCount_OperPar() {
-        Cursor cursor = activity.db.database.rawQuery("select * from oper_param", null);
+        Cursor cursor = activity.dbHandler.database.rawQuery("select * from oper_param", null);
 //        mainActivity.log("OPER_PAR rec=" + cursor.getCount());
         return cursor.getCount();
     }
@@ -749,7 +746,7 @@ public class Storer {
         ContentValues cv = new ContentValues();
         cv.put(KEY_MAIL_RECIPIENT, "CONTROL");
         cv.put(KEY_MAIL_MESSAGE, message);
-        activity.db.database.insert(activity.dbHelper.TABLE_MAIL, null, cv);
+        activity.dbHandler.database.insert(activity.dbHelper.TABLE_MAIL, null, cv);
     }
 
     //
@@ -800,7 +797,7 @@ public class Storer {
      * Жуткий способ очистить ВСЮ базу данных путем перезаписи всех таблиц
      */
     void clearDB() {
-        activity.dbHelper.onUpgrade(activity.db.database, 2, 1);
+        activity.dbHelper.onUpgrade(activity.dbHandler.database, 2, 1);
     }
 
 

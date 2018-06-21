@@ -45,17 +45,21 @@ import static org.and.intex_v2.DBHelper.TABLE_TASK;
 
 public class DBFunctions {
 
-    MainActivity activity;
-    DBHelper dbHelper;
-    SQLiteDatabase db;
+    MainActivity
+            activity;
+    DBHelper
+            dbHelper;
+    SQLiteDatabase
+            db;
 
-    public DBFunctions(MainActivity mainActivity) {
+    public DBFunctions(MainActivity mainActivity, SQLiteDatabase pDB) {
         activity =
                 mainActivity;
-        dbHelper =
-                new DBHelper(activity);
-        db =
-                dbHelper.getWritableDatabase();
+//        dbHelper =
+//                new DBHelper(activity);
+//        dbHandler =
+//                dbHelper.getWritableDatabase();
+        db = pDB;
     }
 
     String dns() {
@@ -230,8 +234,10 @@ public class DBFunctions {
 
     void operList() {
         activity.log(true, "OPER begin");
-        String s = "Task: ALL\n";
-        Cursor c = db.query(
+        String s
+                = "Task: ALL\n";
+        Cursor c
+                = db.query(
                 dbHelper.TABLE_OPER,
                 new String[]{
                         KEY_OPER_ID,
@@ -349,27 +355,27 @@ public class DBFunctions {
     /**
      * Очистка ОПЕРАЦИЙ
      */
-    void clearTask () {
-        activity.db.database
-                .delete(TABLE_TASK,null,null);
+    void clearTask() {
+        activity.dbHandler.database
+                .delete(TABLE_TASK, null, null);
     }
 
     /**
      * Очистка ОПЕРАЦИЙ
      */
-    void clearOper () {
-        activity.db.database
-                .delete(TABLE_OPER_PARAM,null,null);
-        activity.db.database
-                .delete(TABLE_OPER,null,null);
+    void clearOper() {
+        activity.dbHandler.database
+                .delete(TABLE_OPER_PARAM, null, null);
+        activity.dbHandler.database
+                .delete(TABLE_OPER, null, null);
     }
 
     /**
      * Очистка ОПЕРАЦИЙ
      */
-    void clearMail () {
-        activity.db.database
-                .delete(TABLE_MAIL,null,null);
+    void clearMail() {
+        activity.dbHandler.database
+                .delete(TABLE_MAIL, null, null);
     }
 
 }

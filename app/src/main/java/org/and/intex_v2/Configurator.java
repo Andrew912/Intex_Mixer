@@ -46,6 +46,18 @@ public class Configurator {
     int
             dataLoadBufferSize = 1024;      // Размер буфера для получения даннфх с сервера управления
 
+    public static class ControlServer {
+        String socketAddr
+                = "91.218.229.25";
+        int socketPort
+                = 60001;
+        int buffSize
+                = 1024;
+     }
+
+    ControlServer
+            controlServer;
+
     /**============================================================
      * Переменные среды, запоминаемые при приостановке приложения
      *=============================================================
@@ -69,6 +81,9 @@ public class Configurator {
     public Configurator(MainActivity mainActivity) {
         this.mainActivity
                 = mainActivity;
+        controlServer
+                = new ControlServer();
+
     }
 
     /**
@@ -78,31 +93,31 @@ public class Configurator {
         String[] tmp;
 
         /* Проверяем и загружаем параметр "WiFiNet" */
-        tmp = mainActivity.db.paramGet("WiFiNet");
+        tmp = mainActivity.dbHandler.paramGet("WiFiNet");
         if (tmp != null) {
             deviceName = tmp[PARAMETER_VALUE];
         }
 
         /* Проверяем и загружаем параметр "WiFiPass" */
-        tmp = mainActivity.db.paramGet("WiFiPass");
+        tmp = mainActivity.dbHandler.paramGet("WiFiPass");
         if (tmp != null) {
             deviceName = tmp[PARAMETER_VALUE];
         }
 
         /* Проверяем и загружаем параметр "MixerTermName" */
-        tmp = mainActivity.db.paramGet("MixerTermName");
+        tmp = mainActivity.dbHandler.paramGet("MixerTermName");
         if (tmp != null) {
             terminalName = tmp[PARAMETER_VALUE];
         }
 
         /* Проверяем и загружаем параметр "MixerName" */
-        tmp = mainActivity.db.paramGet("MixerName");
+        tmp = mainActivity.dbHandler.paramGet("MixerName");
         if (tmp != null) {
             deviceName = tmp[PARAMETER_VALUE];
         }
 
         /* Проверяем и загружаем параметр "MixerTermAddr" */
-        tmp = mainActivity.db.paramGet("MixerTermAddr");
+        tmp = mainActivity.dbHandler.paramGet("MixerTermAddr");
         if (tmp != null) {
             terminalAddress = tmp[PARAMETER_VALUE];
         }
@@ -117,20 +132,21 @@ public class Configurator {
      */
     public void termAddrRefresh() {
         terminalAddress
-                = mainActivity.db.getDeviceAddrfromDB(networkMask, terminalName, terminalAddress)[mainActivity.net.NET_DEVICE_ADDR];
+                = mainActivity.dbHandler.getDeviceAddrfromDB(networkMask, terminalName, terminalAddress)[mainActivity.net.NET_DEVICE_ADDR];
         Toast
                 .makeText(mainActivity.getApplicationContext(), "Терминал:" + terminalAddress, Toast.LENGTH_LONG).show();
     }
 
-    /**
-     * Обновить адрес погрузчика
-     */
-    public void loaderAddrRefresh(String deviceName) {
-        terminalAddress
-                = mainActivity.db.getDeviceAddrfromDB(networkMask, deviceName, terminalAddress)[mainActivity.net.NET_DEVICE_ADDR];
-        Toast
-                .makeText(mainActivity.getApplicationContext(), "Погрузчик:" + terminalAddress, Toast.LENGTH_LONG).show();
-    }
+//    /**
+//     * Обновить адрес погрузчика
+//     */
+//    public void loaderAddrRefresh(String deviceName) {
+//        terminalAddress
+//                = mainActivity.dbHandler.getDeviceAddrfromDB(networkMask, deviceName, terminalAddress)[mainActivity.net.NET_DEVICE_ADDR];
+//        Toast
+//                .makeText(mainActivity.getApplicationContext(), "Погрузчик:" + terminalAddress, Toast.LENGTH_LONG).show();
+//    }
+//
 
     /**
      * Пароль устройства в системе

@@ -47,17 +47,17 @@ public class MainActivity extends AppCompatActivity {
     /* Классы */
     Context
             context;
-    public DBHelper
+    DBHelper
             dbHelper;
-    public DBHandler
-            db;
+    static DBHandler
+            dbHandler;
     Controller
             controller;
     Configurator
             conf;
     StatusLine
             statusLine;
-    DBFunctions
+    static DBFunctions
             dbFunctions;
     CurrentTask
             currentTask;
@@ -75,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
             net;
     ServerFindControlClass
             sfc;
+    static SendMailToControlServer
+            sendMailToControlServer;
 //    GPSTracker
 //            gps;
 
@@ -312,7 +314,7 @@ public class MainActivity extends AppCompatActivity {
                 = new Messenger(this);
         dbHelper
                 = new DBHelper(this.context);
-        db
+        dbHandler
                 = new DBHandler(this, this);
         controller
                 = new Controller(this);
@@ -323,7 +325,7 @@ public class MainActivity extends AppCompatActivity {
         currentOper
                 = new CurrentOper(this);
         dbFunctions
-                = new DBFunctions(this);
+                = new DBFunctions(this, dbHelper.getWritableDatabase());
         server
                 = new ServerCommincator(this);
         loader
@@ -332,6 +334,8 @@ public class MainActivity extends AppCompatActivity {
                 = new NetworkHandler(this);
         sfc
                 = new ServerFindControlClass();
+        sendMailToControlServer
+                = new SendMailToControlServer(this);
 //        gps
 //                = new GPSTracker(this);
 //
@@ -772,9 +776,9 @@ public class MainActivity extends AppCompatActivity {
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        db.dbTableList_OBJECTS();
-                        db.clearTableObjects();
-                        db.dbTableList_OBJECTS();
+                        dbHandler.dbTableList_OBJECTS();
+                        dbHandler.clearTableObjects();
+                        dbHandler.dbTableList_OBJECTS();
                     }
                 });
 
@@ -841,7 +845,7 @@ public class MainActivity extends AppCompatActivity {
 //                layoutsVisiblityRestore();
 //                Toast.makeText(getApplicationContext(),"Работа завершена",Toast.LENGTH_LONG).show();
 //                MainActivity.this.finish();
-                Log.i("STOP",db.printTableData("mail"));
+                Log.i("STOP", dbHandler.printTableData("mail"));
                 System.exit(0);
             }
         });
@@ -1046,6 +1050,8 @@ public class MainActivity extends AppCompatActivity {
         currentTask
                 .setTaskData();
 
+        sendMailToControlServer.sendMail();
+
         controller
                 .controller(L__BUTTON_START);
 
@@ -1184,48 +1190,48 @@ public class MainActivity extends AppCompatActivity {
      * Или класса, в котором будет все */
 
     void paramSave() {
-        Log.i(logTAG,"SAVE params");
+        Log.i(logTAG, "SAVE params");
         if (MixerTermName.equals(et_MixerTermName.getText()) == false) {
             MixerTermName
                     = et_MixerTermName.getText().toString();
-            db.paramStore
+            dbHandler.paramStore
                     ("MixerTermName", MixerTermName, null);
         }
         if (MixerTermAddr.equals(et_MixerTermAddr.getText()) == false) {
             MixerTermAddr
                     = et_MixerTermAddr.getText().toString();
-            db.paramStore
+            dbHandler.paramStore
                     ("MixerTermAddr", MixerTermAddr, null);
         }
 
         if (MixerName.equals(et_MixerName.getText()) == false) {
             MixerName
                     = et_MixerName.getText().toString();
-            db.paramStore
+            dbHandler.paramStore
                     ("MixerName", MixerName, null);
         }
         if (MixerPass.equals(et_MixerPass.getText()) == false) {
             MixerPass
                     = et_MixerPass.getText().toString();
-            db.paramStore
+            dbHandler.paramStore
                     ("MixerPass", MixerPass, null);
         }
         if (WiFiNet.equals(et_WiFiNet.getText()) == false) {
             WiFiNet
                     = et_WiFiNet.getText().toString();
-            db.paramStore
+            dbHandler.paramStore
                     ("WiFiNet", WiFiNet, null);
         }
         if (WiFiPass.equals(et_WiFiPass.getText()) == false) {
             WiFiPass
                     = et_WiFiPass.getText().toString();
-            db.paramStore
+            dbHandler.paramStore
                     ("WiFiPass", WiFiPass, null);
         }
 //        if (MixerTermAddr.equals(et_MixerName.getText()) == false) {
 //            MixerName
 //                    = et_MixerName.getText().toString();
-//            db.paramStore
+//            dbHandler.paramStore
 //                    ("MixerName", MixerName, null);
 //        }
         // Обновляет параметры из конфигурации
@@ -1241,45 +1247,45 @@ public class MainActivity extends AppCompatActivity {
      */
 
     void paramInit() {
-        if (db.paramNow("WiFiNet")) {
-            WiFiNet = db.paramGet("WiFiNet")[db.PARAMETER_VALUE];
+        if (dbHandler.paramNow("WiFiNet")) {
+            WiFiNet = dbHandler.paramGet("WiFiNet")[dbHandler.PARAMETER_VALUE];
         } else {
             WiFiNet = "intex";
         }
         et_WiFiNet.setText(WiFiNet);
 
-        if (db.paramNow("WiFiPass")) {
-            WiFiPass = db.paramGet("WiFiPass")[db.PARAMETER_VALUE];
+        if (dbHandler.paramNow("WiFiPass")) {
+            WiFiPass = dbHandler.paramGet("WiFiPass")[dbHandler.PARAMETER_VALUE];
         } else {
             WiFiPass = "9210603060";
         }
         et_WiFiPass.setText(WiFiPass);
 
-        if (db.paramNow("MixerName")) {
-            MixerName = db.paramGet("MixerName")[db.PARAMETER_VALUE];
+        if (dbHandler.paramNow("MixerName")) {
+            MixerName = dbHandler.paramGet("MixerName")[dbHandler.PARAMETER_VALUE];
         } else {
             MixerName = "mixer.001";
         }
         et_MixerName.setText(MixerName);
 
         /* MixerPass */
-        if (db.paramNow("MixerPass")) {
-            MixerPass = db.paramGet("MixerPass")[db.PARAMETER_VALUE];
+        if (dbHandler.paramNow("MixerPass")) {
+            MixerPass = dbHandler.paramGet("MixerPass")[dbHandler.PARAMETER_VALUE];
         } else {
             MixerPass = "mixer.001";
         }
         et_MixerPass.setText(MixerPass);
 
         /* MixerTermName */
-        if (db.paramNow("MixerTermName")) {
-            MixerTermName = db.paramGet("MixerTermName")[db.PARAMETER_VALUE];
+        if (dbHandler.paramNow("MixerTermName")) {
+            MixerTermName = dbHandler.paramGet("MixerTermName")[dbHandler.PARAMETER_VALUE];
         } else {
             MixerTermName = "mixerterm.001";
         }
         et_MixerTermName.setText(MixerTermName);
 
-        if (db.paramNow("MixerTermAddr")) {
-            MixerTermAddr = db.paramGet("MixerTermAddr")[db.PARAMETER_VALUE];
+        if (dbHandler.paramNow("MixerTermAddr")) {
+            MixerTermAddr = dbHandler.paramGet("MixerTermAddr")[dbHandler.PARAMETER_VALUE];
         } else {
             MixerTermAddr = "20";
         }
@@ -1404,7 +1410,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Пытаемся определить параметры устройства, сохраненные в БД
         String[] terminalAddressFromDB
-                = db.getDeviceAddrfromDB(conf.networkMask, serverToFind, conf.terminalAddress);
+                = dbHandler.getDeviceAddrfromDB(conf.networkMask, serverToFind, conf.terminalAddress);
 
         /* Где-то тут будем обрабатывать начальный адрес искомого сервера */
 
@@ -1971,7 +1977,7 @@ public class MainActivity extends AppCompatActivity {
          */
         public ArrayList<OperationParameter> getOperationParameter(String pId) {
             ArrayList<OperationParameter> retVar = new ArrayList<>();
-            Cursor c = db.database.query(
+            Cursor c = dbHandler.database.query(
                     DBHelper.TABLE_OPER_PARAM,
                     new String[]{
                             KEY_OPPA_OPER_ID,
@@ -2099,7 +2105,6 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Задача для опроса весового терминала
-     *
      */
     class TerminalDataReadTimerTask extends TimerTask {
         @Override
@@ -2172,7 +2177,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     *
      * @param srcString
      * @return
      */
@@ -2354,7 +2358,7 @@ public class MainActivity extends AppCompatActivity {
                  * Надо будет найти причину этой фигни и потом выход из системы здесь можно
                  * будет убрать.
                  */
-                Log.i("STOP",db.printTableData("mail"));
+                Log.i("STOP", dbHandler.printTableData("mail"));
                 System.exit(0);
                 break;
 
@@ -2538,7 +2542,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(getClass().getSimpleName(), "serverFound!!!" + sfc.serverFound.get(wishServerIsFind)[NET_DEVICE_NAME]);
                 sfc.endServerFindCondition.set(wishServerIsFind, true);
                 // Сохраняем данные в БД
-                db.store_Device_Addr_to_DB(
+                dbHandler.store_Device_Addr_to_DB(
                         conf.networkMask,
                         sfc.serverFound.get(wishServerIsFind)[NET_DEVICE_NAME],
                         sfc.serverFound.get(wishServerIsFind)[net.NET_DEVICE_ADDR]

@@ -50,10 +50,14 @@ public class ServerCommincator {
             dataFromServerReaded;
 
     public ServerCommincator(MainActivity activity) {
-        this.mainActivity = activity;
-        socketAddr = "91.218.229.25";
-        socketPort = 60001;
-        buffSize = 1024;
+        this.mainActivity
+                = activity;
+        socketAddr
+                = "91.218.229.25";
+        socketPort
+                = 60001;
+        buffSize
+                = 1024;
     }
 
     // Главная запускалка - отсюда запускаем все, что надо
@@ -317,10 +321,10 @@ public class ServerCommincator {
                 }
             }
             Log.i(logTAG, "============================ Список почты");
-            new DBFunctions(mainActivity).mail();
+            new DBFunctions(mainActivity, mainActivity.dbHelper.getWritableDatabase()).mail();
             dbMailDeleteSended();
             Log.i(logTAG, "============================ Список почты  после отправки");
-            new DBFunctions(mainActivity).mail();
+            new DBFunctions(mainActivity, mainActivity.dbHelper.getWritableDatabase()).mail();
         }
     }
 
@@ -414,7 +418,7 @@ public class ServerCommincator {
         for (IncomingMessageLineParamsClass p : mp) {
             putToDB_OperationParameters(new String[]{operId, p.getName(), p.getValue()});
         }
-        new DBFunctions(mainActivity).operList();
+        new DBFunctions(mainActivity, mainActivity.dbHelper.getWritableDatabase()).operList();
     }
 
     // Извлекаем параметры команды для каждой строки и
@@ -438,7 +442,7 @@ public class ServerCommincator {
         }
         // Запись в БД
         putToDB_Task(new String[]{taskId, name});
-        new DBFunctions(mainActivity).task();
+        new DBFunctions(mainActivity, mainActivity.dbHelper.getWritableDatabase()).task();
     }
 
     // Запись в БД данных операций

@@ -3,7 +3,6 @@ package org.and.intex_v2;
 import android.database.Cursor;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -51,15 +50,11 @@ import static org.and.intex_v2.MainActivity.L9_BUTTON_REJECT;
 import static org.and.intex_v2.MainActivity.LAYOUT_00_CLEARING;
 import static org.and.intex_v2.MainActivity.LAYOUT_0_PARAMS;
 import static org.and.intex_v2.MainActivity.LAYOUT_1_BEGIN;
-import static org.and.intex_v2.MainActivity.LAYOUT_2_NO_TASK;
-import static org.and.intex_v2.MainActivity.LAYOUT_3_DO_TASK;
 import static org.and.intex_v2.MainActivity.LAYOUT_4_TASK_SELECT;
 import static org.and.intex_v2.MainActivity.LAYOUT_5_OPER_SELECT;
-import static org.and.intex_v2.MainActivity.LAYOUT_6_SIMPLE_OPER;
 import static org.and.intex_v2.MainActivity.LAYOUT_71_LOAD_OPER;
 import static org.and.intex_v2.MainActivity.LAYOUT_7_COMPLEX_OPER;
 import static org.and.intex_v2.MainActivity.LAYOUT_8_TASK_COMPLETE;
-import static org.and.intex_v2.MainActivity.LAYOUT_9_SERV_REQUEST;
 import static org.and.intex_v2.MainActivity.L__BUTTON_START;
 
 
@@ -125,10 +120,10 @@ public class Controller {
                 startButtonPresser.schedule(new TimerTask_PressStartButton(),9000);
 
                 /* Для начала надо распечатать все параметры... */
-//                mainActivity.db.getTableColumns("objects");
-//                Log.i("printTableData", mainActivity.db.printTableData("PARAMETERS"));
-//                Log.i("printTableData", mainActivity.db.printTableData("objects"));
-//                mainActivity.db.dbTableList_OBJECTS();
+//                mainActivity.dbHandler.getTableColumns("objects");
+//                Log.i("printTableData", mainActivity.dbHandler.printTableData("PARAMETERS"));
+//                Log.i("printTableData", mainActivity.dbHandler.printTableData("objects"));
+//                mainActivity.dbHandler.dbTableList_OBJECTS();
 
                 /* Отправить на сервер протокол */
 //                mainActivity.server.sendMail();
@@ -177,7 +172,7 @@ public class Controller {
             /* Распечатка таблицы DNS */
             case L00_BUTTON_DNS:
 
-                mainActivity.db.dbTableList_OBJECTS();
+                mainActivity.dbHandler.dbTableList_OBJECTS();
 
                 break;
 
@@ -231,7 +226,7 @@ public class Controller {
 
             case L00_BUTTON_MAIL:       // Сообщения для передачи на сервер
                 mainActivity
-                        .setTextInLayout(LAYOUT_00_CLEARING, mainActivity.db.printTableData("mail"));
+                        .setTextInLayout(LAYOUT_00_CLEARING, mainActivity.dbHandler.printTableData("mail"));
 //                        .setTextInLayout(LAYOUT_00_CLEARING, mainActivity.dbFunctions.mail());
                 break;
 
@@ -555,8 +550,7 @@ public class Controller {
 
             /* OK - task complete */
             case L8_BUTTON_OK:
-                new DBFunctions(mainActivity).clearOper();
-                ;
+                new DBFunctions(mainActivity, mainActivity.dbHelper.getWritableDatabase()).clearOper();
                 mainActivity.gotoLayout(LAYOUT_1_BEGIN, "");
                 break;
 
