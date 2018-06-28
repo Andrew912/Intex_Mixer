@@ -77,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
             sfc;
     static SendMailToControlServer
             sendMailToControlServer;
+    static MailToSend
+            mailToSend;
 //    GPSTracker
 //            gps;
 
@@ -336,6 +338,8 @@ public class MainActivity extends AppCompatActivity {
                 = new ServerFindControlClass();
         sendMailToControlServer
                 = new SendMailToControlServer(this);
+        mailToSend
+                = new MailToSend(this, dbHelper.getWritableDatabase());
 //        gps
 //                = new GPSTracker(this);
 //
@@ -1053,7 +1057,7 @@ public class MainActivity extends AppCompatActivity {
 
         /* ========== */
 //        sendMailToControlServer.sendMail();
-        sendMailToControlServer.test();
+        sendMailToControlServer.send();
 
         controller
                 .controller(L__BUTTON_START);

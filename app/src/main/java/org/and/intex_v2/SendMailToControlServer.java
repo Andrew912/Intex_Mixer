@@ -24,6 +24,12 @@ public class SendMailToControlServer {
 
     MainActivity
             mainActivity;
+    MailToSend
+            mailToSend;                         // Для простоты объявляем класс прямо здесь, хотя
+    // он объявлен как static в MainActivity.
+    // При желании можно работать с тем экземпляром
+    long
+            mailRecordsToSend;                  // Количество записей для отправки
     String
             logTAG = "SendMailToControlServer";
     static final int mailSendDelay
@@ -41,7 +47,8 @@ public class SendMailToControlServer {
     public SendMailToControlServer(MainActivity activity) {
         mainActivity
                 = activity;
-
+        mailToSend
+                = new MailToSend(activity, mainActivity.dbHandler.database);
     }
 
     /**
@@ -84,29 +91,34 @@ public class SendMailToControlServer {
     public void send() {
 
         Log.i(logTAG, "SEND mail");
-        // Если отправлять нечего - выход
-        if (dbMailRecCount() == 0) {
+
+        /* Если отправлять нечего - выход */
+        mailRecordsToSend
+                = mailToSend.prepareMail();
+
+        if (mailRecordsToSend == 0) {
             return;
         }
-        // Если сервер недоступен - выход
+
+        /* Если сервер недоступен - выход */
         if (connectionToServerCheck() == false) {
             return;
         }
-        // Если все в порядке - отправка
-        serverSendMailClass.execute(dbMailGetMessages());
+
+        /* Если все в порядке - отправка */
+        serverSendMailClass
+                = new ServerSendMailClass();
+        serverSendMailClass
+                .execute(dbMailGetMessages());
     }
 
-    String dbMailGetMessages() {
-        return
-                new String();
-    }
-
-    int dbMailRecCount() {
-        return 1;
-    }
-
-    boolean connectionToServerCheck() {
-        return true;
+    /**
+     * Формирует массив строк - параметр для асинхронной функции передачи на сервер
+     *
+     * @return
+     */
+    String [] dbMailGetMessages() {
+        return new String[]{null};
     }
 
     /**
@@ -118,13 +130,18 @@ public class SendMailToControlServer {
 
         @Override
         protected Void doInBackground(String... params) {
-            Log.i(logTAG, "ServerSendMailMessagesClass: run");
-            Socket socket;
-            InputStream is;
-            OutputStream os;
-
-            o = params;
-            int oSize = o.length;
+            Log.i
+                    (logTAG, "ServerSendMailMessagesClass: run");
+            Socket
+                    socket;
+            InputStream
+                    is;
+            OutputStream
+                    os;
+            o
+                    = params;
+            int oSize
+                    = o.length;
 
             Log.i(logTAG, "===========================================");
             for (int i = 0; i < oSize; i++) {
@@ -238,25 +255,23 @@ public class SendMailToControlServer {
     }
 
     /**
-     * test of "insert into"
+     * TEST
      */
     public void test() {
-//        dbHandler = mainActivity.dbFunctions.dbHandler;
-//        Log.i("SendMailToControlServer", mainActivity.dbHandler.printTableData("mail"));
-//        Log.i(
-//                "SendMailToControlServer",
-//                "readDeviceAddrFromDB=" +
-//                        mainActivity.dbHandler.readDeviceAddrFromDB("192.168.100.", "mixerterm.001", "9"));
-//        Log.i(
-//                "SendMailToControlServer",
-//                "readDeviceAddrFromDB=" +
-//                        mainActivity.dbHandler.deviceDataNowInDB("mixerterm.001", "192.168.100."));
 
-        mainActivity.dbHandler.copyMail();
+//        Log.i("SendMailToControlServer", mainActivity.dbHandler.printTableData("mailtosend"));
 
-        Log.i("SendMailToControlServer", mainActivity.dbHandler.printTableData("mailtosend"));
+        while (mailToSend.readable()) {
 
+//            Log.i("**** ***** ****", "Id=" + mailToSend.readID() + " Msg=" + mailToSend.readMessage());
 
+            mailToSend.moveNext();
+        }
+
+    }
+
+    boolean connectionToServerCheck() {
+        return true;
     }
 
 

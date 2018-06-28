@@ -90,6 +90,17 @@ public class DBHelper extends SQLiteOpenHelper {
             KEY_MAIL_TO_DELETE = "to_delete";
 
     /**
+     * Table "MAILTOSEND"
+     */
+    public static final String
+            TABLE_MAILTOSEND = "mailtosend",
+            KEY_MAILTOSEND_ID = "mailid",
+            KEY_MAILTOSEND_MESSAGE = "message",
+            KEY_MAILTOSEND_REPORTED = "reported",
+            KEY_MAILTOSEND_COMPLETE = "complete",
+            KEY_MAILTOSEND_TO_DELETE = "to_delete";
+
+    /**
      * Ключ со значением 0
      * Применяется в зависимости от контекста там, где надо подставить 0 в параметре
      */

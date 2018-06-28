@@ -866,14 +866,4 @@ public class DBHandler {
         return retVar;
     }
 
-    /**
-     * Копирует записи из mail в mailtosend
-     */
-    public void copyMail() {
-        database.execSQL(
-                "delete from mailtosend"
-        );
-        database.execSQL(
-                "insert into mailtosend (mailid,message) select _id as mailid,message from mail where to_delete=0");
-    }
 }
