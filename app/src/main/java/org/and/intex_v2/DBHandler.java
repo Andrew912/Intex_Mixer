@@ -827,6 +827,9 @@ public class DBHandler {
      * @param tableName
      */
     public String printTableData(String tableName) {
+
+    Log.i("printTableData", "PREPARE to print table " + tableName);
+
         String delimiter
                 = "==============================";
         String retVar

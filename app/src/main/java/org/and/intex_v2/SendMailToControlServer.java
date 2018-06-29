@@ -33,9 +33,9 @@ public class SendMailToControlServer {
     String
             logTAG = "SendMailToControlServer";
     static final int mailSendDelay
-            = 3000;                             // Задержка выполнения потока - 10 минут
-    String
-            eol = "\r\n\r\n";
+            = 5000;                             // Задержка выполнения потока - 10 минут
+    static final String eol
+            = "\r\n\r\n";
     ServerSendMailClass
             serverSendMailClass;
 
@@ -55,6 +55,23 @@ public class SendMailToControlServer {
      * Отправка протокола на сервер управления - в отдельном потоке
      */
     public void sendMail() {
+        /**
+         * Подготовить таблицу с данными почты к отправке
+         */
+        if (mailToSend.prepareMail() == 0) {
+            return;
+        }
+
+        /**
+         * Если сервер недоступен - выход
+         */
+        if (connectionToServerCheck() == false) {
+            return;
+        }
+
+        /**
+         * Подготовка к запуску в отдельном потоке
+         */
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -63,12 +80,16 @@ public class SendMailToControlServer {
 
                     /* Отправка */
 //                    send();
+                    serverSendMailClass
+                            = new ServerSendMailClass();
+                    serverSendMailClass
+                            .execute();
 
-                    Log.i(
-                            "****** sendMail ******",
-                            "\nAddress=" + mainActivity.conf.controlServer.socketAddr +
-                                    ", Port=" + mainActivity.conf.controlServer.socketPort + "\n"
-                    );
+//                    Log.i(
+//                            "****** sendMail ******",
+//                            "\nAddress=" + mainActivity.conf.controlServer.socketAddr +
+//                                    ", Port=" + mainActivity.conf.controlServer.socketPort + "\n"
+//                    );
                 /* Задержка выполнения потока на 10 минут */
                     try {
                         Thread.sleep(mailSendDelay);
@@ -92,11 +113,12 @@ public class SendMailToControlServer {
 
         Log.i(logTAG, "SEND mail");
 
-        /* Если отправлять нечего - выход */
-        mailRecordsToSend
-                = mailToSend.prepareMail();
+        mainActivity.dbHandler.printTableData("mail");
 
-        if (mailRecordsToSend == 0) {
+        /* Если отправлять нечего - выход */
+//        mailRecordsToSend = mailToSend.prepareMail();
+
+        if (mailToSend.prepareMail() == 0) {
             return;
         }
 
@@ -105,31 +127,25 @@ public class SendMailToControlServer {
             return;
         }
 
+
+//        mailToSend.test_test();
+
         /* Если все в порядке - отправка */
         serverSendMailClass
                 = new ServerSendMailClass();
         serverSendMailClass
-                .execute(dbMailGetMessages());
-    }
-
-    /**
-     * Формирует массив строк - параметр для асинхронной функции передачи на сервер
-     *
-     * @return
-     */
-    String [] dbMailGetMessages() {
-        return new String[]{null};
+                .execute();
     }
 
     /**
      * Класс передачи сообщений на сервер
      */
-    class ServerSendMailClass extends AsyncTask<String, Void, Void> {
+    class ServerSendMailClass extends AsyncTask<Void, Void, Void> {
         String[]
                 o;
 
         @Override
-        protected Void doInBackground(String... params) {
+        protected Void doInBackground(Void... params) {
             Log.i
                     (logTAG, "ServerSendMailMessagesClass: run");
             Socket
@@ -138,16 +154,17 @@ public class SendMailToControlServer {
                     is;
             OutputStream
                     os;
-            o
-                    = params;
-            int oSize
-                    = o.length;
-
-            Log.i(logTAG, "===========================================");
-            for (int i = 0; i < oSize; i++) {
-                Log.i(logTAG, "PARAMS(o)=" + o[i]);
-            }
-            Log.i(logTAG, "===========================================");
+//            o
+//                    = params;
+//            int oSize
+//                    = o.length;
+            long oSize
+                    = mailToSend.recordsToSend;
+//            Log.i(logTAG, "===========================================");
+//            for (int i = 0; i < oSize; i++) {
+//                Log.i(logTAG, "PARAMS(o)=" + o[i]);
+//            }
+//            Log.i(logTAG, "===========================================");
             try {
                 InetAddress serverAddr = InetAddress.getByName(mainActivity.conf.controlServer.socketAddr);
                 socket = new Socket(serverAddr, mainActivity.conf.controlServer.socketPort);
@@ -156,8 +173,9 @@ public class SendMailToControlServer {
                     os = socket.getOutputStream();
 
                     for (int i = 0; i < oSize; i++) {
-                        Log.i(logTAG, "message to send= " + o[i]);
-                        byte[] buffer = (o[i] + eol).getBytes();
+
+                        Log.i(logTAG, "message to send= " + mailToSend.readMessage());
+                        byte[] buffer = (mailToSend.readMessage() + eol).getBytes();
                         os.write(buffer);
                         os.flush();
                         buffer = new byte[mainActivity.conf.controlServer.buffSize];
@@ -173,8 +191,11 @@ public class SendMailToControlServer {
                         Log.i(logTAG, "-----------------------------");
                         Log.i(logTAG, "operStatus=" + status);
                         if (status.equals("0") == false) {
-                            o[i] = null;
+                            Log.i(logTAG, "message to delete=" + mailToSend.readID() + "," + mailToSend.readMessage());
+//                            o[i] = null;
                         }
+                        /* Перемещаемся на следующую запись в курсоре */
+                        mailToSend.moveNext();
                     }
                     socket.close();
                 }
@@ -187,19 +208,22 @@ public class SendMailToControlServer {
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
+            mailToSend.moveFirst();
             Log.i(logTAG, "Значение массива o[]");
-            for (int i = 0; i < o.length; i++) {
-                Log.i(logTAG, "o[]=" + o[i]);
-                if (o[i] != null) {
+            for (int i = 0; i < mailToSend.recordsToSend; i++) {
+//                Log.i(logTAG, "o[]=" + mailToSend.readMessage());
+                if (mailToSend.readMessage() != null) {
                     // Пометить записи, как отправленные
+                    Log.i(logTAG, "Проверяем + setMailRecordAsSended(o[i])");
                     setMailRecordAsSended(o[i]);
+                    mailToSend.moveNext();
                 }
             }
-            Log.i(logTAG, "============================ Список почты");
-            new DBFunctions(mainActivity, mainActivity.dbHelper.getWritableDatabase()).mail();
-            dbMailDeleteSended();
-            Log.i(logTAG, "============================ Список почты  после отправки");
-            new DBFunctions(mainActivity, mainActivity.dbHelper.getWritableDatabase()).mail();
+//            Log.i(logTAG, "============================ Список почты");
+//            new DBFunctions(mainActivity, mainActivity.dbHelper.getWritableDatabase()).mail();
+//            dbMailDeleteSended();
+//            Log.i(logTAG, "============================ Список почты  после отправки");
+//            new DBFunctions(mainActivity, mainActivity.dbHelper.getWritableDatabase()).mail();
         }
     }
 

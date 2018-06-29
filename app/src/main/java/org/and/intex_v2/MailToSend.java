@@ -2,9 +2,7 @@ package org.and.intex_v2;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-
-import static org.and.intex_v2.DBHelper.KEY_MAILTOSEND_ID;
-import static org.and.intex_v2.DBHelper.KEY_MAILTOSEND_MESSAGE;
+import android.util.Log;
 
 /**
  * Created by and on 21.06.2018.
@@ -24,6 +22,17 @@ public class MailToSend {
             cursorReadable;
     long
             cursorPosition;
+    long
+            recordsToSend;
+    String
+            currentId;
+
+    /**
+     * Индексы полей курсора (для скорости, чтобы без преобразований туда-сюда)
+     */
+    static final int
+            CURSOR_FIELDKEY_ID = 0,
+            CURSOR_FIELDKEY_MESSAGE = 1;
 
     /**
      * Количество записей, считываемых в таблицу mailtosend из mail за один цикл оправки почты.
@@ -62,12 +71,23 @@ public class MailToSend {
         if (cursor.moveToFirst()) {
             cursorReadable = true;
             cursorPosition = cursor.getPosition();
-            return cursor.getCount();
+            recordsToSend = cursor.getCount();
+            currentId = cursor.getString(CURSOR_FIELDKEY_ID);
+            return recordsToSend;
         } else {
             cursorReadable = false;
             cursorPosition = 0;
+            currentId = null;
             return 0;
         }
+    }
+
+    /**
+     * Пометка на удаление текущей записи
+     */
+    public void deleteCurrent() {
+        if (currentId != null)
+            database.execSQL("update mailtosend set to_delete=? where mailid=?", new String[]{"1", currentId});
     }
 
     /**
@@ -79,10 +99,12 @@ public class MailToSend {
         if (cursor.moveToFirst()) {
             cursorReadable = true;
             cursorPosition = cursor.getPosition();
+            currentId = cursor.getString(CURSOR_FIELDKEY_ID);
             return true;
         } else {
             cursorReadable = false;
             cursorPosition = 0;
+            currentId = null;
             return false;
         }
     }
@@ -96,10 +118,12 @@ public class MailToSend {
         if (cursor.moveToNext()) {
             cursorReadable = true;
             cursorPosition = cursor.getPosition();
+            currentId = cursor.getString(CURSOR_FIELDKEY_ID);
             return true;
         } else {
             cursorReadable = false;
             cursorPosition = 0;
+            currentId = null;
             return false;
         }
     }
@@ -110,7 +134,7 @@ public class MailToSend {
      * @return
      */
     public long readID() {
-        if (cursorReadable) return cursor.getLong(cursor.getColumnIndex(KEY_MAILTOSEND_ID));
+        if (cursorReadable) return cursor.getLong(CURSOR_FIELDKEY_ID);
         return 0;
     }
 
@@ -120,7 +144,7 @@ public class MailToSend {
      * @return
      */
     public String readMessage() {
-        if (cursorReadable) return cursor.getString(cursor.getColumnIndex(KEY_MAILTOSEND_MESSAGE));
+        if (cursorReadable) return cursor.getString(CURSOR_FIELDKEY_MESSAGE);
         return null;
     }
 
@@ -141,5 +165,31 @@ public class MailToSend {
         cursor.close();
         cursorReadable = false;
         cursorPosition = 0;
+        currentId = null;
+        recordsToSend = 0;
+    }
+
+    /**
+     * Тестирование индекса столбца ДБ
+     */
+    public void test_test() {
+        long i;
+
+
+        if (moveFirst()) {
+            for (i = 0; i < recordsToSend; i++) {
+                Log.i("****", "MailId=" + readID() + ", Message=[" + readMessage() + "]");
+                moveNext();
+            }
+        } else {
+            Log.i("****", "Нет данных в MAILTOSEND");
+        }
+    }
+
+    /**
+     * Тестирование индекса столбца ДБ
+     */
+    public void test_Column_Index() {
+        Log.i("****", "MailId index = " + cursor.getColumnIndex("mailid"));
     }
 }

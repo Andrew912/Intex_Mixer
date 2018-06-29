@@ -1056,8 +1056,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         /* ========== */
-//        sendMailToControlServer.sendMail();
-        sendMailToControlServer.send();
+
+        /* Запуск демона отправки почты */
+        sendMailToControlServer.sendMail();
 
         controller
                 .controller(L__BUTTON_START);
