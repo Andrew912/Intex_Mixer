@@ -2046,14 +2046,21 @@ public class MainActivity extends AppCompatActivity {
                 .serverSendWeightStop();
     }
 
+    /**
+     * Старт получения данных от весового терминала
+     */
     public void weightDataFromDeviceReader_Start() {
-        Log.i(logTAG + ": weightData: ", "start");
+
+        final int dataReadPeriod
+                = 1000;
+        Log
+                .i(logTAG + ": weightData: ", "start");
         myTerminalDataReadTimer
                 = new Timer();
         myTerminalDataReadTask
                 = new TerminalDataReadTimerTask();
         myTerminalDataReadTimer
-                .schedule(myTerminalDataReadTask, 500, 500);
+                .schedule(myTerminalDataReadTask, dataReadPeriod, dataReadPeriod);
     }
 
     public void weightDataFromDeviceReader_Stop() {

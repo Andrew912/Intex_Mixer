@@ -105,13 +105,9 @@ public class LoaderCommunicator {
                 = true;
     }
 
-//    // Остановить таймер управления отправкой данных погрузчику
-//    void dropTimerServerSendWeight() {
-//        if (timerServerSendWeight != null) {
-//            timerServerSendWeight.cancel();
-//        }
-//    }
-
+    /**
+     *
+     */
     void serverServiceRequest() {
         //  Начинаем попытки
         msgServiceRequest

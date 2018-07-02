@@ -237,15 +237,6 @@ public class Controller {
 
             /* Начало работы самое что ни на есть */
             case L1_BUTTON_BEGIN_JOB:
-
-                // Отправляем почту, если есть, что отправлять
-//                if (dbMailRecNotEmpty()) {
-//                    mainActivity.server.sendMail();
-//                    Log.i("MAIL", "Почта отправлена!");
-//                } else {
-//                    Log.i("MAIL", "Нет почты для отправки...");
-//                }
-
                 /* Проверяем подключение весового терминала если он еще не подключен */
                 if (mainActivity.ifServerFound(mainActivity.conf.terminalName) == false) {
                     mainActivity.CheckConnection(
