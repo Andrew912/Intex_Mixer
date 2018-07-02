@@ -83,6 +83,13 @@ public class MailToSend {
     }
 
     /**
+     * Удаление из MAIL записей уже отправленных (MAILTOSEND.TO_DELETE=1)
+     */
+    public void deleteSent() {
+        database.execSQL("delete from mail where _id in (select mailid from mailtosend where to_delete=1)");
+    }
+
+    /**
      * Пометка на удаление текущей записи
      */
     public void deleteCurrent() {

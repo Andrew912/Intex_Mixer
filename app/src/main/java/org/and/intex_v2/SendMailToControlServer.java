@@ -190,8 +190,11 @@ public class SendMailToControlServer {
                         Log.i(logTAG, rs);
                         Log.i(logTAG, "-----------------------------");
                         Log.i(logTAG, "operStatus=" + status);
-                        if (status.equals("0") == false) {
+
+                        /* Помечаем на удаление успешно отправленные записи */
+                        if (status.equals("0")) {
                             Log.i(logTAG, "message to delete=" + mailToSend.readID() + "," + mailToSend.readMessage());
+                            mailToSend.deleteCurrent();
 //                            o[i] = null;
                         }
                         /* Перемещаемся на следующую запись в курсоре */
@@ -209,16 +212,17 @@ public class SendMailToControlServer {
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
             mailToSend.moveFirst();
-            Log.i(logTAG, "Значение массива o[]");
-            for (int i = 0; i < mailToSend.recordsToSend; i++) {
-//                Log.i(logTAG, "o[]=" + mailToSend.readMessage());
-                if (mailToSend.readMessage() != null) {
-                    // Пометить записи, как отправленные
-                    Log.i(logTAG, "Проверяем + setMailRecordAsSended(o[i])");
-                    setMailRecordAsSended(o[i]);
-                    mailToSend.moveNext();
-                }
-            }
+            Log.i(logTAG, "Удаляем из MAIL записи, помеченные на удаление");
+            mailToSend.deleteSent();
+//            for (int i = 0; i < mailToSend.recordsToSend; i++) {
+////                Log.i(logTAG, "o[]=" + mailToSend.readMessage());
+//                if (mailToSend.readMessage() != null) {
+//                    // Пометить записи, как отправленные
+//                    Log.i(logTAG, "Проверяем + setMailRecordAsSended(o[i])");
+//                    setMailRecordAsSended(o[i]);
+//                    mailToSend.moveNext();
+//                }
+//            }
 //            Log.i(logTAG, "============================ Список почты");
 //            new DBFunctions(mainActivity, mainActivity.dbHelper.getWritableDatabase()).mail();
 //            dbMailDeleteSended();
