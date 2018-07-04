@@ -523,7 +523,8 @@ public class Controller {
             case L71_BUTTON_COMPLETE:
                 mainActivity.weightDataToLoaderSender_Stop();
 //                mainActivity.weightDataFromDeviceReader_Stop();  // Остановить получение показаний весов
-                mainActivity.terminalCommunicator.readDataStop(); // Остановить получение показаний весов
+                /* Остановить получение показаний весов */
+                mainActivity.terminalCommunicator.readDataStop();
 
                 mainActivity.loader.send(mainActivity.loader.msg_LoadStop(mainActivity.currentOper.operId));
 

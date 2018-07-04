@@ -180,10 +180,8 @@ public class SendMailToControlServer {
                 if (socket.isConnected() == true) {
                     is = socket.getInputStream();
                     os = socket.getOutputStream();
-
                     for (int i = 0; i < oSize; i++) {
-
-                        Log.i(logTAG, "message to send= " + mailToSend.readMessage());
+//                        Log.i(logTAG, "message to send= " + mailToSend.readMessage());
                         byte[] buffer = (mailToSend.readMessage() + eol).getBytes();
                         os.write(buffer);
                         os.flush();
@@ -199,10 +197,9 @@ public class SendMailToControlServer {
                         Log.i(logTAG, rs);
                         Log.i(logTAG, "-----------------------------");
                         Log.i(logTAG, "operStatus=" + status);
-
                         /* Помечаем на удаление успешно отправленные записи */
                         if (status.equals("0")) {
-                            Log.i(logTAG, "message to delete=" + mailToSend.readID() + "," + mailToSend.readMessage());
+//                            Log.i(logTAG, "message to delete=" + mailToSend.readID() + "," + mailToSend.readMessage());
                             mailToSend.deleteCurrent();
 //                            o[i] = null;
                         }

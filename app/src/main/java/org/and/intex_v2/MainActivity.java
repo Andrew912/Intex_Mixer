@@ -2051,7 +2051,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Старт получения данных от весового терминала
+     * Старт получения данных от весового терминала - НЕИСПОЛЬЗУЕМАЯ ВЕРСИЯ
      */
     public void weightDataFromDeviceReader_Start() {
 
@@ -2067,6 +2067,9 @@ public class MainActivity extends AppCompatActivity {
                 .schedule(myTerminalDataReadTask, dataReadPeriod, dataReadPeriod);
     }
 
+    /**
+     * Стоп получения данных от весового терминала - НЕИСПОЛЬЗУЕМАЯ ВЕРСИЯ
+     */
     public void weightDataFromDeviceReader_Stop() {
         Log.i(logTAG + ": weightData: ", "stop");
         if (myTerminalDataReadTimer != null) {
@@ -2123,7 +2126,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Задача для опроса весового терминала
+     * Задача для опроса весового терминала - NOT USED
      */
     class TerminalDataReadTimerTask extends TimerTask {
         @Override

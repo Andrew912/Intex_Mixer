@@ -181,8 +181,6 @@ public class MailToSend {
      */
     public void test_test() {
         long i;
-
-
         if (moveFirst()) {
             for (i = 0; i < recordsToSend; i++) {
                 Log.i("****", "MailId=" + readID() + ", Message=[" + readMessage() + "]");
