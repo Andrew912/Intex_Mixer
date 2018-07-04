@@ -79,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
             sendMailToControlServer;
     static MailToSend
             mailToSend;
+    TerminalCommunicator
+            terminalCommunicator;
 //    GPSTracker
 //            gps;
 
@@ -340,6 +342,8 @@ public class MainActivity extends AppCompatActivity {
                 = new SendMailToControlServer(this);
         mailToSend
                 = new MailToSend(this, dbHelper.getWritableDatabase());
+        terminalCommunicator
+                = new TerminalCommunicator(this);
 //        gps
 //                = new GPSTracker(this);
 //
@@ -2125,13 +2129,16 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void run() {
             Socket socket;
-            String socketAddr = conf.terminalAddress;
-//            String socketAddr = "192.168.1.113";
-            int socketPort = 18080;
+            String socketAddr
+                    = conf.terminalAddress;
+            int socketPort
+                    = 18080;
             InputStream is;
             OutputStream os;
-            String o = "ping\n";
-            String res = null;
+            String o
+                    = "ping\n";
+            String res
+                    = null;
             try {
                 InetAddress serverAddr = InetAddress.getByName(socketAddr);
                 socket = new Socket(serverAddr, socketPort);
@@ -2299,7 +2306,8 @@ public class MainActivity extends AppCompatActivity {
                 btn_7_Start.setVisibility(VISIBLE);
                 btn_7_Complete.setVisibility(View.INVISIBLE);
                 // Остановить получение показаний весов
-                weightDataFromDeviceReader_Stop();
+//                weightDataFromDeviceReader_Stop();
+                terminalCommunicator.readDataStop();
                 weightDataToLoaderSender_Stop();
 
                 // Запуск автонажатия кнопки

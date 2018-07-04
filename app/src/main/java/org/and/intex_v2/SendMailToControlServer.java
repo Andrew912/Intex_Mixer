@@ -24,18 +24,26 @@ public class SendMailToControlServer {
 
     MainActivity
             mainActivity;
+
+    /* Для простоты объявляем класс прямо здесь, хотя
+       он объявлен как static в MainActivity.
+       При желании можно работать с тем экземпляром */
     MailToSend
-            mailToSend;                         // Для простоты объявляем класс прямо здесь, хотя
-    // он объявлен как static в MainActivity.
-    // При желании можно работать с тем экземпляром
+            mailToSend;
+
     long
-            mailRecordsToSend;                  // Количество записей для отправки
+            mailRecordsToSend;                      // Количество записей для отправки
+
     String
             logTAG = "SendMailToControlServer";
+
+    /* Задержка выполнения потока - 1 минута */
     static final int mailSendDelay
-            = 5000;                             // Задержка выполнения потока - 10 минут
+            = 60000;
+
     static final String eol
             = "\r\n\r\n";
+
     ServerSendMailClass
             serverSendMailClass;
 
@@ -84,7 +92,6 @@ public class SendMailToControlServer {
                             = new ServerSendMailClass();
                     serverSendMailClass
                             .execute();
-
 //                    Log.i(
 //                            "****** sendMail ******",
 //                            "\nAddress=" + mainActivity.conf.controlServer.socketAddr +
@@ -166,8 +173,10 @@ public class SendMailToControlServer {
 //            }
 //            Log.i(logTAG, "===========================================");
             try {
-                InetAddress serverAddr = InetAddress.getByName(mainActivity.conf.controlServer.socketAddr);
-                socket = new Socket(serverAddr, mainActivity.conf.controlServer.socketPort);
+                InetAddress serverAddr
+                        = InetAddress.getByName(mainActivity.conf.controlServer.socketAddr);
+                socket
+                        = new Socket(serverAddr, mainActivity.conf.controlServer.socketPort);
                 if (socket.isConnected() == true) {
                     is = socket.getInputStream();
                     os = socket.getOutputStream();

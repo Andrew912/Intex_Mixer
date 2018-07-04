@@ -102,10 +102,10 @@ public class Controller {
         @Override
         public void run() {
             mainActivity.runOnUiThread(new Runnable() {
-               @Override
-                public void run(){
-                   mainActivity.btn_1_Begin.callOnClick();
-               }
+                @Override
+                public void run() {
+                    mainActivity.btn_1_Begin.callOnClick();
+                }
             });
         }
     }
@@ -116,8 +116,8 @@ public class Controller {
 
             case L__BUTTON_START:       //
 
-                startButtonPresser.schedule(new TimerTask_PressStartButton(),4000);
-                startButtonPresser.schedule(new TimerTask_PressStartButton(),9000);
+                startButtonPresser.schedule(new TimerTask_PressStartButton(), 4000);
+                startButtonPresser.schedule(new TimerTask_PressStartButton(), 9000);
 
                 /* Для начала надо распечатать все параметры... */
 //                mainActivity.dbHandler.getTableColumns("objects");
@@ -260,7 +260,8 @@ public class Controller {
                 * */
 
                 // Запускаем Получение показаний весов от терминала
-                mainActivity.weightDataFromDeviceReader_Start();
+//                mainActivity.weightDataFromDeviceReader_Start();
+                mainActivity.terminalCommunicator.rearDataStart();
 
                 // Параметры - на экран
                 mainActivity.displayWeightParameters();
@@ -480,7 +481,8 @@ public class Controller {
             /* Погрузка - Завершено */
             case L7_BUTTON_COMPLETE:
                 mainActivity.weightDataToLoaderSender_Stop();
-                mainActivity.weightDataFromDeviceReader_Stop();  // Остановить получение показаний весов
+//                mainActivity.weightDataFromDeviceReader_Stop();  // Остановить получение показаний весов
+                mainActivity.terminalCommunicator.readDataStop();
                 mainActivity.loader.send(mainActivity.loader.msg_LoadStop(mainActivity.currentOper.operId));
                 // Отчет о выполнении операции
                 mainActivity.currentOper.setToComplete();
@@ -519,13 +521,13 @@ public class Controller {
 
             /* Погрузка - Завершено */
             case L71_BUTTON_COMPLETE:
-                mainActivity
-                        .weightDataToLoaderSender_Stop();
-                mainActivity
-                        .weightDataFromDeviceReader_Stop();  // Остановить получение показаний весов
-                mainActivity.loader
-                        .send(mainActivity.loader.msg_LoadStop(mainActivity.currentOper.operId));
-                // Отчет о выполнении операции
+                mainActivity.weightDataToLoaderSender_Stop();
+//                mainActivity.weightDataFromDeviceReader_Stop();  // Остановить получение показаний весов
+                mainActivity.terminalCommunicator.readDataStop(); // Остановить получение показаний весов
+
+                mainActivity.loader.send(mainActivity.loader.msg_LoadStop(mainActivity.currentOper.operId));
+
+                /* Отчет о выполнении операции */
                 mainActivity.currentOper.setToComplete();
                 // Проверить оставшиеся операции текущей задачи
                 if (mainActivity.storer.getListOperationsForExecution() == null) {
