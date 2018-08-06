@@ -28,6 +28,7 @@ public class SendMailToControlServer {
     /* Для простоты объявляем класс прямо здесь, хотя
        он объявлен как static в MainActivity.
        При желании можно работать с тем экземпляром */
+
     MailToSend
             mailToSend;
 
@@ -108,9 +109,12 @@ public class SendMailToControlServer {
                 }
             }
         };
-        Thread thread = new Thread(runnable);
-        thread.setDaemon(true);
-        thread.start();
+        Thread thread
+                = new Thread(runnable);
+        thread
+                .setDaemon(true);
+        thread
+                .start();
     }
 
     /**

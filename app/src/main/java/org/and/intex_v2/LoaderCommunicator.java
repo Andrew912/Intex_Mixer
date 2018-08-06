@@ -94,7 +94,9 @@ public class LoaderCommunicator {
         deviceWaitAnswerStatus = DeviceWaitAnswerStatus.NONE;
     }
 
-    // Остановить таймер управления запросом на обслуживание
+    /**
+     * Остановить таймер управления запросом на обслуживание
+     */
     void dropTimerServerRequest() {
         if (timerServerRequest != null) {
             timerServerRequest.cancel();
@@ -106,7 +108,7 @@ public class LoaderCommunicator {
     }
 
     /**
-     *
+     * Отправка запроса на обслуживание
      */
     void serverServiceRequest() {
         //  Начинаем попытки
@@ -130,12 +132,18 @@ public class LoaderCommunicator {
                 .schedule(sendServiceRequest, 1000, 1000);
     }
 
+    /**
+     * Остановить передачу веса на погрузчик
+     */
     void serverSendWeightStop() {
         continueSendWeight
                 = false;
     }
 
-    void serverSendWeight() {
+    /**
+     * Запуск передачи веса на погрузчик
+     */
+    void serverSendWeightStart() {
         //  Начинаем попытки
         continueSendWeight = true;
         if (timerServerSendWeight == null) {
@@ -150,18 +158,21 @@ public class LoaderCommunicator {
         }
     }
 
+    /**
+     * Класс передачи показаний веса на погрузчик
+     */
     class SendWeightData extends TimerTask {
 
         @Override
         public void run() {
             msgSendWeight
                     = activity.messenger.msg_ToLoader_SendWeight();
-            // Если можно продолжать попытки отправки запроса, то
+            /* Если можно продолжать попытки отправки запроса, то */
             if (continueSendWeight == true) {
-                // Отправить
+                /* Отправить */
                 new LoaderSendMessagesClass().execute(activity.messenger.msg_ToLoader_SendWeight());
             } else {
-                // Сбросить таймер
+                /* Иначе Сбросить таймер */
                 dropTimerServerRequest();
 //                mainActivity.runOnUiThread(new Runnable() {
 //                    @Override
@@ -173,16 +184,19 @@ public class LoaderCommunicator {
         }
     }
 
+    /**
+     * Класс отправки на погузчик запроса на обслуживание
+     */
     class SendServiceRequest extends TimerTask {
 
         @Override
         public void run() {
-            // Если можно продолжать попытки отправки запроса, то
+            /* Если можно продолжать попытки отправки запроса, то */
             if (tryServiceRequest == true) {
-                // Отправить запрос на собслуживание
+                /* Отправить запрос на собслуживание */
                 new LoaderSendMessagesClass().execute(msgServiceRequest);
             } else {
-                // Сбросить таймер
+                /* Иначе Сбросить таймер */
                 dropTimerServerRequest();
 //                mainActivity.runOnUiThread(new Runnable() {
 //                    @Override
@@ -194,11 +208,18 @@ public class LoaderCommunicator {
         }
     }
 
+    /**
+     * Передача сообщения на погпузчик
+     *
+     * @param messageForSend
+     */
     public void send(String messageForSend) {
         new LoaderSendMessagesClass().execute(messageForSend, socketAddr);
     }
 
-    // Класс передачи сообщений на сервер
+    /**
+     * Класс передачи сообщений на сервер
+     */
     class LoaderSendMessagesClass extends AsyncTask<String, Void, Void> {
         int bufferSize = 10;
         String[] o;

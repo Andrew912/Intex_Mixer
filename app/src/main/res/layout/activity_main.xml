@@ -147,7 +147,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/LL0_Clearing"
-                android:visibility="visible">
+                android:visibility="invisible">
 
                 <LinearLayout
                     android:orientation="vertical"

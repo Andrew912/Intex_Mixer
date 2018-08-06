@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
@@ -147,9 +148,9 @@ public class TerminalCommunicator {
                     buffer = new byte[256];
                     int read = is.read(buffer, 0, 256);
                     res = new String(buffer).substring(0, read);
-                    Log.i(logTAG, "FROM DEVICE=" + res);
+                    Log.i(logTAG, "FROM DEVICE=" + res + " at " + Calendar.getInstance().getTime());
                     res = extractDigits(res);
-                    Log.i(logTAG, "FROM DEVICE=" + res);
+//                    Log.i(logTAG, "FROM DEVICE=" + res);
                     socket.close();
                     /* Пытаемся сохранить показания терминала в протокол, как - см. описание функции */
                     mainActivity.storer.storeCurrentWeightToProtocol(extractData(res));
@@ -174,10 +175,12 @@ public class TerminalCommunicator {
      * Старт получения данных от весового терминала
      */
 
-    public void weightDataFromDeviceReader_Start() {
+    public boolean weightDataFromDeviceReader_Start() {
+
+        if (mainActivity.ifServerFound(mainActivity.conf.terminalName)==false) return false;
 
         final int dataReadPeriod
-                = 1000;
+                = 2000;
         Log
                 .i(logTAG + ": weightData: ", "start");
         myTerminalDataReadTimer
@@ -186,6 +189,7 @@ public class TerminalCommunicator {
                 = new TerminalDataReadTimerTask();
         myTerminalDataReadTimer
                 .schedule(myTerminalDataReadTask, dataReadPeriod, dataReadPeriod);
+        return true;
     }
 
     public void weightDataFromDeviceReader_Stop() {
@@ -216,7 +220,6 @@ public class TerminalCommunicator {
     void readDataStop() {
         action = STOP;
     }
-
 
 
     /**

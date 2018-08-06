@@ -1062,7 +1062,8 @@ public class MainActivity extends AppCompatActivity {
         /* ========== */
 
         /* Запуск демона отправки почты */
-        sendMailToControlServer.sendMail();
+        sendMailToControlServer
+                .sendMail();
 
         controller
                 .controller(L__BUTTON_START);
@@ -1124,7 +1125,7 @@ public class MainActivity extends AppCompatActivity {
          *
          * @param pServerName
          */
-        public int init(String pServerName) {
+        public int init(String pServerName, int pServerType) {
             boolean
                     resB = false;
             int
@@ -1139,7 +1140,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 }
             }
-            // Если в структуре нашлась запись для данного сервера, то удаляем эту запись
+            /* Если в структуре нашлась запись для данного сервера, то удаляем эту запись */
             if (resB == true) {
                 findServerTimer
                         .remove(resI);
@@ -1158,7 +1159,7 @@ public class MainActivity extends AppCompatActivity {
             findServerTimer
                     .add(resI, new Timer());
             findServerTimerTask
-                    .add(resI, new myTimerTask_WatchOnServerFind(pServerName, resI));
+                    .add(resI, new myTimerTask_WatchOnServerFind(pServerName, resI, pServerType));
             numOfServerPingClasses
                     .add(resI, 0);
             serverFound
@@ -1314,6 +1315,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean CheckConnection(
             String
                     serverToFind,
+            int
+                    serverType,
             String
                     serverStartAddress,
             LayoutClass
@@ -1406,7 +1409,7 @@ public class MainActivity extends AppCompatActivity {
         Log.i("==CheckConnection==", "serverToFind=" + serverToFind);
 
         whatDeviceWeFind
-                = sfc.init(serverToFind);
+                = sfc.init(serverToFind,serverType);
 
         Log.i("==CheckConnection==", "whatDeviceWeFind=" + whatDeviceWeFind);
         Log.i("==CheckConnection==", "serverToFind=" + serverToFind + ", netmask=" + conf.networkMask);
@@ -1417,7 +1420,7 @@ public class MainActivity extends AppCompatActivity {
                 null,
                 layout,
                 pLayoutToReturn,
-                null
+                btn_1_Begin
         );
 
         // Пытаемся определить параметры устройства, сохраненные в БД
@@ -2368,7 +2371,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case LAYOUT_7_COMPLEX_OPER:
-                loader.serverSendWeight();
+                loader.serverSendWeightStart();
                 break;
 
             case LAYOUT_71_LOAD_OPER:
@@ -2525,10 +2528,16 @@ public class MainActivity extends AppCompatActivity {
                 serverName;
         int
                 serverIndex;
+        int
+                serverType;
 
-        public myTimerTask_WatchOnServerFind(String pServerName, int pServerIndex) {
-            serverName = pServerName;
-            serverIndex = pServerIndex;
+        public myTimerTask_WatchOnServerFind(String pServerName, int pServerIndex, int pServerType) {
+            serverName
+                    = pServerName;
+            serverIndex
+                    = pServerIndex;
+            serverType
+                    = pServerType;
         }
 
         @Override
@@ -2536,7 +2545,7 @@ public class MainActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    sub1(serverName, serverIndex);
+                    sub1(serverName, serverIndex, serverType);
                 }
             });
         }
@@ -2546,7 +2555,14 @@ public class MainActivity extends AppCompatActivity {
      * @param serverToFind
      * @param wishServerIsFind
      */
-    void sub1(String serverToFind, int wishServerIsFind) {
+    void sub1(String serverToFind, int wishServerIsFind, int serverType) {
+
+        /**
+         * Тип искомого сервера:
+         * 0 - терминал
+         * 1 - погрузчик
+         */
+
         logTAG = "sub1 ";
         // Закончить
         if (sfc.endServerFindCondition.get(wishServerIsFind) == true) {
@@ -2574,9 +2590,19 @@ public class MainActivity extends AppCompatActivity {
                         sfc.serverFound.get(wishServerIsFind)[net.NET_DEVICE_ADDR]
                 );
                 // Адрес переносим в конфигурацию
-                conf.ipAddress = sfc.serverFound.get(wishServerIsFind)[net.NET_DEVICE_ADDR];
-
-                Log.i(getClass().getSimpleName(), "ПОИСК СЕРВЕРА ОСТАНОВЛЕН: " + wishServerIsFind);
+                switch (serverType) {
+                    case 0:                                     // Терминал
+                        conf.terminalAddress
+                                = sfc.serverFound.get(wishServerIsFind)[net.NET_DEVICE_ADDR];
+                        Log.i(getClass().getSimpleName(), "ПОИСК СЕРВЕРА ОСТАНОВЛЕН: " + conf.terminalAddress);
+                        break;
+                    case 1:                                     // Погрузчик
+                        conf.ipAddress
+                                = sfc.serverFound.get(wishServerIsFind)[net.NET_DEVICE_ADDR];
+                        Log.i(getClass().getSimpleName(), "ПОИСК СЕРВЕРА ОСТАНОВЛЕН: " + conf.ipAddress
+                        );
+                        break;
+                }
 
                 b_1000_0_Press();
 
@@ -2657,11 +2683,13 @@ public class MainActivity extends AppCompatActivity {
      * Распечатать содержимое "serverFound"
      */
     void printServerFound() {
-        Log.i(logTAG, "PRINT serverFound");
+        Log.i(logTAG, "PRINT serverFound: " + sfc.serverFound);
         if (sfc.serverFound != null) {
             for (int i = 0; i < sfc.serverFound.size(); i++) {
                 Log.i(logTAG, "serverFound[" + i + "]=" + sfc.serverFound.get(i)[NET_DEVICE_NAME]);
             }
+        } else {
+            Log.i(logTAG, "server NOT Found");
         }
     }
 

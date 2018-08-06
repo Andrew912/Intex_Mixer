@@ -116,8 +116,10 @@ public class Controller {
 
             case L__BUTTON_START:       //
 
-                startButtonPresser.schedule(new TimerTask_PressStartButton(), 4000);
-                startButtonPresser.schedule(new TimerTask_PressStartButton(), 9000);
+                startButtonPresser
+                        .schedule(new TimerTask_PressStartButton(), 4000);
+                startButtonPresser
+                        .schedule(new TimerTask_PressStartButton(), 9000);
 
                 /* Для начала надо распечатать все параметры... */
 //                mainActivity.dbHandler.getTableColumns("objects");
@@ -241,6 +243,7 @@ public class Controller {
                 if (mainActivity.ifServerFound(mainActivity.conf.terminalName) == false) {
                     mainActivity.CheckConnection(
                             mainActivity.conf.terminalName,
+                            0,
                             null,
                             mainActivity.L[LAYOUT_4_TASK_SELECT],
                             mainActivity.btn_11_Next);
