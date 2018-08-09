@@ -2308,22 +2308,21 @@ public class MainActivity extends AppCompatActivity {
                 /**
                  * Непонятно, какого хрена вот так сделано, но надо будет потом разобраться...
                  */
-                // Установка кнопок в 7 экране
+                /* Установка кнопок в 7 экране */
                 btn_7_Start.setVisibility(VISIBLE);
                 btn_7_Complete.setVisibility(View.INVISIBLE);
-                // Остановить получение показаний весов
-//                weightDataFromDeviceReader_Stop();
+                /* Остановить получение показаний весов */
+                weightDataFromDeviceReader_Stop();
                 terminalCommunicator.readDataStop();
                 weightDataToLoaderSender_Stop();
 
-                // Запуск автонажатия кнопки
-//                Timer timer_Click_btn_1_Begin
-//                        = new Timer();
-//                ClickButton_btn_1_Begin clickButton_btn_1_begin
-//                        = new ClickButton_btn_1_Begin();
-//                timer_Click_btn_1_Begin
-//                        .schedule(clickButton_btn_1_begin,3000);
-
+                /* Запуск автонажатия кнопки */
+                Timer timer_Click_btn_1_Begin
+                        = new Timer();
+                ClickButton_btn_1_Begin clickButton_btn_1_begin
+                        = new ClickButton_btn_1_Begin();
+                timer_Click_btn_1_Begin
+                        .schedule(clickButton_btn_1_begin,3000);
                 break;
 
             case LAYOUT_2_NO_TASK:
@@ -2397,7 +2396,7 @@ public class MainActivity extends AppCompatActivity {
 
                 // Посылаем погрузчику запрос на обслуживание
                 // Запускаем Получение показаний весов от терминала
-//                weightDataFromDeviceReader_Start();
+                weightDataFromDeviceReader_Start();
                 loader.serverServiceRequest();
                 break;
 
