@@ -271,7 +271,7 @@
                 android:layout_height="match_parent"
                 android:gravity="bottom"
                 android:orientation="vertical"
-                android:visibility="visible"
+                android:visibility="invisible"
                 android:weightSum="1">
 
                 <LinearLayout
