@@ -193,7 +193,7 @@ public class NetworkHandler {
         ServerPingClass serverPing
                 = new ServerPingClass(activity, serverAddr, serverPort, whatFind);
         activity.toStatusLineNoBlink
-                ("ServerPingClass=" + activity.sfc.numOfServerPingClasses.get(whatFind));
+                ("ServerPingClass=" + activity.sfc.numOfServerPingClasses);
         if (serverPing != null) {
             retVar
                     = serverPing.readServerName(whatFind);

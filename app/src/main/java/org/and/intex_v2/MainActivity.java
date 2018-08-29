@@ -35,6 +35,7 @@ import static org.and.intex_v2.DBHelper.KEY_OPPA_OPER_ID;
 import static org.and.intex_v2.DBHelper.KEY_OPPA_PARAM_NAME;
 import static org.and.intex_v2.DBHelper.KEY_OPPA_PARAM_VALUE;
 import static org.and.intex_v2.DBHelper.KEY_OPPA_TO_DELETE;
+import static org.and.intex_v2.NetworkHandler.NET_DEVICE_ADDR;
 import static org.and.intex_v2.NetworkHandler.NET_DEVICE_NAME;
 import static org.and.intex_v2.NetworkHandler.NET_DEVICE_NOW;
 
@@ -105,18 +106,28 @@ public class MainActivity extends AppCompatActivity {
             savedCurrentLayout = 0;             // Сохраненный номер экрана
 
     /* ListView: Выбор задачи из списка: Task Select */
-    ListView taskSelect_ListView;
-    String[] taskSelect_ListItems;
-    ArrayAdapter<String> taskSelect_ListAdapter;
-    String taskSelect_SelectedValue;                                    // Значение списка при выборе
-    TextView textView1;
+    ListView
+            taskSelect_ListView;
+    String[]
+            taskSelect_ListItems;
+    ArrayAdapter<String>
+            taskSelect_ListAdapter;
+    String
+            taskSelect_SelectedValue;                                    // Значение списка при выборе
+    TextView
+            textView1;
 
     /* ListView: Выбор задачи из списка: CurrentOper Select */
-    ListView operSelect_ListView;
-    String[] operSelect_ListItems;
-    ArrayAdapter<String> operSelect_ListAdapter;
-    String operSelect_SelectedValue;                                    // Значение списка при выборе
-    TextView textView2;
+    ListView
+            operSelect_ListView;
+    String[]
+            operSelect_ListItems;
+    ArrayAdapter<String>
+            operSelect_ListAdapter;
+    String
+            operSelect_SelectedValue;                                    // Значение списка при выборе
+    TextView
+            textView2;
 
     /* Кнопки */
     Button
@@ -258,7 +269,8 @@ public class MainActivity extends AppCompatActivity {
     static int                                  // Предельное количество устройств для поиска в сети
             MAX_NUM_OF_DEVICES = 1;
 
-    static int                                  // Индекс ServerPingClass для различных устройств
+    /* Индекс ServerPingClass для различных устройств */
+    static int
             DEVICE_IS_TERMINAL = 0,             // Весовой терминал
             DEVICE_IS_LOADER = 1;               // Погрузчик
 
@@ -1044,6 +1056,7 @@ public class MainActivity extends AppCompatActivity {
         et_MixerTermAddr
                 = (EditText) findViewById(R.id.editText_0_2_2);
 
+
         /*******************************
          * ЗАПУСК!!!
          *******************************/
@@ -1089,17 +1102,30 @@ public class MainActivity extends AppCompatActivity {
      * Класс управления поиском сетевых устройств
      */
     public class ServerFindControlClass {
-        ArrayList<String>
+//        ArrayList<String>
+//                serverName;                         // Имя сервера
+//        ArrayList<Timer>
+//                findServerTimer;                    // Таймер поиска сервера
+//        ArrayList<myTimerTask_WatchOnServerFind>
+//                findServerTimerTask;                // Задача таймера поиска сервера
+//        public ArrayList<Integer>
+//                numOfServerPingClasses;             // Количество открытых в данный момент ServerPingClass
+//        public ArrayList<String[]>
+//                serverFound;                        // Параметры найденного сервера
+//        public ArrayList<Boolean>
+//                endServerFindCondition;             // Условие выхода из цикла при поиске серверов
+
+        String
                 serverName;                         // Имя сервера
-        ArrayList<Timer>
+        Timer
                 findServerTimer;                    // Таймер поиска сервера
-        ArrayList<myTimerTask_WatchOnServerFind>
+        myTimerTask_WatchOnServerFind
                 findServerTimerTask;                // Задача таймера поиска сервера
-        public ArrayList<Integer>
+        public Integer
                 numOfServerPingClasses;             // Количество открытых в данный момент ServerPingClass
-        public ArrayList<String[]>
-                serverFound;                        // Параметры найденного сервера
-        public ArrayList<Boolean>
+        public String[]
+                serverFound = {""};                 // Параметры найденного сервера
+        public Boolean
                 endServerFindCondition;             // Условие выхода из цикла при поиске серверов
 
         /**
@@ -1107,17 +1133,29 @@ public class MainActivity extends AppCompatActivity {
          */
         public ServerFindControlClass() {
             serverName
-                    = new ArrayList<>();
+                    = "";
             findServerTimer
-                    = new ArrayList<>();
-            findServerTimerTask
-                    = new ArrayList<>();
+                    = new Timer();
+//            findServerTimerTask
+//                    = new ArrayList<>();
             numOfServerPingClasses
-                    = new ArrayList<>();
-            serverFound
-                    = new ArrayList<>();
+                    = 0;
+//            serverFound
+//                    = {""};
             endServerFindCondition
-                    = new ArrayList<>();
+                    = false;
+//            serverName
+//                    = new ArrayList<>();
+//            findServerTimer
+//                    = new ArrayList<>();
+//            findServerTimerTask
+//                    = new ArrayList<>();
+//            numOfServerPingClasses
+//                    = new ArrayList<>();
+//            serverFound
+//                    = new ArrayList<>();
+//            endServerFindCondition
+//                    = new ArrayList<>();
         }
 
         /**
@@ -1131,43 +1169,43 @@ public class MainActivity extends AppCompatActivity {
             int
                     resI = 0;
             // Смотрим, нет ли в структуре записи с таким именем сервера
-            for (int i = 0; i < serverName.size(); i++) {
-                if (serverName.get(i).equals(pServerName) == true) {
-                    resI
-                            = i + 1;
-                    resB
-                            = true;
-                    break;
-                }
-            }
-            /* Если в структуре нашлась запись для данного сервера, то удаляем эту запись */
-            if (resB == true) {
-                findServerTimer
-                        .remove(resI);
-                findServerTimerTask
-                        .remove(resI);
-                numOfServerPingClasses
-                        .remove(resI);
-                serverFound
-                        .remove(resI);
-                endServerFindCondition
-                        .remove(resI);
-                serverName
-                        .remove(resI);
-            }
+//            for (int i = 0; i < serverName.size(); i++) {
+//                if (serverName.equals(pServerName) == true) {
+//                    resI
+//                            = i + 1;
+//                    resB
+//                            = true;
+//                    break;
+//                }
+//            }
+//            /* Если в структуре нашлась запись для данного сервера, то удаляем эту запись */
+//            if (resB == true) {
+//                findServerTimer
+//                        .remove(resI);
+//                findServerTimerTask
+//                        .remove(resI);
+//                numOfServerPingClasses
+//                        .remove(resI);
+//                serverFound
+//                        .remove(resI);
+//                endServerFindCondition
+//                        .remove(resI);
+//                serverName
+//                        .remove(resI);
+//            }
             // И создаем новую с таким же индексом
             findServerTimer
-                    .add(resI, new Timer());
+                    = new Timer();
             findServerTimerTask
-                    .add(resI, new myTimerTask_WatchOnServerFind(pServerName, resI, pServerType));
+                    = new myTimerTask_WatchOnServerFind(pServerName, pServerType);
             numOfServerPingClasses
-                    .add(resI, 0);
+                    = 0;
             serverFound
-                    .add(resI, new String[]{pServerName, null, null, null, null, null});
+                    = new String[]{pServerName, null, null, null, null, null};
             endServerFindCondition
-                    .add(resI, false);
+                    = false;
             serverName
-                    .add(resI, pServerName);
+                    = pServerName;
 
             // Возвращаем индекс структуры
             return resI;
@@ -1181,15 +1219,15 @@ public class MainActivity extends AppCompatActivity {
          */
         public int getIndex(String pServerName) {
             // Если записей в структуре нет вообще
-            if (serverName.size() == 0) {
+            if (serverName.equals("'")) {
                 return -1;
             }
             // Ищем подходящую запись
-            for (int i = 0; i < serverName.size(); i++) {
-                if (serverName.get(i).equals(pServerName) == true) {
-                    return i;
-                }
+//            for (int i = 0; i < serverName.size(); i++) {
+            if (serverName.equals(pServerName) == true) {
+                return 0;
             }
+//            }
             return -1;
         }
 
@@ -1409,7 +1447,7 @@ public class MainActivity extends AppCompatActivity {
         Log.i("==CheckConnection==", "serverToFind=" + serverToFind);
 
         whatDeviceWeFind
-                = sfc.init(serverToFind,serverType);
+                = sfc.init(serverToFind, serverType);
 
         Log.i("==CheckConnection==", "whatDeviceWeFind=" + whatDeviceWeFind);
         Log.i("==CheckConnection==", "serverToFind=" + serverToFind + ", netmask=" + conf.networkMask);
@@ -1429,18 +1467,18 @@ public class MainActivity extends AppCompatActivity {
 
         /* Где-то тут будем обрабатывать начальный адрес искомого сервера */
 
-        Log.i(logTAG, "Find=" + terminalAddressFromDB[net.NET_DEVICE_NAME] + ", addr=" + terminalAddressFromDB[net.NET_DEVICE_ADDR]);
+        Log.i(logTAG, "Find=" + terminalAddressFromDB[net.NET_DEVICE_NAME] + ", addr=" + terminalAddressFromDB[NET_DEVICE_ADDR]);
 
         // Запускаем поиск интересующего нас сервера
         try {
-            net.findServerInNetwork(serverToFind, terminalAddressFromDB[net.NET_DEVICE_ADDR], conf.terminalPort, whatDeviceWeFind);
+            net.findServerInNetwork(serverToFind, terminalAddressFromDB[NET_DEVICE_ADDR], conf.terminalPort, whatDeviceWeFind);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         // Запускаем опрос по таймеру на предмет того, что сервер найден
-        sfc.findServerTimer.get(whatDeviceWeFind)
-                .schedule(sfc.findServerTimerTask.get(whatDeviceWeFind), 100, 100);
+        sfc.findServerTimer
+                .schedule(new myTimerTask_WatchOnServerFind(serverToFind, DEVICE_IS_TERMINAL), 100, 100);
         //
         Log.i(logTAG, "L1.res=" + L1.findResult);
         //
@@ -2527,15 +2565,11 @@ public class MainActivity extends AppCompatActivity {
         String
                 serverName;
         int
-                serverIndex;
-        int
                 serverType;
 
-        public myTimerTask_WatchOnServerFind(String pServerName, int pServerIndex, int pServerType) {
+        public myTimerTask_WatchOnServerFind(String pServerName, int pServerType) {
             serverName
                     = pServerName;
-            serverIndex
-                    = pServerIndex;
             serverType
                     = pServerType;
         }
@@ -2545,7 +2579,7 @@ public class MainActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    sub1(serverName, serverIndex, serverType);
+                    sub1(serverName, serverType);
                 }
             });
         }
@@ -2553,9 +2587,8 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * @param serverToFind
-     * @param wishServerIsFind
      */
-    void sub1(String serverToFind, int wishServerIsFind, int serverType) {
+    void sub1(String serverToFind, int serverType) {
 
         /**
          * Тип искомого сервера:
@@ -2565,10 +2598,11 @@ public class MainActivity extends AppCompatActivity {
 
         logTAG = "sub1 ";
         // Закончить
-        if (sfc.endServerFindCondition.get(wishServerIsFind) == true) {
+        if (sfc.endServerFindCondition == true) {
             Beep();
-            sfc.findServerTimer.get(wishServerIsFind).cancel();
+            sfc.findServerTimer.cancel();
         }
+
         /**
          * Условие выхода из цикла:
          * 1. Найден интересующий нас сервер.
@@ -2576,29 +2610,29 @@ public class MainActivity extends AppCompatActivity {
          * 3. Абстрактный тайм-аут.
          */
         // 1. Найден сервер
-        if (sfc.serverFound.get(wishServerIsFind)[NET_DEVICE_NOW] != null) {
-            Log.i(logTAG, "serverFound=" + sfc.serverFound.get(wishServerIsFind)[NET_DEVICE_NAME]);
-            if (sfc.serverFound.get(wishServerIsFind)[NET_DEVICE_NAME].equals(serverToFind)) {
+        if (sfc.serverFound[NET_DEVICE_NOW] != null) {
+            Log.i(logTAG, "serverFound=" + sfc.serverFound[NET_DEVICE_NAME]);
+            if (sfc.serverFound[NET_DEVICE_NAME].equals(serverToFind)) {
                 // Если сервер - тот, который мы ищем
                 // Прекратить дальнейший поиск
-                Log.i(getClass().getSimpleName(), "serverFound!!!" + sfc.serverFound.get(wishServerIsFind)[NET_DEVICE_NAME]);
-                sfc.endServerFindCondition.set(wishServerIsFind, true);
+                Log.i(getClass().getSimpleName(), "serverFound!!!" + sfc.serverFound[NET_DEVICE_NAME]);
+                sfc.endServerFindCondition = true;
                 // Сохраняем данные в БД
                 dbHandler.store_Device_Addr_to_DB(
                         conf.networkMask,
-                        sfc.serverFound.get(wishServerIsFind)[NET_DEVICE_NAME],
-                        sfc.serverFound.get(wishServerIsFind)[net.NET_DEVICE_ADDR]
+                        sfc.serverFound[NET_DEVICE_NAME],
+                        sfc.serverFound[NET_DEVICE_ADDR]
                 );
                 // Адрес переносим в конфигурацию
                 switch (serverType) {
                     case 0:                                     // Терминал
                         conf.terminalAddress
-                                = sfc.serverFound.get(wishServerIsFind)[net.NET_DEVICE_ADDR];
+                                = sfc.serverFound[NET_DEVICE_ADDR];
                         Log.i(getClass().getSimpleName(), "ПОИСК СЕРВЕРА ОСТАНОВЛЕН: " + conf.terminalAddress);
                         break;
                     case 1:                                     // Погрузчик
                         conf.ipAddress
-                                = sfc.serverFound.get(wishServerIsFind)[net.NET_DEVICE_ADDR];
+                                = sfc.serverFound[NET_DEVICE_ADDR];
                         Log.i(getClass().getSimpleName(), "ПОИСК СЕРВЕРА ОСТАНОВЛЕН: " + conf.ipAddress
                         );
                         break;
@@ -2608,16 +2642,16 @@ public class MainActivity extends AppCompatActivity {
 
             } else {
                 // Сервер оказался не тот, который нужен, сбрасываем результат
-                sfc.serverFound.get(wishServerIsFind)[NET_DEVICE_NOW] = null;
+                sfc.serverFound[NET_DEVICE_NOW] = null;
             }
         } else {
             // Сервера пока вообще нет
             // Проверяем, есть ли еще активные процессы срединения с сервером
-            if (sfc.numOfServerPingClasses.get(wishServerIsFind) > 0) {
+            if (sfc.numOfServerPingClasses > 0) {
                 // Пока поиск продолжаем
             } else {
                 // Прекратить дальнейший поиск, т.к. все равно больше ничего не найдется
-                sfc.endServerFindCondition.set(wishServerIsFind, true);
+                sfc.endServerFindCondition = true;
             }
         }
     }
@@ -2684,14 +2718,22 @@ public class MainActivity extends AppCompatActivity {
      */
     void printServerFound() {
         Log.i(logTAG, "PRINT serverFound: " + sfc.serverFound);
-        if (sfc.serverFound != null) {
-            for (int i = 0; i < sfc.serverFound.size(); i++) {
-                Log.i(logTAG, "serverFound[" + i + "]=" + sfc.serverFound.get(i)[NET_DEVICE_NAME]);
-            }
-        } else {
+        if (sfc.serverFound.length>0) {
+            Log.i(logTAG, "serverFound=" + sfc.serverFound[NET_DEVICE_NAME]);
+        } else
+        {
             Log.i(logTAG, "server NOT Found");
         }
+
     }
+//        if (sfc.serverFound != null) {
+//            for (int i = 0; i < sfc.serverFound.size(); i++) {
+//                Log.i(logTAG, "serverFound[" + i + "]=" + sfc.serverFound.get(i)[NET_DEVICE_NAME]);
+//            }
+//        } else {
+//            Log.i(logTAG, "server NOT Found");
+//        }
+//    }
 
     /**
      * Проверяет в serverFound есть ли в числе найденных указанный сервер
@@ -2700,11 +2742,11 @@ public class MainActivity extends AppCompatActivity {
      * @return
      */
     boolean ifServerFound(String serverName) {
-        Log.i("ifServerFound", "serverFound.size()=" + sfc.serverFound.size());
-        if (sfc.serverFound.size() > 0) {
-            for (int i = 0; i < sfc.serverFound.size(); i++) {
-                if (sfc.serverFound.get(i)[0] != null && sfc.serverFound.get(i)[NET_DEVICE_NAME].equals(serverName)) {
-                    Log.i("ifServerFound", "serverFound[" + i + "]=" + sfc.serverFound.get(i)[NET_DEVICE_NAME]);
+        Log.i("ifServerFound", "serverFound.size()=" + sfc.serverFound.length);
+        if (sfc.serverFound.length > 0) {
+            for (int i = 0; i < sfc.serverFound.length; i++) {
+                if (sfc.serverFound[0] != null && sfc.serverFound[NET_DEVICE_NAME].equals(serverName)) {
+                    Log.i("ifServerFound", "serverFound[" + i + "]=" + sfc.serverFound[NET_DEVICE_NAME]);
                     return true;
                 }
             }

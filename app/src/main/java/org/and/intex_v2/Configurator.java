@@ -121,6 +121,9 @@ public class Configurator {
         if (tmp != null) {
             terminalAddress = tmp[PARAMETER_VALUE];
         }
+//        else {
+//            terminalAddress = String.valueOf(1);
+//        }
 
         /* Вычисляем полный адрес терминала в сети */
         termAddrRefresh();

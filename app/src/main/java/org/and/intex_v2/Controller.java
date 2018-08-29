@@ -126,10 +126,8 @@ public class Controller {
 //                Log.i("printTableData", mainActivity.dbHandler.printTableData("PARAMETERS"));
 //                Log.i("printTableData", mainActivity.dbHandler.printTableData("objects"));
 //                mainActivity.dbHandler.dbTableList_OBJECTS();
-
                 /* Отправить на сервер протокол */
 //                mainActivity.server.sendMail();
-
                 /* Проверим координаты */
                 // check if GPS enabled
 //                if(mainActivity.gps.canGetLocation()){
