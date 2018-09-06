@@ -65,32 +65,25 @@ public class ServerCommincator {
                 = mainActivity.conf.controlServer.socketPort;
         buffSize
                 = mainActivity.conf.controlServer.buffSize;
-
-//        socketAddr
-//                = "91.218.229.25";
-//        socketPort
-//                = 60001;
-//        buffSize
-//                = 1024;
     }
 
-    // Главная запускалка - отсюда запускаем все, что надо
+    /**
+     * Главная запускалка - отсюда запускаем все, что надо
+     */
     public void main() {
-//        new DBFunctions(mainActivity).mailClear();
-//        insertIntoMailTable_test();
-//        Log.i(logTAG, "reccount=" + dbMailRecCount());
         readTask();
-//        sendMail();
-//        readTask();
-//        readOper();
     }
 
-    // Получение списка операций
+    /**
+     * Получение списка операций
+     */
     public void readOper() {
         new ServerExchangeClass_getOperations().execute(new String[]{getCurrentTaskIdFromDB()});
     }
 
-    // Класс получения списка операций
+    /**
+     * Класс получения списка операций
+     */
     class ServerExchangeClass_getOperations extends AsyncTask<String, Void, Void> {
         int bufferSize = 30;
         CycleBuffer sourceInputLineBuffer = new CycleBuffer(bufferSize);
@@ -103,7 +96,7 @@ public class ServerCommincator {
             OutputStream os;
             rs = "";
             // Формирование запроса на список операций
-            String o = new MessageMaker(mainActivity).request_OperList(params[0]);
+            String o = new MessageMakerClass(mainActivity).request_OperList(params[0]);
             try {
                 InetAddress serverAddr = InetAddress.getByName(socketAddr);
                 socket = new Socket(serverAddr, socketPort);
@@ -176,7 +169,7 @@ public class ServerCommincator {
         new ServerExchangeClass_getTasks().execute();
     }
 
-    // Класс получения списка задач
+    /* Класс получения списка задач */
     class ServerExchangeClass_getTasks extends AsyncTask<Void, Void, Void> {
         int bufferSize = 5;
         CycleBuffer sourceInputLineBuffer = new CycleBuffer(bufferSize);
@@ -187,7 +180,7 @@ public class ServerCommincator {
             Socket socket;
             InputStream is;
             OutputStream os;
-            String o = new MessageMaker(mainActivity).request_TaskLisk();
+            String o = new MessageMakerClass(mainActivity).request_TaskLisk();
             try {
                 InetAddress serverAddr = InetAddress.getByName(socketAddr);
                 socket = new Socket(serverAddr, socketPort);
@@ -359,7 +352,12 @@ public class ServerCommincator {
         return r;
     }
 
-    // Выделяем отдельные команды
+    /**
+     * Выделяем отдельные команды
+     *
+     * @param inS
+     * @return
+     */
     public String ExtractMessageStatus(String inS) {
         Pattern pattern = Pattern.compile(mainActivity.getString(R.string.pattern_Cmd_Name) + "=\'" + mainActivity.getString(R.string.pattern_Cmd_Value) + "\'");
         Matcher matcher = pattern.matcher(inS);
@@ -370,7 +368,12 @@ public class ServerCommincator {
         return t.getValue();
     }
 
-    // Выделяем отдельные команды
+    /**
+     * Выделяем отдельные команды
+     *
+     * @param inS
+     * @return
+     */
     public ArrayList<IncomingMessageLineParamsClass> ExtractParametersOfCommand(String inS) {
         ArrayList<IncomingMessageLineParamsClass> parameters;
         parameters = new ArrayList<>();
@@ -385,7 +388,13 @@ public class ServerCommincator {
         return parameters;
     }
 
-    // Разбор входящего потока на строки
+    /**
+     * Разбор входящего потока на строки
+     *
+     * @param inBuffer
+     * @param outBufferSize
+     * @return
+     */
     public CycleBuffer ExtractToSourceInputLineBuffer(String inBuffer, int outBufferSize) {
         if (dataFromServerReaded == true) {
             CycleBuffer sourceInputLineBuffer = new CycleBuffer(outBufferSize);
@@ -647,15 +656,15 @@ public class ServerCommincator {
         SQLiteDatabase db = dbh.getWritableDatabase();
 
         ContentValues newValues = new ContentValues();
-        newValues.put(KEY_MAIL_MESSAGE, new MessageMaker(mainActivity).report_OperBegin("101"));
+        newValues.put(KEY_MAIL_MESSAGE, new MessageMakerClass(mainActivity).report_OperBegin("101"));
         db.insert(TABLE_MAIL, null, newValues);
 
         newValues = new ContentValues();
-        newValues.put(KEY_MAIL_MESSAGE, new MessageMaker(mainActivity).report_OperBegin("102"));
+        newValues.put(KEY_MAIL_MESSAGE, new MessageMakerClass(mainActivity).report_OperBegin("102"));
         db.insert(TABLE_MAIL, null, newValues);
 
         newValues = new ContentValues();
-        newValues.put(KEY_MAIL_MESSAGE, new MessageMaker(mainActivity).report_OperBegin("103"));
+        newValues.put(KEY_MAIL_MESSAGE, new MessageMakerClass(mainActivity).report_OperBegin("103"));
         db.insert(TABLE_MAIL, null, newValues);
         db.close();
         dbh.close();

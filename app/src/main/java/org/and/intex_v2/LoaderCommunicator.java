@@ -113,9 +113,9 @@ public class LoaderCommunicator {
     void serverServiceRequest() {
         //  Начинаем попытки
         msgServiceRequest
-                = activity.messenger.msg_ToLoader_ServiceRequest();
+                = activity.messengerClass.msg_ToLoader_ServiceRequest();
         msgLoadingBegin
-                = activity.messenger.msg_ToLoader_LoadBegin();
+                = activity.messengerClass.msg_ToLoader_LoadBegin();
         tryServiceRequest
                 = true;
         deviceWaitAnswerStatus
@@ -166,11 +166,11 @@ public class LoaderCommunicator {
         @Override
         public void run() {
             msgSendWeight
-                    = activity.messenger.msg_ToLoader_SendWeight();
+                    = activity.messengerClass.msg_ToLoader_SendWeight();
             /* Если можно продолжать попытки отправки запроса, то */
             if (continueSendWeight == true) {
                 /* Отправить */
-                new LoaderSendMessagesClass().execute(activity.messenger.msg_ToLoader_SendWeight());
+                new LoaderSendMessagesClass().execute(activity.messengerClass.msg_ToLoader_SendWeight());
             } else {
                 /* Иначе Сбросить таймер */
                 dropTimerServerRequest();

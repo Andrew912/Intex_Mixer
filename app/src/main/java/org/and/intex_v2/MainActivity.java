@@ -66,8 +66,8 @@ public class MainActivity extends AppCompatActivity {
             currentOper;
     Storer
             storer;
-    Messenger
-            messenger;
+    MessengerClass
+            messengerClass;
     ServerCommincator
             server;
     LoaderCommunicator
@@ -326,8 +326,8 @@ public class MainActivity extends AppCompatActivity {
                 = new StatusLine();
         conf
                 = new Configurator(this);
-        messenger
-                = new Messenger(this);
+        messengerClass
+                = new MessengerClass(this);
         dbHelper
                 = new DBHelper(this.context);
         dbHandler
@@ -1211,26 +1211,26 @@ public class MainActivity extends AppCompatActivity {
             return resI;
         }
 
-        /**
-         * Возвращает индекс структуры, соответствующий заданному имени сервера
-         *
-         * @param pServerName
-         * @return
-         */
-        public int getIndex(String pServerName) {
-            // Если записей в структуре нет вообще
-            if (serverName.equals("'")) {
-                return -1;
-            }
-            // Ищем подходящую запись
-//            for (int i = 0; i < serverName.size(); i++) {
-            if (serverName.equals(pServerName) == true) {
-                return 0;
-            }
+//        /**
+//         * Возвращает индекс структуры, соответствующий заданному имени сервера
+//         *
+//         * @param pServerName
+//         * @return
+//         */
+//        public int getIndex(String pServerName) {
+//            // Если записей в структуре нет вообще
+//            if (serverName.equals("'")) {
+//                return -1;
 //            }
-            return -1;
-        }
-
+//            // Ищем подходящую запись
+////            for (int i = 0; i < serverName.size(); i++) {
+//            if (serverName.equals(pServerName) == true) {
+//                return 0;
+//            }
+////            }
+//            return -1;
+//        }
+//
     }
 
     /**
@@ -1604,7 +1604,7 @@ public class MainActivity extends AppCompatActivity {
             switch (taskStatus) {
                 case "undef":
                     taskStatus = "begin";
-                    storer.sendMessageToControlServer(messenger.msg_TaskReport_begin(taskId));
+                    storer.sendMessageToControlServer(messengerClass.msg_TaskReport_begin(taskId));
                     Log.i(logTAG, "Status: undef->begin");
                     break;
                 case "begin":
@@ -1620,12 +1620,12 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "suspend":
                     taskStatus = "resume";
-                    storer.sendMessageToControlServer(messenger.msg_TaskReport_resume(taskId));
+                    storer.sendMessageToControlServer(messengerClass.msg_TaskReport_resume(taskId));
                     Log.i(logTAG, "Status: suspend->resume");
                     break;
                 case "resume":
                     taskStatus = "resume";
-                    storer.sendMessageToControlServer(messenger.msg_TaskReport_resume(taskId));
+                    storer.sendMessageToControlServer(messengerClass.msg_TaskReport_resume(taskId));
                     Log.i(logTAG, "Status: resume->resume");
                     break;
             }
@@ -1643,7 +1643,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "begin":
                     taskStatus = "suspend";
-                    storer.sendMessageToControlServer(messenger.msg_TaskReport_suspend(taskId));
+                    storer.sendMessageToControlServer(messengerClass.msg_TaskReport_suspend(taskId));
                     Log.i(logTAG, "Status: begin->suspend");
                     break;
                 case "end":
@@ -1657,7 +1657,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "resume":
                     taskStatus = "suspend";
-                    storer.sendMessageToControlServer(messenger.msg_TaskReport_suspend(taskId));
+                    storer.sendMessageToControlServer(messengerClass.msg_TaskReport_suspend(taskId));
                     Log.i(logTAG, "Status: resume->suspend");
                     break;
             }
@@ -1674,7 +1674,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "begin":
                     taskStatus = "end";
-                    storer.sendMessageToControlServer(messenger.msg_TaskReport_end(taskId));
+                    storer.sendMessageToControlServer(messengerClass.msg_TaskReport_end(taskId));
                     Log.i(logTAG, "Status: begin->end");
                     break;
                 case "end":
@@ -1688,7 +1688,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "resume":
                     taskStatus = "suspend";
-                    storer.sendMessageToControlServer(messenger.msg_TaskReport_end(taskId));
+                    storer.sendMessageToControlServer(messengerClass.msg_TaskReport_end(taskId));
                     Log.i(logTAG, "Status: resume->end");
                     break;
             }
@@ -1814,12 +1814,12 @@ public class MainActivity extends AppCompatActivity {
             switch (operStatus) {
                 case "undef":
                     operStatus = "begin";
-                    storer.sendMessageToControlServer(messenger.msg_OperReport_begin(operId));
+                    storer.sendMessageToControlServer(messengerClass.msg_OperReport_begin(operId));
                     Log.i(logTAG, "Status: undef->begin");
                     break;
                 case "begin":
                     operStatus = "resume";
-                    storer.sendMessageToControlServer(messenger.msg_OperReport_resume(operId));
+                    storer.sendMessageToControlServer(messengerClass.msg_OperReport_resume(operId));
                     Log.i(logTAG, "Status: begin->resume");
                     break;
                 case "end":
@@ -1830,7 +1830,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "suspend":
                     operStatus = "resume";
-                    storer.sendMessageToControlServer(messenger.msg_OperReport_resume(operId));
+                    storer.sendMessageToControlServer(messengerClass.msg_OperReport_resume(operId));
                     Log.i(logTAG, "Status: suspend->resume");
                     break;
                 case "resume":
@@ -1849,7 +1849,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "begin":
                     operStatus = "suspend";
-                    storer.sendMessageToControlServer(messenger.msg_OperReport_suspend(operId));
+                    storer.sendMessageToControlServer(messengerClass.msg_OperReport_suspend(operId));
                     Log.i(logTAG, "Status: begin->suspend");
                     break;
                 case "end":
@@ -1863,7 +1863,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "resume":
                     operStatus = "suspend";
-                    storer.sendMessageToControlServer(messenger.msg_OperReport_suspend(operId));
+                    storer.sendMessageToControlServer(messengerClass.msg_OperReport_suspend(operId));
                     Log.i(logTAG, "Status: resume->suspend");
                     break;
             }
@@ -1879,7 +1879,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "begin":
                     operStatus = "end";
-                    storer.sendMessageToControlServer(messenger.msg_OperReport_end(operId));
+                    storer.sendMessageToControlServer(messengerClass.msg_OperReport_end(operId));
                     Log.i(logTAG, "Status: begin->end");
                     break;
                 case "end":
@@ -1893,7 +1893,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "resume":
                     operStatus = "end";
-                    storer.sendMessageToControlServer(messenger.msg_OperReport_end(operId));
+                    storer.sendMessageToControlServer(messengerClass.msg_OperReport_end(operId));
                     Log.i(logTAG, "Status: resume->end");
                     break;
             }

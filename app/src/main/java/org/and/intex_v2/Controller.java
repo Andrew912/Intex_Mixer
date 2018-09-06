@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 import static org.and.intex_v2.DBHelper.KEY_MAIL_COMPLETE;
 import static org.and.intex_v2.DBHelper.TABLE_MAIL;
+import static org.and.intex_v2.MainActivity.DEVICE_IS_LOADER;
 import static org.and.intex_v2.MainActivity.L00_BUTTON_DNS;
 import static org.and.intex_v2.MainActivity.L00_BUTTON_BACK;
 import static org.and.intex_v2.MainActivity.L00_DATA_CLEAR;
@@ -50,11 +51,15 @@ import static org.and.intex_v2.MainActivity.L9_BUTTON_REJECT;
 import static org.and.intex_v2.MainActivity.LAYOUT_00_CLEARING;
 import static org.and.intex_v2.MainActivity.LAYOUT_0_PARAMS;
 import static org.and.intex_v2.MainActivity.LAYOUT_1_BEGIN;
+import static org.and.intex_v2.MainActivity.LAYOUT_2_NO_TASK;
+import static org.and.intex_v2.MainActivity.LAYOUT_3_DO_TASK;
 import static org.and.intex_v2.MainActivity.LAYOUT_4_TASK_SELECT;
 import static org.and.intex_v2.MainActivity.LAYOUT_5_OPER_SELECT;
+import static org.and.intex_v2.MainActivity.LAYOUT_6_SIMPLE_OPER;
 import static org.and.intex_v2.MainActivity.LAYOUT_71_LOAD_OPER;
 import static org.and.intex_v2.MainActivity.LAYOUT_7_COMPLEX_OPER;
 import static org.and.intex_v2.MainActivity.LAYOUT_8_TASK_COMPLETE;
+import static org.and.intex_v2.MainActivity.LAYOUT_9_SERV_REQUEST;
 import static org.and.intex_v2.MainActivity.L__BUTTON_START;
 
 
@@ -74,8 +79,8 @@ public class Controller {
             currentOper;
     String[]
             currentOperParam;
-    Messenger
-            messenger;
+    MessengerClass
+            messengerClass;
     boolean
             loadingMayBegin;
 
@@ -90,8 +95,8 @@ public class Controller {
     public Controller(MainActivity activity) {
         this.mainActivity
                 = activity;
-        messenger
-                = new Messenger(this.mainActivity);
+        messengerClass
+                = new MessengerClass(this.mainActivity);
         loadingMayBegin
                 = false;
         startButtonPresser
@@ -270,40 +275,40 @@ public class Controller {
 
                 mainActivity.gotoLayout(LAYOUT_71_LOAD_OPER, "Миксер");
 
-//                mainActivity.currentTask.setTaskData();
-//
-//                if (mainActivity.currentTask.now) {
-//                    currentOper = mainActivity.storer.getCurrentOperId(String.valueOf(mainActivity.currentTask.taskId));
-//                    if (currentOper != null) {
-//                        mainActivity.currentTask.setToActive();
-//                        mainActivity.currentOper.setToActive();
-//                        mainActivity.gotoLayout(LAYOUT_6_SIMPLE_OPER, mainActivity.currentOper.getOperationInfoForView());
-//                        /**
-//                         * currentOper.operNow() определяет, есть ли в БД операция с признаком
-//                         * "текущая".
-//                         * И, кстати, тут же сохраняет параметры текущей операции в объект...
-//                         *
-//                         * Если есть текущая операция, то сразу переходим на нее,
-//                         * если текущей операции нет, то переходим на экран выбора операции.
-//                         * Хотя какого хрена туда переходить, все равно будет выбрана
-//                         * первая по списку операция.
-//                         */
-//                    } else {
-//                        mainActivity.gotoLayout(LAYOUT_3_DO_TASK, "Текущая задача: " + mainActivity.currentTask.taskComment);
-//                        /**
-//                         * Задача есть, операция не выбрана.
-//                         * Переход на экран списка операций текущей задачи.
-//                         */
-//                    }
-//                } else {
-//                    mainActivity.gotoLayout(LAYOUT_2_NO_TASK, "Нет текущей задачи, получите задание от диспетчера");
-//                    /**
-//                     * Нет ни текущей задачи, ни операции.
-//                     * ??? Переходим на экран выбора задачи.
-//                     * Скорее, пытаемся прочитать список задач с сервера
-//                     */
-//                    mainActivity.server.readTask();
-//                }
+                mainActivity.currentTask.setTaskData();
+
+                if (mainActivity.currentTask.now) {
+                    currentOper = mainActivity.storer.getCurrentOperId(String.valueOf(mainActivity.currentTask.taskId));
+                    if (currentOper != null) {
+                        mainActivity.currentTask.setToActive();
+                        mainActivity.currentOper.setToActive();
+                        mainActivity.gotoLayout(LAYOUT_6_SIMPLE_OPER, mainActivity.currentOper.getOperationInfoForView());
+                        /**
+                         * currentOper.operNow() определяет, есть ли в БД операция с признаком
+                         * "текущая".
+                         * И, кстати, тут же сохраняет параметры текущей операции в объект...
+                         *
+                         * Если есть текущая операция, то сразу переходим на нее,
+                         * если текущей операции нет, то переходим на экран выбора операции.
+                         * Хотя какого хрена туда переходить, все равно будет выбрана
+                         * первая по списку операция.
+                         */
+                    } else {
+                        mainActivity.gotoLayout(LAYOUT_3_DO_TASK, "Текущая задача: " + mainActivity.currentTask.taskComment);
+                        /**
+                         * Задача есть, операция не выбрана.
+                         * Переход на экран списка операций текущей задачи.
+                         */
+                    }
+                } else {
+                    mainActivity.gotoLayout(LAYOUT_2_NO_TASK, "Нет текущей задачи, получите задание от диспетчера");
+                    /**
+                     * Нет ни текущей задачи, ни операции.
+                     * ??? Переходим на экран выбора задачи.
+                     * Скорее, пытаемся прочитать список задач с сервера
+                     */
+                    mainActivity.server.readTask();
+                }
                 break;
 
             /*  */
@@ -363,82 +368,83 @@ public class Controller {
 
             /* Начать выполнение операций задачи */
             case L5_BUTTON_ACCEPT:
-//                mainActivity.currentTask
-//                        .setToActive();
-//                currentOperParam
-//                        = new String[4];
-//                currentOperParam
-//                        = mainActivity.storer.getFirstOperationForExecution();
-//                mainActivity.currentOper
-//                        .set(
-//                                currentOperParam[0],
-//                                currentOperParam[1],
-//                                currentOperParam[2],
-//                                mainActivity.storer.getOperData(currentOperParam[0])[4]
-//                        );
-//                mainActivity.currentOper
-//                        .setCurrent();
-//                mainActivity.currentOper
-//                        .setToActive();
-//
-//                // Если операция - "загрузка без погрузчика", то на экран ???, иначе - проверить "простая" погрузка
-//                if (mainActivity.currentOper.operIsLoadNoLoader() == true) {
-//                    // Погрузка будет без испольщования погрузчика
-//                    mainActivity.currentOper.loadNoLoader = true;
-//
-//                    /* Запускаем Получение показаний весов от терминала */
-//                    mainActivity.weightDataFromDeviceReader_Start();
-//
-//                    /* Тут надо поменять переход сразу на начало загрузки */
-//                    // Загруженный вес
-//                    mainActivity.storer.weightLoaded
-//                            = 0;
-//                    // Стартовый вес в миксере
-//                    mainActivity.storer.weightStart
-//                            = mainActivity.storer.weightCurrent;
-//                    // Вычислить конечный вес в погрузчике
-//                    mainActivity.storer.weightTarget
-//                            = mainActivity.currentOper.loadValue + mainActivity.storer.weightCurrent;
-//                    Log.i(logTAG, "конечный вес в погрузчике = " + mainActivity.storer.weightTarget);
-//                    // Толеранс +
-//                    mainActivity.storer.tolerancePlus
-//                            = (int) (mainActivity.currentOper.loadValue * Float.parseFloat(mainActivity.getString(R.string.LOADING_PERCENT_WEIGHT_TOLERANCE_UP)));
-//                    // Параметры - на экран
-//                    mainActivity.displayWeightParameters();
-//                    mainActivity.displayWeightParameters1();
-//
-//                    mainActivity.gotoLayout(LAYOUT_71_LOAD_OPER, mainActivity.currentOper.getOperationInfoForView());
-//                    break;
-//                }
-//
-//                // Погрузка будет с использованием погрузчика
-//                mainActivity.currentOper.loadNoLoader = false;
-//
-//                // Если оперция - загрузка, то на экран 8, иначе - 6
-//                if (mainActivity.currentOper.operIsLoad() == true) {
-//
-//                    /* Надо проверить подключние погрузчика */
-//
-//                    Log.i("L5_BUTTON_ACCEPT",
-//                            "servern=" + mainActivity.currentOper.getParam("servern") +
-//                                    ", servera=" + mainActivity.currentOper.getParam("servera"));
-//                    Log.i("L5_BUTTON_ACCEPT", "==============================");
-//
-//                    /* Попытаемся найти погрузчик в сети */
-//
-//                    mainActivity.CheckConnection(
-//                            mainActivity.currentOper.getParam("servern"),
-//                            null,
-//                            mainActivity.L[LAYOUT_9_SERV_REQUEST],
-//                            null);
-//
-////                    mainActivity.conf.loaderAddrRefresh(mainActivity.currentOper.getParam("servern"));
-//
-//                    mainActivity.gotoLayout(LAYOUT_9_SERV_REQUEST, mainActivity.currentOper.getOperationInfoForView());
-//
-//                } else {
-//                    mainActivity.gotoLayout(LAYOUT_6_SIMPLE_OPER, mainActivity.currentOper.getOperationInfoForView());
-//                }
+                mainActivity.currentTask
+                        .setToActive();
+                currentOperParam
+                        = new String[4];
+                currentOperParam
+                        = mainActivity.storer.getFirstOperationForExecution();
+                mainActivity.currentOper
+                        .set(
+                                currentOperParam[0],
+                                currentOperParam[1],
+                                currentOperParam[2],
+                                mainActivity.storer.getOperData(currentOperParam[0])[4]
+                        );
+                mainActivity.currentOper
+                        .setCurrent();
+                mainActivity.currentOper
+                        .setToActive();
+
+                // Если операция - "загрузка без погрузчика", то на экран ???, иначе - проверить "простая" погрузка
+                if (mainActivity.currentOper.operIsLoadNoLoader() == true) {
+                    // Погрузка будет без испольщования погрузчика
+                    mainActivity.currentOper.loadNoLoader = true;
+
+                    /* Запускаем Получение показаний весов от терминала */
+                    mainActivity.weightDataFromDeviceReader_Start();
+
+                    /* Тут надо поменять переход сразу на начало загрузки */
+                    // Загруженный вес
+                    mainActivity.storer.weightLoaded
+                            = 0;
+                    // Стартовый вес в миксере
+                    mainActivity.storer.weightStart
+                            = mainActivity.storer.weightCurrent;
+                    // Вычислить конечный вес в погрузчике
+                    mainActivity.storer.weightTarget
+                            = mainActivity.currentOper.loadValue + mainActivity.storer.weightCurrent;
+                    Log.i(logTAG, "конечный вес в погрузчике = " + mainActivity.storer.weightTarget);
+                    // Толеранс +
+                    mainActivity.storer.tolerancePlus
+                            = (int) (mainActivity.currentOper.loadValue * Float.parseFloat(mainActivity.getString(R.string.LOADING_PERCENT_WEIGHT_TOLERANCE_UP)));
+                    // Параметры - на экран
+                    mainActivity.displayWeightParameters();
+                    mainActivity.displayWeightParameters1();
+
+                    mainActivity.gotoLayout(LAYOUT_71_LOAD_OPER, mainActivity.currentOper.getOperationInfoForView());
+                    break;
+                }
+
+                // Погрузка будет с использованием погрузчика
+                mainActivity.currentOper.loadNoLoader = false;
+
+                // Если оперция - загрузка, то на экран 8, иначе - 6
+                if (mainActivity.currentOper.operIsLoad() == true) {
+
+                    /* Надо проверить подключние погрузчика */
+
+                    Log.i("L5_BUTTON_ACCEPT",
+                            "servern=" + mainActivity.currentOper.getParam("servern") +
+                                    ", servera=" + mainActivity.currentOper.getParam("servera"));
+                    Log.i("L5_BUTTON_ACCEPT", "==============================");
+
+                    /* Попытаемся найти погрузчик в сети */
+
+                    mainActivity.CheckConnection(
+                            mainActivity.currentOper.getParam("servern"),
+                            DEVICE_IS_LOADER,
+                            null,
+                            mainActivity.L[LAYOUT_9_SERV_REQUEST],
+                            null);
+
+//                    mainActivity.conf.loaderAddrRefresh(mainActivity.currentOper.getParam("servern"));
+
+                    mainActivity.gotoLayout(LAYOUT_9_SERV_REQUEST, mainActivity.currentOper.getOperationInfoForView());
+
+                } else {
+                    mainActivity.gotoLayout(LAYOUT_6_SIMPLE_OPER, mainActivity.currentOper.getOperationInfoForView());
+                }
                 break;
 
             /* "Простая операция" - отмена */

@@ -9,7 +9,7 @@ import static android.R.attr.y;
  * Created by Андрей on 22.07.2017.
  */
 
-public class Messenger {
+public class MessengerClass {
 
     enum MessageType {
         task,
@@ -24,7 +24,7 @@ public class Messenger {
 
     MainActivity activity;
 
-    public Messenger(MainActivity activity) {
+    public MessengerClass(MainActivity activity) {
         this.activity = activity;
         messageHeader = pair("ver", this.activity.conf.getDevProtocol()) +
                 pair("dev", this.activity.conf.getDevId()) +

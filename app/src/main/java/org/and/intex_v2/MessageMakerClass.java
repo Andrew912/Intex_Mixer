@@ -9,7 +9,7 @@ import java.util.Date;
  * Формирование строк сообщений-запросов для отправки серверу управления
  */
 
-public class MessageMaker {
+public class MessageMakerClass {
 
     MainActivity
             a;
@@ -24,7 +24,7 @@ public class MessageMaker {
      *
      * @param activity
      */
-    public MessageMaker(MainActivity activity) {
+    public MessageMakerClass(MainActivity activity) {
         this.a
                 = activity;
         header

@@ -50,7 +50,6 @@ public class ServerPingClass {
         // Обозначаем свое присутствие
         activity.sfc.numOfServerPingClasses
                 =1;
-
         socketAddr =
                 pAddr;
         socketPort =
@@ -95,14 +94,21 @@ public class ServerPingClass {
                     if (socket.isConnected() == true) {
                         is = socket.getInputStream();
                         os = socket.getOutputStream();
+
+                        /* Отправка строки байт */
                         byte[] buffer = o.getBytes();
                         os.write(buffer);
                         os.flush();
+
+                        /* Получение строки байт */
                         buffer = new byte[buffSize];
                         int read = is.read(buffer, 0, buffSize);
                         byte[] b = new byte[read];
                         System.arraycopy(buffer, 0, b, 0, read);
+
+                        /* Замена "неправильных символов в полученной строке" */
                         rs = new String(b).replace("\"", "--");
+
                         socket.close();
                         Log.i(logTAG, "ServerExchangeClass_getOperations: " + 2);
                         /**

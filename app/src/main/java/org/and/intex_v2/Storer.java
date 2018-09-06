@@ -76,7 +76,7 @@ public class Storer {
         if (currentWeight != newWeight) {
             currentWeight = newWeight;
             /* Запись в протокол показаний весового терминала */
-            sendMessageToControlServer(activity.messenger.msg_Protocol(currentWeight, 0, 0));
+            sendMessageToControlServer(activity.messengerClass.msg_Protocol(currentWeight, 0, 0));
         }
     }
 
