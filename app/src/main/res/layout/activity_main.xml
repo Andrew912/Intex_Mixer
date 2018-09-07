@@ -23,7 +23,7 @@
         <FrameLayout
             android:id="@+id/FrameMain"
             android:layout_width="match_parent"
-            android:layout_height="472dp">
+            android:layout_height="433dp">
 
             <LinearLayout
                 android:orientation="vertical"
@@ -635,7 +635,7 @@
                 <ListView
                     android:id="@+id/list_Task_Select"
                     android:layout_width="match_parent"
-                    android:layout_height="134dp"
+                    android:layout_height="170dp"
                     android:visibility="visible"
                     tools:listheader="список доступных задач" />
 
@@ -1023,7 +1023,7 @@
         <TextView
             android:id="@+id/text_StatusLine"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 

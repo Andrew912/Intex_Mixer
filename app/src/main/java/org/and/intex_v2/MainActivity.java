@@ -82,9 +82,6 @@ public class MainActivity extends AppCompatActivity {
             mailToSend;
     TerminalCommunicator
             terminalCommunicator;
-//    GPSTracker
-//            gps;
-
     /* Лайауты */
     LinearLayout[]
             layout;
@@ -298,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
             MixerPass,              // Пароль миксера
             MixerTermName,          // имя весового терминала
             MixerTermAddr;          // стартовый адрес весового терминала (для быстрого поиска в сети)
-    // Поля для редактирования
+    /* Поля для редактирования */
     EditText
             et_WiFiNet,
             et_WiFiPass,
@@ -356,16 +353,14 @@ public class MainActivity extends AppCompatActivity {
                 = new MailToSend(this, dbHelper.getWritableDatabase());
         terminalCommunicator
                 = new TerminalCommunicator(this);
-//        gps
-//                = new GPSTracker(this);
-//
+
         /***********************
          * Объявление Лайауты
          ***********************/
-        // ???
+        /* Лайоут статусной строки */
         layoutStatus
                 = new LayoutStatusClass(Integer.valueOf(getString(R.string.NUMBER_OF_LAYOUTS)));
-        // Старый вариант формирования экранов
+        /* Старый вариант формирования экранов */
         layout
                 = new LinearLayout[layoutStatus.numberOfLayouts];
         layout[LAYOUT_11_EMPTY]
@@ -397,7 +392,7 @@ public class MainActivity extends AppCompatActivity {
         layout_4_1
                 = (LinearLayout) findViewById(R.id.LL4_1_Buttons);
 
-        // Новый вариант формирования экранов
+        /* Новый вариант формирования экранов */
         L
                 = new LayoutClass[Integer.valueOf(getString(R.string.NUMBER_OF_LAYOUTS))];
 
@@ -522,30 +517,8 @@ public class MainActivity extends AppCompatActivity {
         /**************************************************
          * Переменные, управляющие поиском устройств в сети
          **************************************************/
-//        findServerTimer
-//                = new ArrayList<>();
-//        myTimerTask_watchOnServerFind
-//                = new ArrayList<>();
-//        numOfServerPingClasses
-//                = new ArrayList<>();
-//        serverFound
-//                = new ArrayList<>();
-//        endServerFindCondition
-//                = new ArrayList<>();
-//
-        /* Вот тут я не уверен, что именно так должно все быть:
-           Наверное, лучше все эти присваивания перенести в CheckConnection для случая, когда
-           нам попадается для поиска новое устройство */
-//        for (int i = 0; i < MAX_NUM_OF_DEVICES; i++) {
-//            findServerTimer
-//                    .add(i, new Timer());
-//            numOfServerPingClasses
-//                    .add(i, new Integer(0));
-//            serverFound
-//                    .add(i, new String[3]);
-//            endServerFindCondition
-//                    .add(i, false);
-//        }
+
+        /* Проверка подключения к сети */
         conf.is_Connected_to_network
                 = net.terminalConnectedToNetwork();
         if (conf.is_Connected_to_network) {
@@ -584,7 +557,6 @@ public class MainActivity extends AppCompatActivity {
                 = null;
         textView[LAYOUT_00_CLEARING]
                 = (TextView) findViewById(R.id.text_0_Info);
-
         text_7_target
                 = (TextView) findViewById(R.id.text_7_target);
         text_71_target
@@ -729,11 +701,12 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
+        /**/
         buttonStatus
                 = new boolean[NUMBER_OF_BUTTONS];
         buttonStatusDrop();
 
-        // btn_11_Next
+        /* btn_11_Next */
         btn_11_Next
                 = (Button) findViewById(R.id.btn_11_00_Begin_job);
         btn_11_Next.setOnClickListener(new View.OnClickListener() {
@@ -744,7 +717,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // btn_11_Next
+        // btn_11_Next */
         btn_11_LoaderFound
                 = (Button) findViewById(R.id.btn_11_00_Begin_job);
         btn_11_LoaderFound.setOnClickListener(new View.OnClickListener() {
@@ -755,7 +728,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // btn_0_SendMail
+        // btn_0_SendMail */
         btn_0_SendMail
                 = (Button) findViewById(R.id.button_0_SendMail);
         btn_0_SendMail
@@ -766,7 +739,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        // Кнопка btn_ToDB
+        // Кнопка btn_ToDB */
         btn_ToDB
                 = (Button) findViewById(R.id.button_LoadDB);
         btn_ToDB
@@ -777,7 +750,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        // Кнопка btn_ClearDB
+        // Кнопка btn_ClearDB */
         btn_ClearDB
                 = (Button) findViewById(R.id.button_Clear_DB);
         btn_ClearDB
@@ -789,7 +762,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        // Кнопка btn_ClearDNS
+        // Кнопка btn_ClearDNS */
         btn_ClearDNS
                 = (Button) findViewById(R.id.button_Clear_DNS);
         btn_ClearDNS
@@ -802,7 +775,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        // Кнопка btn_0_Back (LL0)
+        // Кнопка btn_0_Back (LL0) */
         btn_0_Back = (Button) findViewById(R.id.button_0_Back);         // Response Yes
         btn_0_Back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -811,7 +784,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
+        /**/
         btn_0_DNS = (Button) findViewById(R.id.button_0_DNS);
         btn_0_DNS.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -820,7 +793,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Кнопка "Печать таблицы TASK"
+        /* Кнопка "Печать таблицы TASK" */
         btn_0_Task = (Button) findViewById(R.id.button_0_Task);           // Response No
         btn_0_Task.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -829,7 +802,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Кнопка "Печать таблицы TASK"
+        /* Кнопка "Печать таблицы TASK" */
         btn_0_Mail = (Button) findViewById(R.id.button_0_Task1);           // Response No
         btn_0_Mail.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -838,7 +811,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Кнопка "Печать таблицы CurrentOper"
+        /* Кнопка "Печать таблицы CurrentOper" */
         btn_0_Oper = (Button) findViewById(R.id.button_0_Oper);
         btn_0_Oper.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -847,7 +820,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Кнопка btn_1_Begin (LL1)
+        /* Кнопка btn_1_Begin (LL1) */
         btn_1_Begin = (Button) findViewById(R.id.button_1_BeginJob);
 
         btn_1_Begin.setOnClickListener(new View.OnClickListener() {
@@ -857,7 +830,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Кнопка button_Done (LL1)
+        /* Кнопка button_Done (LL1) */
         btn_1_Done = (Button) findViewById(R.id.button_Done);
         btn_1_Done.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -870,7 +843,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Кнопка btn_2_TaskGet
+        /* Кнопка btn_2_TaskGet */
         btn_2_TaskGet = (Button) findViewById(R.id.button_2_TaskGet);
         btn_2_TaskGet.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -879,7 +852,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Кнопка btn_2_Cancel
+        /* Кнопка btn_2_Cancel */
         btn_2_Cancel = (Button) findViewById(R.id.button_2_Cancel);
         btn_2_Cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -888,7 +861,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Btn_3_Continue
+        /* Btn_3_Continue */
         btn_3_Continue = (Button) findViewById(R.id.button_3_TaskContinue);
         btn_3_Continue.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -897,7 +870,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Btn_3_Cancel
+        /* Btn_3_Cancel */
         btn_3_Cancel = (Button) findViewById(R.id.button_3_Cancel);
         btn_3_Cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -906,7 +879,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Кнопка Accept (LL4)
+        /* Кнопка Accept (LL4) */
         btn_4_Accept = (Button) findViewById(R.id.button_4_Accept);
         btn_4_Accept.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -915,7 +888,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Кнопка Cancel (LL4)
+        /* Кнопка Cancel (LL4) */
         btn_4_Cancel = (Button) findViewById(R.id.button_4_Cancel);
         btn_4_Cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -924,7 +897,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Кнопка Accept (LL5)
+        /* Кнопка Accept (LL5) */
         btn_5_Accept = (Button) findViewById(R.id.button_5_Accept);
         btn_5_Accept.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -933,7 +906,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Кнопка Cancel (LL5)
+        /* Кнопка Cancel (LL5) */
         btn_5_Cancel = (Button) findViewById(R.id.button_5_Cancel);
         btn_5_Cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -942,7 +915,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Кнопка Cancel (LL6)
+        /* Кнопка Cancel (LL6) */
         btn_6_Cancel = (Button) findViewById(R.id.button_6_Cancel);
         btn_6_Cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -951,7 +924,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Кнопка Accept (LL6)
+        /* Кнопка Accept (LL6) */
         btn_6_Complete = (Button) findViewById(R.id.button_6_Complete);
         btn_6_Complete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -960,7 +933,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // btn_7_Complete
+        /* btn_7_Complete */
         btn_7_Complete = (Button) findViewById(R.id.button_7_Complete);
         btn_7_Complete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -969,7 +942,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // btn_7_Start
+        /* btn_7_Start */
         btn_7_Start = (Button) findViewById(R.id.button_7_Start);
         btn_7_Start.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -978,7 +951,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // btn_71_Complete
+        /* btn_71_Complete */
         btn_71_Complete = (Button) findViewById(R.id.button_71_Complete);
         btn_71_Complete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -987,7 +960,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // btn_71_Start
+        /* btn_71_Start */
         btn_71_Start = (Button) findViewById(R.id.button_71_Start);
         btn_71_Start.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -996,7 +969,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // btn_8_OK
+        /* btn_8_OK */
         btn_8_OK = (Button) findViewById(R.id.button_8_ok);
         btn_8_OK.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1005,7 +978,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // btn_9_Cancel
+        /* btn_9_Cancel */
         btn_9_Cancel = (Button) findViewById(R.id.button_9_Cancel);
         btn_9_Cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1014,7 +987,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // btn_9_Accept
+        /* btn_9_Accept */
         btn_9_Accept = (Button) findViewById(R.id.button_9_Accept);
         btn_9_Accept.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1023,7 +996,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // btn_9_Reject
+        /* btn_9_Reject */
         btn_9_Reject = (Button) findViewById(R.id.button_9_Reject);
         btn_9_Reject.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1032,7 +1005,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // btn_9_Refresh
+        /* btn_9_Refresh */
         btn_9_Refresh = (Button) findViewById(R.id.button_9_Refresh);
         btn_9_Refresh.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1056,30 +1029,23 @@ public class MainActivity extends AppCompatActivity {
         et_MixerTermAddr
                 = (EditText) findViewById(R.id.editText_0_2_2);
 
-
         /*******************************
          * ЗАПУСК!!!
          *******************************/
 
         paramInit();
 
-        conf
-                .setSystemParameters();
+        conf.setSystemParameters();
 
         printServerFound();
 
-        currentTask
-                .setTaskData();
-
-
-        /* ========== */
+        currentTask.setTaskData();
 
         /* Запуск демона отправки почты */
-        sendMailToControlServer
-                .sendMail();
+        sendMailToControlServer.sendMail();
 
-        controller
-                .controller(L__BUTTON_START);
+        /* Запуск главного контроллера */
+        controller.controller(L__BUTTON_START);
 
         /*******************************
          * КОНЕЦ
@@ -1102,19 +1068,6 @@ public class MainActivity extends AppCompatActivity {
      * Класс управления поиском сетевых устройств
      */
     public class ServerFindControlClass {
-//        ArrayList<String>
-//                serverName;                         // Имя сервера
-//        ArrayList<Timer>
-//                findServerTimer;                    // Таймер поиска сервера
-//        ArrayList<myTimerTask_WatchOnServerFind>
-//                findServerTimerTask;                // Задача таймера поиска сервера
-//        public ArrayList<Integer>
-//                numOfServerPingClasses;             // Количество открытых в данный момент ServerPingClass
-//        public ArrayList<String[]>
-//                serverFound;                        // Параметры найденного сервера
-//        public ArrayList<Boolean>
-//                endServerFindCondition;             // Условие выхода из цикла при поиске серверов
-
         String
                 serverName;                         // Имя сервера
         Timer
@@ -1129,33 +1082,17 @@ public class MainActivity extends AppCompatActivity {
                 endServerFindCondition;             // Условие выхода из цикла при поиске серверов
 
         /**
-         * Конструктор
+         * Конструктор ServerFindControlClass
          */
         public ServerFindControlClass() {
             serverName
                     = "";
             findServerTimer
                     = new Timer();
-//            findServerTimerTask
-//                    = new ArrayList<>();
             numOfServerPingClasses
                     = 0;
-//            serverFound
-//                    = {""};
             endServerFindCondition
                     = false;
-//            serverName
-//                    = new ArrayList<>();
-//            findServerTimer
-//                    = new ArrayList<>();
-//            findServerTimerTask
-//                    = new ArrayList<>();
-//            numOfServerPingClasses
-//                    = new ArrayList<>();
-//            serverFound
-//                    = new ArrayList<>();
-//            endServerFindCondition
-//                    = new ArrayList<>();
         }
 
         /**
@@ -1206,31 +1143,9 @@ public class MainActivity extends AppCompatActivity {
                     = false;
             serverName
                     = pServerName;
-
             // Возвращаем индекс структуры
             return resI;
         }
-
-//        /**
-//         * Возвращает индекс структуры, соответствующий заданному имени сервера
-//         *
-//         * @param pServerName
-//         * @return
-//         */
-//        public int getIndex(String pServerName) {
-//            // Если записей в структуре нет вообще
-//            if (serverName.equals("'")) {
-//                return -1;
-//            }
-//            // Ищем подходящую запись
-////            for (int i = 0; i < serverName.size(); i++) {
-//            if (serverName.equals(pServerName) == true) {
-//                return 0;
-//            }
-////            }
-//            return -1;
-//        }
-//
     }
 
     /**
@@ -1279,13 +1194,6 @@ public class MainActivity extends AppCompatActivity {
             dbHandler.paramStore
                     ("WiFiPass", WiFiPass, null);
         }
-//        if (MixerTermAddr.equals(et_MixerName.getText()) == false) {
-//            MixerName
-//                    = et_MixerName.getText().toString();
-//            dbHandler.paramStore
-//                    ("MixerName", MixerName, null);
-//        }
-        // Обновляет параметры из конфигурации
         conf.setSystemParameters();
     }
 
@@ -1296,7 +1204,6 @@ public class MainActivity extends AppCompatActivity {
      * 1. MixerTermName     имя весового терминала
      * 2. MixerTermAddr     стартовый адрес весового терминала (для быстрого поиска в сети)
      */
-
     void paramInit() {
         if (dbHandler.paramNow("WiFiNet")) {
             WiFiNet = dbHandler.paramGet("WiFiNet")[dbHandler.PARAMETER_VALUE];
@@ -1385,69 +1292,10 @@ public class MainActivity extends AppCompatActivity {
         int
                 whatDeviceWeFind = 0;
 
-        // Если массив пока вообще пустой, то первым будет элемент с индексом 0
-
-//        if (serverFound.size() > 0) {
-//            for (i = 0; i < serverFound.size(); i++) {
-//                if (serverFound.get(i)[NET_DEVICE_NAME].equals(serverToFind) == true) {
-//                    // Если мы такую запись нашли, то чистим все для нее
-//                    whatDeviceWeFind
-//                            = i;
-//                    serverFoudFindResult
-//                            = Result_Found;
-//                    break;
-//                } else {
-//                    // Если такой записи нет, то создаем все по-новой
-//                    whatDeviceWeFind
-//                            = serverFound.size() + 1;
-//                    serverFoudFindResult
-//                            = Result_New;
-//                }
-//            }
-//        }
-//
-//        // Добавлять связанные записи в аррайлисты будем как в случае пустого массива, так и в случае
-//        // отсутствия нужной нам записи в непустом массиве
-//        if (serverFoudFindResult == Result_Empty) {
-//            serverFoudFindResult = Result_New;
-//        }
-//
-//        // Если запись нашлась, то найти записи для данного сервера и уничтожить их
-//        if (serverFoudFindResult == Result_Found) {
-//            for (i = 0; i < serverFound.size(); i++) {
-//                if (myTimerTask_watchOnServerFind.get(i).serverName == serverToFind) {
-//                    myTimerTask_watchOnServerFind.remove(i);
-//                    whatDeviceWeFind = i;
-//                    break;
-//                }
-//            }
-//            findServerTimer
-//                    .remove(whatDeviceWeFind);
-//            numOfServerPingClasses
-//                    .remove(whatDeviceWeFind);
-//            serverFound
-//                    .remove(whatDeviceWeFind);
-//            endServerFindCondition
-//                    .remove(whatDeviceWeFind);
-//        }
-//
-//        // Cоздать по-новой
-//        findServerTimer
-//                .add(whatDeviceWeFind, new Timer());
-//        numOfServerPingClasses
-//                .add(whatDeviceWeFind, new Integer(0));
-//        serverFound
-//                .add(whatDeviceWeFind, new String[3]);
-//        endServerFindCondition
-//                .add(whatDeviceWeFind, false);
-
-        // Новая задача таймера - потом создать по-новой
-
         Log.i("==CheckConnection==", "=============================");
         Log.i("==CheckConnection==", "serverToFind=" + serverToFind);
 
-        whatDeviceWeFind
-                = sfc.init(serverToFind, serverType);
+        whatDeviceWeFind = sfc.init(serverToFind, serverType);
 
         Log.i("==CheckConnection==", "whatDeviceWeFind=" + whatDeviceWeFind);
         Log.i("==CheckConnection==", "serverToFind=" + serverToFind + ", netmask=" + conf.networkMask);
@@ -1485,27 +1333,34 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    // "Нажимает" кнопку b_1000_0
-
+    /**
+     * "Нажимает" кнопку b_1000_0
+     */
     void b_1000_0_Press() {
         b_1000_0.callOnClick();
     }
 
-    // Сброс статуса кнопок
+    /**
+     * Сброс статуса кнопок
+     */
     void buttonStatusDrop() {
         for (int i = 0; i < buttonStatus.length; i++) {
             buttonStatus[i] = false;
         }
     }
 
-    // Сохраняет текущее состояние видимости в массив объекта
+    /**
+     * Сохраняет текущее состояние видимости в массив объекта
+     */
     void layoutsVisiblitySave() {
         for (int i = 0; i < layoutStatus.numberOfLayouts; i++) {
             layoutStatus.status[i] = layout[i].getVisibility() == VISIBLE;
         }
     }
 
-    // Устанавливает состояние видимости в соответствии с массивом
+    /**
+     * Устанавливает состояние видимости в соответствии с массивом
+     */
     void layoutsVisiblityRestore() {
         for (int i = 0; i < layoutStatus.numberOfLayouts; i++) {
             if (layoutStatus.getStatus(i) != true) {
@@ -1516,7 +1371,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Устанавливает видимость экрана по номеру
+    /**
+     * Устанавливает видимость экрана по номеру
+     *
+     * @param layoutToSet
+     */
     void layoutVisiblitySet(int layoutToSet) {
         layoutsVisiblitySave();
         for (int i = 0; i < layoutStatus.numberOfLayouts; i++) {
@@ -1528,7 +1387,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Лог
+    /**
+     * Лог
+     *
+     * @param s
+     */
     public void log(String s) {
         Log.i("MAIN.LOG: ", s);
     }
@@ -1545,12 +1408,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Вычисление значения при выборе ListView Task select
+    /**
+     * Вычисление значения при выборе ListView Task select
+     *
+     * @return
+     */
     String getTaskSelect_SelectedValue() {
         return taskSelect_SelectedValue;
     }
 
-    // Параметры текущей задачи
+    /**
+     * Параметры текущей задачи
+     */
     public class CurrentTask {
         MainActivity a;
         String logTAG;
@@ -1699,6 +1568,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     *
+     */
     public class CurrentOper {
         /**
          * Описывает операцию - ид, имя и тип (экранное имя)
@@ -1720,6 +1592,9 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<OperationParameter>
                 operationParameters;
 
+        /**
+         * @param activity
+         */
         public CurrentOper(MainActivity activity) {
             this.mainActivity = activity;
             operStatus = mainActivity.getString(R.string.STATUS_UNDEF);
@@ -1727,10 +1602,16 @@ public class MainActivity extends AppCompatActivity {
             setOperData();
         }
 
+        /**
+         *
+         */
         void setCurrent() {
             storer.setTaskProperty_Current(operId, 1);
         }
 
+        /**
+         *
+         */
         void setOperData() {
             logTAG = mainActivity.logTAG + "setOperData()";
             String[] s = storer.takeCurrentOperData(currentTask.taskId);
@@ -1808,7 +1689,9 @@ public class MainActivity extends AppCompatActivity {
             operType = getParam0(s, operationParameters);
         }
 
-        // Текущая операция начинает/продолжает выполняться
+        /**
+         * Текущая операция начинает/продолжает выполняться
+         */
         public void setToActive() {
             String logTAG = mainActivity.currentOper.logTAG + "setToActive";
             switch (operStatus) {
@@ -1840,7 +1723,9 @@ public class MainActivity extends AppCompatActivity {
             storer.setOperProperty_Status(operId, operStatus);
         }
 
-        // Текущая операция прерывается/останавливается
+        /**
+         * Текущая операция прерывается/останавливается
+         */
         public void setToUnactive() {
             String logTAG = mainActivity.currentOper.logTAG + "setToUnactive";
             switch (operStatus) {
@@ -1870,7 +1755,9 @@ public class MainActivity extends AppCompatActivity {
             storer.setOperProperty_Status(operId, operStatus);
         }
 
-        // Текущая операция завершается
+        /**
+         * Текущая операция завершается
+         */
         public void setToComplete() {
             String logTAG = mainActivity.currentOper.logTAG + "setToComplete";
             switch (operStatus) {
@@ -1902,7 +1789,11 @@ public class MainActivity extends AppCompatActivity {
             storer.setOperProperty_Complete(operId);
         }
 
-        // Получение данных о текущей операции
+        /**
+         * Получение данных о текущей операции
+         *
+         * @return
+         */
         public String now() {
             return mainActivity.storer.getCurrentOperId(currentTask.taskId);
         }
@@ -2065,7 +1956,11 @@ public class MainActivity extends AppCompatActivity {
         currentOper.setParamInClass();
     }
 
-    // Текущее значение времени
+    /**
+     * Текущее значение времени
+     *
+     * @return
+     */
     public Date getCurrentTime() {
         Date cal = Calendar.getInstance().getTime();
         return cal;
@@ -2085,6 +1980,9 @@ public class MainActivity extends AppCompatActivity {
         Log.i(logTAG + ": weightData: ", "start");
     }
 
+    /**
+     *
+     */
     public void weightDataToLoaderSender_Stop() {
         Log.i(logTAG + ": weightData: ", "stop");
         loader
@@ -2126,7 +2024,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Вывод данных в статусную строку
+    /**
+     * Вывод данных в статусную строку
+     */
     public class StatusLine {
         private String statusLine;
 
@@ -2718,22 +2618,13 @@ public class MainActivity extends AppCompatActivity {
      */
     void printServerFound() {
         Log.i(logTAG, "PRINT serverFound: " + sfc.serverFound);
-        if (sfc.serverFound.length>0) {
+        if (sfc.serverFound.length > 0) {
             Log.i(logTAG, "serverFound=" + sfc.serverFound[NET_DEVICE_NAME]);
-        } else
-        {
+        } else {
             Log.i(logTAG, "server NOT Found");
         }
 
     }
-//        if (sfc.serverFound != null) {
-//            for (int i = 0; i < sfc.serverFound.size(); i++) {
-//                Log.i(logTAG, "serverFound[" + i + "]=" + sfc.serverFound.get(i)[NET_DEVICE_NAME]);
-//            }
-//        } else {
-//            Log.i(logTAG, "server NOT Found");
-//        }
-//    }
 
     /**
      * Проверяет в serverFound есть ли в числе найденных указанный сервер
@@ -2768,6 +2659,5 @@ public class MainActivity extends AppCompatActivity {
         }
         return rv;
     }
-
 
 }

@@ -414,97 +414,135 @@ public class ServerCommincator {
         }
     }
 
-    // Извлекаем параметры команды для каждой строки и  
+    /**
+     * Извлекаем параметры команды для каждой строки и
+     *
+     * @param mp
+     */
     public void ExtractParametersForEachOperation(ArrayList<IncomingMessageLineParamsClass> mp) {
-        // Параметры операции для сохранения в БД
+        /* Параметры операции для сохранения в БД */
         String operId = null;
         String taskId = null;
         String type = null;
         String comment = null;
-        // Находим параметры операции
+        /* Находим параметры операции */
         for (int i = 0; i < mp.size(); i++) {
-            // Код операции
+            /* Код операции */
             if (mp.get(i).getName().equals(mainActivity.getString(R.string.MESSAGE_OPER_ID_KEYWORD))) {
                 operId = mp.get(i).getValue();
             }
-            // Код задачи
+            /* Код задачи */
             if (mp.get(i).getName().equals(mainActivity.getString(R.string.MESSAGE_TASK_ID_KEYWORD))) {
                 taskId = mp.get(i).getValue();
             }
-            // Тип операции
+            /* Тип операции */
             if (mp.get(i).getName().equals(mainActivity.getString(R.string.MESSAGE_OPER_TYPE_KEYWORD))) {
                 type = mp.get(i).getValue();
             }
-            // Комментарий
+            /* Комментарий */
             if (mp.get(i).getName().equals(mainActivity.getString(R.string.MESSAGE_OPER_COMMENT_KEYWORD))) {
                 comment = mp.get(i).getValue();
             }
         }
-        // Запись в БД
+        /* Запись в БД */
         putToDB_Operation(new String[]{taskId, operId, type, comment});
-        // Запись в БД параметров операции
+        /* Запись в БД параметров операции */
         for (IncomingMessageLineParamsClass p : mp) {
             putToDB_OperationParameters(new String[]{operId, p.getName(), p.getValue()});
         }
         new DBFunctions(mainActivity, mainActivity.dbHelper.getWritableDatabase()).operList();
     }
 
-    // Извлекаем параметры команды для каждой строки и
+    /**
+     * Извлекаем параметры команды для каждой строки и
+     *
+     * @param mp
+     */
     public void ExtractParametersForEachTask(ArrayList<IncomingMessageLineParamsClass> mp) {
-        // Параметры операции для сохранения в БД
+        /* Параметры операции для сохранения в БД */
         String taskId = null;
         String name = null;
         Log.i(logTAG, "ExtractParametersForEachTask(): start");
-        // Находим параметры задачи
+        /* Находим параметры задачи */
         for (int i = 0; i < mp.size(); i++) {
-            // Код задачи
+            /* Код задачи */
             if (mp.get(i).getName().equals(mainActivity.getString(R.string.MESSAGE_TASK_ID_KEYWORD))) {
                 taskId = mp.get(i).getValue();
                 Log.i(logTAG, "ExtractParametersForEachTask(): taskId" + taskId);
             }
-            // Наименование задачи
+            /* Наименование задачи */
             if (mp.get(i).getName().equals(mainActivity.getString(R.string.MESSAGE_TASK_NAME_KEYWORD))) {
                 name = mp.get(i).getValue();
                 Log.i(logTAG, "ExtractParametersForEachTask(): operName" + name);
             }
         }
-        // Запись в БД
+        /* Запись в БД */
         putToDB_Task(new String[]{taskId, name});
         new DBFunctions(mainActivity, mainActivity.dbHelper.getWritableDatabase()).task();
     }
 
-    // Запись в БД данных операций
+    /**
+     * Запись в БД данных операций
+     *
+     * @param s
+     */
     void putToDB_Task(String[] s) {
         Log.i(logTAG, "putToDB_Task(): taskId=" + s[0] + ", operName=" + s[1]);
-        ContentValues newValues = new ContentValues();
-        newValues.put(KEY_TASK_ID, s[0]);
-        newValues.put(KEY_TASK_COMMENT, s[1]);
-        DBHelper dbh = new DBHelper(mainActivity.context);
-        SQLiteDatabase db = dbh.getWritableDatabase();
-        db.insert(dbh.TABLE_TASK, null, newValues);
-        db.close();
-        dbh.close();
+        ContentValues newValues
+                = new ContentValues();
+        newValues
+                .put(KEY_TASK_ID, s[0]);
+        newValues
+                .put(KEY_TASK_COMMENT, s[1]);
+        DBHelper dbh
+                = new DBHelper(mainActivity.context);
+        SQLiteDatabase db
+                = dbh.getWritableDatabase();
+        db
+                .insert(dbh.TABLE_TASK, null, newValues);
+        db
+                .close();
+        dbh
+                .close();
     }
 
-    // Запись в БД данных операций
+    /**
+     * Запись в БД данных операций
+     *
+     * @param s
+     */
     void putToDB_Operation(String[] s) {
         Log.i(logTAG, "taskId=" + s[0] + ", operId=" + s[1] + ", operType=" + s[2] + ", taskComment=" + s[3]);
         if (s[3] == null) {
             s[3] = s[2];
         }
-        ContentValues newValues = new ContentValues();
-        newValues.put(DBHelper.KEY_OPER_TASK_ID, s[0]);
-        newValues.put(DBHelper.KEY_OPER_ID, s[1]);
-        newValues.put(DBHelper.KEY_OPER_TYPE, s[2].toLowerCase());
-        newValues.put(DBHelper.KEY_OPER_NAME, s[3]);
-        DBHelper dbh = new DBHelper(mainActivity.context);
-        SQLiteDatabase db = dbh.getWritableDatabase();
-        db.insert(dbh.TABLE_OPER, null, newValues);
-        db.close();
-        dbh.close();
+        ContentValues newValues
+                = new ContentValues();
+        newValues
+                .put(DBHelper.KEY_OPER_TASK_ID, s[0]);
+        newValues
+                .put(DBHelper.KEY_OPER_ID, s[1]);
+        newValues
+                .put(DBHelper.KEY_OPER_TYPE, s[2].toLowerCase());
+        newValues
+                .put(DBHelper.KEY_OPER_NAME, s[3]);
+        DBHelper dbh
+                = new DBHelper(mainActivity.context);
+        SQLiteDatabase db
+                = dbh.getWritableDatabase();
+        db
+                .insert(dbh.TABLE_OPER, null, newValues);
+        db
+                .close();
+        dbh
+                .close();
     }
 
-    // Запись в БД данных параметров операции
+    /**
+     * Запись в БД данных параметров операции
+     *
+     * @param s
+     */
     void putToDB_OperationParameters(String[] s) {
         Log.i(logTAG, "operId=" + s[0] + ", operName=" + s[1] + ", value=" + s[2]);
 
@@ -521,6 +559,10 @@ public class ServerCommincator {
         dbh.close();
     }
 
+    /**
+     * @param inS
+     * @return
+     */
     private IncomingMessageLineParamsClass extractParam(String inS) {
         IncomingMessageLineParamsClass retV = null;
         Pattern patternOfName = Pattern.compile("^" + mainActivity.getString(R.string.pattern_Cmd_Name));
@@ -535,7 +577,11 @@ public class ServerCommincator {
         return retV;
     }
 
-    // Список сообщений из таблицы mail, которые еще не отправлены
+    /**
+     * Список сообщений из таблицы mail, которые еще не отправлены
+     *
+     * @return
+     */
     String[] dbMailGetMessages() {
         String[]
                 r;
@@ -567,7 +613,11 @@ public class ServerCommincator {
         return r;
     }
 
-    // Очистка MAIL от отправленных сообщений
+    /**
+     * Очистка MAIL от отправленных сообщений
+     *
+     * @return
+     */
     int dbMailDeleteSended() {
         String[] r;
         DBHelper dbh = new DBHelper(mainActivity.context);
@@ -582,7 +632,9 @@ public class ServerCommincator {
         return res;
     }
 
-    //
+    /**
+     * @return
+     */
     int dbMailRecCount() {
         int r;
         DBHelper dbh = new DBHelper(mainActivity.context);
@@ -604,7 +656,11 @@ public class ServerCommincator {
         return r;
     }
 
-    // Пометить запись как отправленную (complete)
+    /**
+     * Пометить запись как отправленную (complete)
+     *
+     * @param key
+     */
     void setMailRecordAsSended(String key) {
         DBHelper dbh = new DBHelper(mainActivity.context);
         ContentValues newValues = new ContentValues();
@@ -623,7 +679,11 @@ public class ServerCommincator {
         dbh.close();
     }
 
-    // Получить данные задачи из БД
+    /**
+     * Получить данные задачи из БД
+     *
+     * @return
+     */
     String getCurrentTaskIdFromDB() {
         String r = null;
         Log.i(logTAG, "getCurrentTaskIdFromDB: start find taskId");
@@ -649,28 +709,9 @@ public class ServerCommincator {
         return r;
     }
 
-    // TEST insert records into table MAIL
-    void insertIntoMailTable_test() {
-
-        DBHelper dbh = new DBHelper(mainActivity.context);
-        SQLiteDatabase db = dbh.getWritableDatabase();
-
-        ContentValues newValues = new ContentValues();
-        newValues.put(KEY_MAIL_MESSAGE, new MessageMakerClass(mainActivity).report_OperBegin("101"));
-        db.insert(TABLE_MAIL, null, newValues);
-
-        newValues = new ContentValues();
-        newValues.put(KEY_MAIL_MESSAGE, new MessageMakerClass(mainActivity).report_OperBegin("102"));
-        db.insert(TABLE_MAIL, null, newValues);
-
-        newValues = new ContentValues();
-        newValues.put(KEY_MAIL_MESSAGE, new MessageMakerClass(mainActivity).report_OperBegin("103"));
-        db.insert(TABLE_MAIL, null, newValues);
-        db.close();
-        dbh.close();
-    }
-
-    //
+    /**
+     * @return
+     */
     boolean connectionToServerCheck() {
         return true;
     }

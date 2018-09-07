@@ -210,7 +210,7 @@ public class TerminalCommunicator {
     /**
      * Начинаем читать данне из терминала
      */
-    void rearDataStart() {
+    void readDataStart() {
         action = START;
     }
 

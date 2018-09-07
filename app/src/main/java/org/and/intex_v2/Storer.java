@@ -135,6 +135,7 @@ public class Storer {
      * @return
      */
     public String[] getListOperationsForExecution() {
+
         activity.log("getListOperationsForExecution");
         Cursor c = activity.dbHandler.database.query(
                 activity.dbHelper.TABLE_OPER,
@@ -155,15 +156,15 @@ public class Storer {
                 null,
                 null,
                 KEY_OPER_ID + " ASC");
-        // Если записей нет, возвращаем НУЛЬ
-        //
+
+        /* Если записей нет, возвращаем НУЛЬ */
         if (c.getCount() == 0) {
             return null;
         }
+
         String[] retVar = new String[c.getCount()];
         c.moveToFirst();
 
-        //
         int i = 0;
         String keyOperName = "";
         String s = "";
@@ -183,36 +184,28 @@ public class Storer {
 
             switch (keyOperName) {
                 case "load":
-                    Log.i(logTAG, "keyOperName = " + keyOperName);
-                    s
-                            = s + getOperParam(c.getString(c.getColumnIndex(KEY_OPER_ID)), "feedn") + " ";
-                    s
-                            = s + getOperParam(c.getString(c.getColumnIndex(KEY_OPER_ID)), "value") + " ";
-                    s
-                            = s + getOperParam(c.getString(c.getColumnIndex(KEY_OPER_ID)), "unit") + " ";
-                    s
-                            = s + getOperParam(c.getString(c.getColumnIndex(KEY_OPER_ID)), "servern");
+                    Log.i(logTAG, "keyOperName: " + keyOperName);
+                    s = s + getOperParam(c.getString(c.getColumnIndex(KEY_OPER_ID)), "feedn") + " ";
+                    s = s + getOperParam(c.getString(c.getColumnIndex(KEY_OPER_ID)), "value") + " ";
+                    s = s + getOperParam(c.getString(c.getColumnIndex(KEY_OPER_ID)), "unit") + " ";
+                    s = s + getOperParam(c.getString(c.getColumnIndex(KEY_OPER_ID)), "servern");
+                    retVar[i] = retVar[i] + s + " [" + c.getString(c.getColumnIndex(KEY_OPER_ID)) + "]";
                     break;
                 case "move":
-                    Log.i(logTAG, "keyOperName = " + keyOperName);
-                    s
-                            = s + getOperParam(c.getString(c.getColumnIndex(KEY_OPER_ID)), "pointn");
+                    /* Операции "движения в" пока не выводим */
+                    Log.i(logTAG, "keyOperName: " + keyOperName + " - not included");
+//                    s = s + getOperParam(c.getString(c.getColumnIndex(KEY_OPER_ID)), "pointn");
+//                    retVar[i] = retVar[i] + s + " [" + c.getString(c.getColumnIndex(KEY_OPER_ID)) + "]";
                     break;
                 case "deploy":
-                    Log.i(logTAG, "keyOperName = " + keyOperName);
-                    s
-                            = s + getOperParam(c.getString(c.getColumnIndex(KEY_OPER_ID)), "value") + " ";
-                    s
-                            = s + getOperParam(c.getString(c.getColumnIndex(KEY_OPER_ID)), "unit") + " ";
+                    Log.i(logTAG, "keyOperName: " + keyOperName);
+                    s = s + getOperParam(c.getString(c.getColumnIndex(KEY_OPER_ID)), "value") + " ";
+                    s = s + getOperParam(c.getString(c.getColumnIndex(KEY_OPER_ID)), "unit") + " ";
+                    retVar[i] = retVar[i] + s + " [" + c.getString(c.getColumnIndex(KEY_OPER_ID)) + "]";
                     break;
             }
 
-            retVar[i] =
-                    retVar[i] +
-                            s +
-                            " [" +
-                            c.getString(c.getColumnIndex(KEY_OPER_ID)) +
-                            "]";
+
             i++;
         } while (c.moveToNext());
         /* *************************************************************************
@@ -292,6 +285,8 @@ public class Storer {
      * @return
      */
     public String[] getListTasksForExecution() {
+
+
         Cursor c = activity.dbHandler.database.query(
                 activity.dbHelper.TABLE_TASK,
                 new String[]{

@@ -116,59 +116,19 @@ public class Controller {
     }
 
     void controller(int btn) {
-
+        /**
+         *
+         */
         switch (btn) {
-
-            case L__BUTTON_START:       //
+            /**
+             *
+             */
+            case L__BUTTON_START:
 
                 startButtonPresser
                         .schedule(new TimerTask_PressStartButton(), 4000);
                 startButtonPresser
                         .schedule(new TimerTask_PressStartButton(), 9000);
-
-                /* Для начала надо распечатать все параметры... */
-//                mainActivity.dbHandler.getTableColumns("objects");
-//                Log.i("printTableData", mainActivity.dbHandler.printTableData("PARAMETERS"));
-//                Log.i("printTableData", mainActivity.dbHandler.printTableData("objects"));
-//                mainActivity.dbHandler.dbTableList_OBJECTS();
-                /* Отправить на сервер протокол */
-//                mainActivity.server.sendMail();
-                /* Проверим координаты */
-                // check if GPS enabled
-//                if(mainActivity.gps.canGetLocation()){
-//
-//                    double latitude = mainActivity.gps.getLatitude();
-//                    double longitude = mainActivity.gps.getLongitude();
-//                    double altitude = mainActivity.gps.getAltitude();
-//                    double speed = mainActivity.gps.getSpeed();
-//                    double bearing = mainActivity.gps.getBearing();
-//                    double speedLimitA = ((10*1000)/(60*60));
-//
-//                    // \n is for new line
-//
-//                    Log.i("GPS", "Your Location is - \nLat: " + latitude
-//                            + "\nLong: " + longitude
-//                            + "\nAlt:" + altitude);
-//
-//                    Toast.makeText(mainActivity.getApplicationContext(), "Your Location is - \nLat: " + latitude
-//                            + "\nLong: " + longitude
-//                            + "\nAlt:" + altitude, Toast.LENGTH_LONG).show();
-////                    Intent intent = new Intent(this, Logik_Activity.class);
-////                    intent.putExtra("alt",altitude);
-////                    intent.putExtra("speed",speed);
-////                    intent.putExtra("bearing",bearing);
-////                    if (speed < speedLimitA){
-////                        startActivity(intent);
-////                    }
-//                    // if speed > 0 then AAA else BBB
-//
-//                }else{
-//                    // can't get location
-//                    // GPS or Network is not enabled
-//                    // Ask user to enable GPS/network in settings
-//                    mainActivity.gps.showSettingsAlert();
-//                }
-
 
                 Log.i("controller", "L__BUTTON_START: Let's begin!");
                 mainActivity.gotoLayout(LAYOUT_1_BEGIN, "Терминал миксера");
@@ -201,19 +161,17 @@ public class Controller {
                 mainActivity.gotoLayout(LAYOUT_00_CLEARING, null);
                 break;
 
+            /* Сохранение параметров */
             case L0_BUTTON_PARAM_SAVE:
-                // Сохранение параметров
                 mainActivity.paramSave();
                 break;
-
+            /* Отправка статистики по операциям */
             case L00_BUTTON_SENDMAIL:
-                // Отправка статистики по операциям
-
                 /* Надо будет включить отправку почты обратно потом */
-//                mainActivity.server.sendMail();
+                // mainActivity.server.sendMail();
                 break;
-
-            case L0_BUTTON_BACK:        //
+            /**/
+            case L0_BUTTON_BACK:
                 mainActivity.gotoLayout(LAYOUT_1_BEGIN, "");
                 break;
 
@@ -229,13 +187,14 @@ public class Controller {
                         .setTextInLayout(LAYOUT_00_CLEARING, mainActivity.dbFunctions.task());
                 break;
 
-            case L00_BUTTON_MAIL:       // Сообщения для передачи на сервер
+            /* Сообщения для передачи на сервер */
+            case L00_BUTTON_MAIL:
                 mainActivity
                         .setTextInLayout(LAYOUT_00_CLEARING, mainActivity.dbHandler.printTableData("mail"));
-//                        .setTextInLayout(LAYOUT_00_CLEARING, mainActivity.dbFunctions.mail());
                 break;
 
-            case L1_BUTTON_TO_PARAMS:       // На экран БД
+            /* На экран БД */
+            case L1_BUTTON_TO_PARAMS:
                 startButtonPresser.cancel();
                 mainActivity.gotoLayout(LAYOUT_0_PARAMS, "");
                 break;
@@ -265,11 +224,10 @@ public class Controller {
                 *
                 * */
 
-                // Запускаем Получение показаний весов от терминала
-//                mainActivity.weightDataFromDeviceReader_Start();
-                mainActivity.terminalCommunicator.rearDataStart();
+                /* Запускаем Получение показаний весов от терминала */
+                mainActivity.terminalCommunicator.readDataStart();
 
-                // Параметры - на экран
+                /* Параметры - на экран */
                 mainActivity.displayWeightParameters();
                 mainActivity.displayWeightParameters1();
 
