@@ -1,5 +1,6 @@
 package org.and.intex_v2;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.media.Ringtone;
@@ -13,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -83,16 +85,14 @@ public class MainActivity extends AppCompatActivity {
     TerminalCommunicator
             terminalCommunicator;
     /* Лайауты */
+    FrameLayout             // Главный фрейм. Если его погасить, погаснет все
+            mainFrame;
     LinearLayout[]
             layout;
-
     LayoutStatusClass
             layoutStatus;
-
     LayoutClass
-            L[],
-            L0,
-            L1;
+            L[], L0, L1;
 
     /* Блок кнопок (L4.1) */
     LinearLayout
@@ -361,6 +361,9 @@ public class MainActivity extends AppCompatActivity {
         layoutStatus
                 = new LayoutStatusClass(Integer.valueOf(getString(R.string.NUMBER_OF_LAYOUTS)));
         /* Старый вариант формирования экранов */
+        mainFrame
+                = (FrameLayout) findViewById(R.id.FrameMain);
+
         layout
                 = new LinearLayout[layoutStatus.numberOfLayouts];
         layout[LAYOUT_11_EMPTY]
@@ -701,7 +704,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        /**/
+        /* buttonStatus */
         buttonStatus
                 = new boolean[NUMBER_OF_BUTTONS];
         buttonStatusDrop();
@@ -717,7 +720,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // btn_11_Next */
+        /* btn_11_Next */
         btn_11_LoaderFound
                 = (Button) findViewById(R.id.btn_11_00_Begin_job);
         btn_11_LoaderFound.setOnClickListener(new View.OnClickListener() {
@@ -728,7 +731,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // btn_0_SendMail */
+        /* btn_0_SendMail */
         btn_0_SendMail
                 = (Button) findViewById(R.id.button_0_SendMail);
         btn_0_SendMail
@@ -739,7 +742,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        // Кнопка btn_ToDB */
+        /* Кнопка btn_ToDB */
         btn_ToDB
                 = (Button) findViewById(R.id.button_LoadDB);
         btn_ToDB
@@ -750,7 +753,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        // Кнопка btn_ClearDB */
+        /* Кнопка btn_ClearDB */
         btn_ClearDB
                 = (Button) findViewById(R.id.button_Clear_DB);
         btn_ClearDB
@@ -762,7 +765,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        // Кнопка btn_ClearDNS */
+        /* Кнопка btn_ClearDNS */
         btn_ClearDNS
                 = (Button) findViewById(R.id.button_Clear_DNS);
         btn_ClearDNS
@@ -775,7 +778,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        // Кнопка btn_0_Back (LL0) */
+        /* Кнопка btn_0_Back (LL0) */
         btn_0_Back = (Button) findViewById(R.id.button_0_Back);         // Response Yes
         btn_0_Back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1251,12 +1254,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Проверка соединения, новая версия
+     *
+     * @return
+     */
+    public boolean CheckConn(
+            String
+                    serverToFind,
+            String
+                    serverStartAddress,
+            Button
+                    btnToReturn) {
+
+        /* А тут надо погасить все экраны */
+        layoutVisiblityOff();
+
+        /* Переходим в экран поиска */
+        L1.Activate(
+                new String[]{null, serverToFind},
+                null,
+                layout,
+                null,
+                btnToReturn
+        );
+
+
+        return true;
+    }
+
+    /**
      * Проверка возможности подключения к конкретному серверу.
      * Проверка производится в текущей подсети (networkMask)
      *
      * @param serverToFind - имя сервера
      */
-
     public boolean CheckConnection(
             String
                     serverToFind,
@@ -1295,7 +1326,9 @@ public class MainActivity extends AppCompatActivity {
         Log.i("==CheckConnection==", "=============================");
         Log.i("==CheckConnection==", "serverToFind=" + serverToFind);
 
-        whatDeviceWeFind = sfc.init(serverToFind, serverType);
+        whatDeviceWeFind = sfc.init(
+                serverToFind,
+                serverType);
 
         Log.i("==CheckConnection==", "whatDeviceWeFind=" + whatDeviceWeFind);
         Log.i("==CheckConnection==", "serverToFind=" + serverToFind + ", netmask=" + conf.networkMask);
@@ -1310,8 +1343,10 @@ public class MainActivity extends AppCompatActivity {
         );
 
         // Пытаемся определить параметры устройства, сохраненные в БД
-        String[] terminalAddressFromDB
-                = dbHandler.getDeviceAddrfromDB(conf.networkMask, serverToFind, conf.terminalAddress);
+        String[] terminalAddressFromDB = dbHandler.getDeviceAddrfromDB(
+                conf.networkMask,
+                serverToFind,
+                conf.terminalAddress);
 
         /* Где-то тут будем обрабатывать начальный адрес искомого сервера */
 
@@ -1319,14 +1354,21 @@ public class MainActivity extends AppCompatActivity {
 
         // Запускаем поиск интересующего нас сервера
         try {
-            net.findServerInNetwork(serverToFind, terminalAddressFromDB[NET_DEVICE_ADDR], conf.terminalPort, whatDeviceWeFind);
+            net.findServerInNetwork(
+                    serverToFind,
+                    terminalAddressFromDB[NET_DEVICE_ADDR],
+                    conf.terminalPort,
+                    whatDeviceWeFind);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         // Запускаем опрос по таймеру на предмет того, что сервер найден
         sfc.findServerTimer
-                .schedule(new myTimerTask_WatchOnServerFind(serverToFind, DEVICE_IS_TERMINAL), 100, 100);
+                .schedule(
+                        new myTimerTask_WatchOnServerFind(serverToFind, DEVICE_IS_TERMINAL),
+                        100,
+                        100);
         //
         Log.i(logTAG, "L1.res=" + L1.findResult);
         //
@@ -1385,6 +1427,20 @@ public class MainActivity extends AppCompatActivity {
                 layout[i].setVisibility(View.INVISIBLE);
             }
         }
+    }
+
+    /**
+     * Сделать невидимыми все экраны
+     */
+    void layoutVisiblityOff() {
+        mainFrame.setVisibility(View.INVISIBLE);
+//        for (int i = 0; i < layoutStatus.numberOfLayouts; i++) {
+//            layout[i].setVisibility(View.INVISIBLE);
+//        }
+    }
+
+    void layoutVisiblityOn() {
+        mainFrame.setVisibility(View.VISIBLE);
     }
 
     /**

@@ -99,8 +99,8 @@ public class Controller {
                 = new MessengerClass(this.mainActivity);
         loadingMayBegin
                 = false;
-        startButtonPresser
-                = new Timer();
+//        startButtonPresser
+//                = new Timer();
     }
 
     class TimerTask_PressStartButton extends TimerTask {
@@ -125,11 +125,11 @@ public class Controller {
              */
             case L__BUTTON_START:
 
-                startButtonPresser
-                        .schedule(new TimerTask_PressStartButton(), 4000);
-                startButtonPresser
-                        .schedule(new TimerTask_PressStartButton(), 9000);
-
+//                startButtonPresser
+//                        .schedule(new TimerTask_PressStartButton(), 4000);
+//                startButtonPresser
+//                        .schedule(new TimerTask_PressStartButton(), 9000);
+//
                 Log.i("controller", "L__BUTTON_START: Let's begin!");
                 mainActivity.gotoLayout(LAYOUT_1_BEGIN, "Терминал миксера");
                 break;
@@ -374,7 +374,7 @@ public class Controller {
                     break;
                 }
 
-                // Погрузка будет с использованием погрузчика
+                /* Погрузка будет с использованием погрузчика */
                 mainActivity.currentOper.loadNoLoader = false;
 
                 // Если оперция - загрузка, то на экран 8, иначе - 6
@@ -387,7 +387,12 @@ public class Controller {
                                     ", servera=" + mainActivity.currentOper.getParam("servera"));
                     Log.i("L5_BUTTON_ACCEPT", "==============================");
 
-                    /* Попытаемся найти погрузчик в сети */
+                    /**
+                     * Попытаемся найти погрузчик в сети
+                     * При успешной попытке переходим на LAYOUT_9_SERV_REQUEST
+                     * Если устройство найти не удалось, перейти на экран ошибки
+                     * (его надо сделать)
+                     */
 
                     mainActivity.CheckConnection(
                             mainActivity.currentOper.getParam("servern"),
@@ -396,11 +401,10 @@ public class Controller {
                             mainActivity.L[LAYOUT_9_SERV_REQUEST],
                             null);
 
-//                    mainActivity.conf.loaderAddrRefresh(mainActivity.currentOper.getParam("servern"));
-
                     mainActivity.gotoLayout(LAYOUT_9_SERV_REQUEST, mainActivity.currentOper.getOperationInfoForView());
 
                 } else {
+                    // Если оперция - загрузка, то на экран 8, иначе - 6
                     mainActivity.gotoLayout(LAYOUT_6_SIMPLE_OPER, mainActivity.currentOper.getOperationInfoForView());
                 }
                 break;
