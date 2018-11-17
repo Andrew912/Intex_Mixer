@@ -635,7 +635,7 @@
                 <ListView
                     android:id="@+id/list_Task_Select"
                     android:layout_width="match_parent"
-                    android:layout_height="170dp"
+                    android:layout_height="101dp"
                     android:visibility="visible"
                     tools:listheader="список доступных задач" />
 
@@ -650,23 +650,23 @@
                 <LinearLayout
                     android:id="@+id/LL4_1_Buttons"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="49dp"
                     android:orientation="horizontal"
                     android:visibility="visible">
 
                     <Button
                         android:id="@+id/button_4_Cancel"
                         android:layout_width="match_parent"
-                        android:layout_height="100dp"
-                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
                         android:text="отмена"
                         android:textSize="24sp"
-                        tools:ignore="ButtonStyle,HardcodedText" />
+                        tools:ignore="ButtonStyle,HardcodedText"
+                        android:layout_weight="1" />
 
                     <Button
                         android:id="@+id/button_4_Accept"
                         android:layout_width="match_parent"
-                        android:layout_height="100dp"
+                        android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="принять"
                         android:textSize="24sp"
@@ -1023,7 +1023,7 @@
         <TextView
             android:id="@+id/text_StatusLine"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="20dp" />
 
     </LinearLayout>
 

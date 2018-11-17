@@ -194,8 +194,8 @@ public class Storer {
                 case "move":
                     /* Операции "движения в" пока не выводим */
                     Log.i(logTAG, "keyOperName: " + keyOperName + " - not included");
-//                    s = s + getOperParam(c.getString(c.getColumnIndex(KEY_OPER_ID)), "pointn");
-//                    retVar[i] = retVar[i] + s + " [" + c.getString(c.getColumnIndex(KEY_OPER_ID)) + "]";
+                    s = s + getOperParam(c.getString(c.getColumnIndex(KEY_OPER_ID)), "pointn");
+                    retVar[i] = retVar[i] + s + " [" + c.getString(c.getColumnIndex(KEY_OPER_ID)) + "]";
                     break;
                 case "deploy":
                     Log.i(logTAG, "keyOperName: " + keyOperName);
