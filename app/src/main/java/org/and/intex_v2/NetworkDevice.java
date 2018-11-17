@@ -14,15 +14,16 @@ import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static and.Test_NewNetworkDevices.NetworkDevice.CommList.C1_IncreaseFreq;
-import static and.Test_NewNetworkDevices.NetworkDevice.CommList.C2_StartPing;
-import static and.Test_NewNetworkDevices.NetworkDevice.CommList.C3_StartSearch;
-import static and.Test_NewNetworkDevices.NetworkDevice.CommList.C4_DropWaitPingResult;
-import static and.Test_NewNetworkDevices.NetworkDevice.CommList.C5_DropWaitPingTimeout;
-import static and.Test_NewNetworkDevices.NetworkDevice.CommList.C6_DropWaitSearchResult;
-import static and.Test_NewNetworkDevices.NetworkDevice.CommList.C7_DropWaitSearchTimeout;
-import static and.Test_NewNetworkDevices.NetworkDevice.CommList.C8_StartOperation;
-import static and.Test_NewNetworkDevices.NetworkDevice.CommList.C9_SearchErrorReport;
+import static org.and.intex_v2.NetworkDevice.CommList.C1_IncreaseFreq;
+import static org.and.intex_v2.NetworkDevice.CommList.C2_StartPing;
+import static org.and.intex_v2.NetworkDevice.CommList.C3_StartSearch;
+import static org.and.intex_v2.NetworkDevice.CommList.C4_DropWaitPingResult;
+import static org.and.intex_v2.NetworkDevice.CommList.C5_DropWaitPingTimeout;
+import static org.and.intex_v2.NetworkDevice.CommList.C6_DropWaitSearchResult;
+import static org.and.intex_v2.NetworkDevice.CommList.C7_DropWaitSearchTimeout;
+import static org.and.intex_v2.NetworkDevice.CommList.C8_StartOperation;
+import static org.and.intex_v2.NetworkDevice.CommList.C9_SearchErrorReport;
+
 
 /**
  * Created by and on 26.09.2018.
@@ -64,26 +65,6 @@ public class NetworkDevice {
     String addrStart;
     String addrStop;
 
-    /* Массив "Условия" - не используется */
-//    enum TrasitionIs {
-//        None,
-//        T01_RunCheck,
-//        T0_NoCommand,
-//        T1_GetBeginCommand,
-//        T2_PingResultNow,
-//        T3_PingResultNone,
-//        T4_SearchResultNow,
-//        T5_SearchResultNone,
-//        E0_PingNow,
-//        E1_PingTimeout,
-//        E2_SearchNow,
-//        E3_SearchTimeout,
-//        D0_DropWaitPing,
-//        D1_DropWaitPingTimeout,
-//        D2_DropWaitSearch,
-//        D3_DropWaitSearchTimeout
-//    }
-//
     /* Массив "Команды" */
     boolean Command[];
 
@@ -1445,7 +1426,7 @@ public class NetworkDevice {
                 new int[]{                                  // set      M'
                         MessageList.M9_BeginCommandIncome},
                 new int[]{                                  // set      C'
-                        CommList.C1_IncreaseFreq},
+                        C1_IncreaseFreq},
                 T7_BeginRequest
         );
 

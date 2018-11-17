@@ -179,7 +179,10 @@ public class DBHandler {
      * [0] - если найдено, то имя, иначе - null
      * [1] - адрес
      */
-    public String[] getDeviceAddrfromDB(String devNetMask, String devName, String devNameStartAddr) {
+    public String[] getDeviceAddrfromDB(
+            String devNetMask,
+            String devName,
+            String devNameStartAddr) {
 
         Log.i(logTag, "=====================================================================");
         Log.i(logTag, "getDeviceAddrfromDB: devNetMask=" + devNetMask + ", devName=" + devName + ", Start=" + devNameStartAddr);

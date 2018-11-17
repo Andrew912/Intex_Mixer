@@ -53,11 +53,10 @@ public class Configurator {
                 = 60001;
         int buffSize
                 = 1024;
-     }
+    }
 
     ControlServer
             controlServer;
-
     /**============================================================
      * Переменные среды, запоминаемые при приостановке приложения
      *=============================================================
@@ -79,10 +78,8 @@ public class Configurator {
      * @param mainActivity
      */
     public Configurator(MainActivity mainActivity) {
-        this.mainActivity
-                = mainActivity;
-        controlServer
-                = new ControlServer();
+        this.mainActivity = mainActivity;
+        controlServer = new ControlServer();
 
     }
 
@@ -121,9 +118,6 @@ public class Configurator {
         if (tmp != null) {
             terminalAddress = tmp[PARAMETER_VALUE];
         }
-//        else {
-//            terminalAddress = String.valueOf(1);
-//        }
 
         /* Вычисляем полный адрес терминала в сети */
         termAddrRefresh();
@@ -135,9 +129,12 @@ public class Configurator {
      */
     public void termAddrRefresh() {
         terminalAddress
-                = mainActivity.dbHandler.getDeviceAddrfromDB(networkMask, terminalName, terminalAddress)[mainActivity.net.NET_DEVICE_ADDR];
-        Toast
-                .makeText(mainActivity.getApplicationContext(), "Терминал:" + terminalAddress, Toast.LENGTH_LONG).show();
+                = mainActivity.dbHandler.getDeviceAddrfromDB(
+                networkMask,
+                terminalName,
+                terminalAddress)[mainActivity.net.NET_DEVICE_ADDR];
+
+        Toast.makeText(mainActivity.getApplicationContext(), "Терминал:" + terminalAddress, Toast.LENGTH_LONG).show();
     }
 
 //    /**
