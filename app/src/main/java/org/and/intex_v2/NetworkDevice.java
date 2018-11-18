@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -23,7 +24,6 @@ import static org.and.intex_v2.NetworkDevice.CommList.C6_DropWaitSearchResult;
 import static org.and.intex_v2.NetworkDevice.CommList.C7_DropWaitSearchTimeout;
 import static org.and.intex_v2.NetworkDevice.CommList.C8_StartOperation;
 import static org.and.intex_v2.NetworkDevice.CommList.C9_SearchErrorReport;
-
 
 /**
  * Created by and on 26.09.2018.
@@ -65,6 +65,26 @@ public class NetworkDevice {
     String addrStart;
     String addrStop;
 
+    /* Массив "Условия" - не используется */
+//    enum TrasitionIs {
+//        None,
+//        T01_RunCheck,
+//        T0_NoCommand,
+//        T1_GetBeginCommand,
+//        T2_PingResultNow,
+//        T3_PingResultNone,
+//        T4_SearchResultNow,
+//        T5_SearchResultNone,
+//        E0_PingNow,
+//        E1_PingTimeout,
+//        E2_SearchNow,
+//        E3_SearchTimeout,
+//        D0_DropWaitPing,
+//        D1_DropWaitPingTimeout,
+//        D2_DropWaitSearch,
+//        D3_DropWaitSearchTimeout
+//    }
+//
     /* Массив "Команды" */
     boolean Command[];
 
@@ -152,6 +172,7 @@ public class NetworkDevice {
             D5_AbortPing = 17,
             D6_AbortSearch = 18,
             T8_AbortRequest = 19;
+
     /* Наименования переходов для всяких там логов и пр. */
     public static final String[] transitionNames = {
             "T6_RunCheck",
@@ -232,9 +253,10 @@ public class NetworkDevice {
     Button[]
             btnCallback;
 
-    /* Непонятно - нахрена... */
-//    TrasitionIs Trasitions[];
-//
+    /* Массив тектовых полей статусной строки для вывода сообщений */
+    TextView[]
+            statusLine;
+
     /* Итог всего - параметры (имя, адрес, порт) устройства, по которым к нему
     можно подключиться */
     public String[]
@@ -649,6 +671,10 @@ public class NetworkDevice {
 
         /* Останавливаем (убиваем) задачу PING */
         void stopPingTask(Thread threadToKill) {
+            if (pingTimeoutTimer != null) {
+                pingTimeoutTimer.purge();
+                pingTimeoutTimer.cancel();
+            }
             if (threadToKill != null) {
                 Thread dummy = threadToKill;
                 threadToKill = null;
@@ -665,8 +691,7 @@ public class NetworkDevice {
 
             @Override
             public void run() {
-                if (mainActivity.networkDevice != null)
-                    mainActivity.networkDevice.setEvent(NetworkDevice.EventList.E1_PingTimeout);
+                setEvent(NetworkDevice.EventList.E1_PingTimeout);
             }
         }
 
@@ -694,6 +719,23 @@ public class NetworkDevice {
 
     }
 
+    public static class MessageMakerLocal {
+        /**
+         * Сообщения весовому терминалу
+         */
+        final class Terminal {
+            /**
+             * PING
+             *
+             * @return
+             */
+            public String ping() {
+                return "who\n";
+            }
+        }
+    }
+
+
     /**
      * Created by and on 06.09.2018.
      * <p>
@@ -710,7 +752,7 @@ public class NetworkDevice {
      * Определяется путем пребора адресов в подсети.
      * Адрес, с которого придет ответ, содержащий звдвнное имя устройства, является адресом устройства.
      */
-    public static class NetworkDeviceActionClass {
+    public class NetworkDeviceActionClass {
         /* Параметры */
         String logTag
                 = "Device Ping Class";
@@ -719,12 +761,12 @@ public class NetworkDevice {
         LinearLayout
                 mainSwitch;
 
-        /* Тип сообщения - неизвестен, ответ устройства на пинг и пр. */
-        enum MsgType {
-            unknown,
-            devicePingResponse
-        }
-
+        //        /* Тип сообщения - неизвестен, ответ устройства на пинг и пр. */
+//        enum MsgType {
+//            unknown,
+//            devicePingResponse
+//        }
+//
         /* Имя найденного устройства */
         public String
                 name;
@@ -737,38 +779,14 @@ public class NetworkDevice {
         MyMessageReader
                 myMsgReader;
 
-        public static final class MessageMakerLocal {
-            /**
-             * Сообщения весовому терминалу
-             */
-            static class Terminal {
-                /**
-                 * PING
-                 *
-                 * @return
-                 */
-                static String ping() {
-                    return "who\n";
-                }
-            }
-
-            /**
-             * Сообщения астрактному устройству в сети
-             */
-            static class Device {
-            }
-        }
-
         /**
          * Конструктор класса NetworkDeviceActionClass
          *
          * @param activity
          */
         public NetworkDeviceActionClass(MainActivity activity) {
-            mainActivity
-                    = activity;
-            myMsgReader
-                    = new MyMessageReader();
+            mainActivity = activity;
+            myMsgReader = new MyMessageReader();
         }
 
         /**
@@ -880,7 +898,8 @@ public class NetworkDevice {
                     mainActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mainActivity.status[0].setText(finalIpAddress);
+                            /* Выводим строку сообщения на главный экран */
+                            statusLine[0].setText(finalIpAddress);
                         }
                     });
                     /* Пытаемся открыть соединение и провести обмен строками */
@@ -892,7 +911,7 @@ public class NetworkDevice {
                         outputStream
                                 = socket.getOutputStream();
                         /* Отправка строки байт. Строку берем прямо из MessageMakerLocal */
-                        byte[] buffer = MessageMakerLocal.Terminal.ping().getBytes();
+                        byte[] buffer = ping().getBytes();
                         outputStream.write(buffer);
                         outputStream.flush();
                         /* Получение строки байт */
@@ -906,9 +925,9 @@ public class NetworkDevice {
                         /* Если имя устройства совпало с тем, которое ищем, то запишем адрес устройства */
                         if (myMsgReader.name.equals(params[2].toString())) {
                             /* И тут сразу записываем данные для возврата */
-                            mainActivity.networkDevice.realDeviceParam[0] = name = myMsgReader.name;
-                            mainActivity.networkDevice.realDeviceParam[1] = address = ipAddress;
-                            mainActivity.networkDevice.realDeviceParam[2] = params[1];
+                            realDeviceParam[0] = name = myMsgReader.name;
+                            realDeviceParam[1] = address = ipAddress;
+                            realDeviceParam[2] = params[1];
                             whileContinue = false;
                             Log.i(logTag, ipAddress + ": " + name);
                             /* Возвращаем для onPostExecute имя устройства */
@@ -937,9 +956,9 @@ public class NetworkDevice {
 
                 /* Если найдено необходимое устройство */
                 if (name != null)
-                    mainActivity.networkDevice.setEvent(NetworkDevice.EventList.E2_SearchNow);
+                    setEvent(NetworkDevice.EventList.E2_SearchNow);
                 else
-                    mainActivity.networkDevice.setEvent(NetworkDevice.EventList.E3_SearchTimeOut);
+                    setEvent(NetworkDevice.EventList.E3_SearchTimeOut);
 
                 /* Фиксируем параметры найденного устройства */
 
@@ -977,7 +996,7 @@ public class NetworkDevice {
                     outputStream
                             = socket.getOutputStream();
                     /* Отправка строки байт. Строку берем прямо из MessageMakerLocal */
-                    byte[] buffer = MessageMakerLocal.Terminal.ping().getBytes();
+                    byte[] buffer = ping().getBytes();
                     outputStream.write(buffer);
                     outputStream.flush();
                     /* Получение строки байт */
@@ -991,9 +1010,9 @@ public class NetworkDevice {
                     /* Если имя устройства совпало с тем, которое ищем, то запишем адрес устройства */
                     if (myMsgReader.name.equals(params[2].toString())) {
                         /* Данные для возврата */
-                        mainActivity.networkDevice.realDeviceParam[0] = name = myMsgReader.name;
-                        mainActivity.networkDevice.realDeviceParam[1] = address = params[0];
-                        mainActivity.networkDevice.realDeviceParam[2] = params[1];
+                        realDeviceParam[0] = name = myMsgReader.name;
+                        realDeviceParam[1] = address = params[0];
+                        realDeviceParam[2] = params[1];
                         return myMsgReader.name;
                     } else
                         return null;
@@ -1013,9 +1032,9 @@ public class NetworkDevice {
             protected void onPostExecute(String result) {
                 super.onPostExecute(result);
                 if (name != null)
-                    mainActivity.networkDevice.setEvent(NetworkDevice.EventList.E0_PingNow);
+                    setEvent(NetworkDevice.EventList.E0_PingNow);
                 else
-                    mainActivity.networkDevice.setEvent(NetworkDevice.EventList.E1_PingTimeout);
+                    setEvent(NetworkDevice.EventList.E1_PingTimeout);
                 Log.i("*****", "name= " + name);
             }
         }
@@ -1058,8 +1077,8 @@ public class NetworkDevice {
             class Msg {
                 boolean
                         empty;          /* Пустое собщение */
-                MsgType
-                        msgType;        /* Тип сообщения */
+                //                MsgType
+//                        msgType;        /* Тип сообщения */
                 ArrayList<MsgPair>
                         msgBody;        /* Здесь будут после разбора содержаться пары "КЗ" конкретного сообщения */
                 String
@@ -1082,13 +1101,13 @@ public class NetworkDevice {
                  * на основании имен ключей и их значений
                  */
                 void analizeMsg() {
-                    msgType = MsgType.unknown;
+//                    msgType = MsgType.unknown;
                     deviceName = null;
                     for (MyMessageReader.MsgPair msgPair : msgBody
                             ) {
                         switch (msgPair.key) {
                             case "server":
-                                msgType = MsgType.devicePingResponse;
+//                                msgType = MsgType.devicePingResponse;
                                 name = msgPair.value;
                                 break;
                             default:
@@ -1159,6 +1178,11 @@ public class NetworkDevice {
                 msg = new Msg(source);
             }
         }
+
+        /* Формирует строку PING для отправки */
+        public String ping() {
+            return "who\n";
+        }
     }
 
     /**
@@ -1212,8 +1236,9 @@ public class NetworkDevice {
      */
     public NetworkDevice(
             MainActivity activity,
-            String[] devParam,
-            Button[] btnCallbackParam
+            String[] devParam,          // Параметры поиска устройства: Маска, Адрес, Порт, Имя, Старт, Стоп
+            TextView[] pStatusLine,     // Вывод сообщений на главный экран
+            Button[] btnCallbackParam   // Кнопки команд на главном экране - самый простой колбэк
     ) {
         mainActivity = activity;
 
@@ -1232,8 +1257,10 @@ public class NetworkDevice {
                 = devParam[5];
 
         /* Инициализация массива кнопок-колбэков для возврата управления в вызывающий модуль */
-        btnCallback
-                = btnCallbackParam;
+        btnCallback = btnCallbackParam;
+
+        /* Инициализация массива TextView для вывода на главный экран */
+        statusLine = pStatusLine;
 
         /* Инициализация всего */
         init();
@@ -1766,12 +1793,6 @@ public class NetworkDevice {
                 }
             }
         }
-
-        /* Debug */
-//        Log.i(logTag, "trans no=" + transitionsNumber);
-//        for (int i = 0; i < transition.length; i++) {
-//            Log.i(logTag, "t[" + i + "]\tpriority=" + transition[i].priority + "\tindex=" + transition[i].id + "\tno=" + transition[i].no);
-//        }
     }
 
     /**
@@ -1797,7 +1818,7 @@ public class NetworkDevice {
      *
      * @param eventToSet
      */
-    void setEvent(int eventToSet) {
+    public void setEvent(int eventToSet) {
         Events[eventToSet] = true;
     }
 
@@ -1829,7 +1850,7 @@ public class NetworkDevice {
     }
 
     /**
-     * Возвращает параметры устроцства - имя, адрес, порт
+     * Возвращает параметры устройства - имя, адрес, порт
      *
      * @return
      */

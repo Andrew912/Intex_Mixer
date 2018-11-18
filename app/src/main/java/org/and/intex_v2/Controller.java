@@ -103,6 +103,9 @@ public class Controller {
 //                = new Timer();
     }
 
+    /**
+     * Автоматическое нажатие кнопки "Cтарт"
+     */
     class TimerTask_PressStartButton extends TimerTask {
         @Override
         public void run() {
@@ -115,14 +118,13 @@ public class Controller {
         }
     }
 
+    /**
+     * Главный контроллер
+     *
+     * @param btn
+     */
     void controller(int btn) {
-        /**
-         *
-         */
         switch (btn) {
-            /**
-             *
-             */
             case L__BUTTON_START:
 
 //                startButtonPresser

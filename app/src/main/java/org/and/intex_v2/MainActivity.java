@@ -84,6 +84,12 @@ public class MainActivity extends AppCompatActivity {
             mailToSend;
     TerminalCommunicator
             terminalCommunicator;
+
+    /* Классы поиска сетевого устройства */
+    NetworkDevice
+            NDTerminal,     // Терминал
+            NDLoader;       // Погрузчик
+
     /* Лайауты */
     FrameLayout             // Главный фрейм. Если его погасить, погаснет все
             mainFrame;
