@@ -65,26 +65,6 @@ public class NetworkDevice {
     String addrStart;
     String addrStop;
 
-    /* Массив "Условия" - не используется */
-//    enum TrasitionIs {
-//        None,
-//        T01_RunCheck,
-//        T0_NoCommand,
-//        T1_GetBeginCommand,
-//        T2_PingResultNow,
-//        T3_PingResultNone,
-//        T4_SearchResultNow,
-//        T5_SearchResultNone,
-//        E0_PingNow,
-//        E1_PingTimeout,
-//        E2_SearchNow,
-//        E3_SearchTimeout,
-//        D0_DropWaitPing,
-//        D1_DropWaitPingTimeout,
-//        D2_DropWaitSearch,
-//        D3_DropWaitSearchTimeout
-//    }
-//
     /* Массив "Команды" */
     boolean Command[];
 

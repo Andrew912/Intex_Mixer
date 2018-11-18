@@ -980,7 +980,20 @@
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.05">
+                    android:layout_weight="0.05"
+                    android:visibility="invisible">
+
+                    <Button
+                        android:text="Button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/button_90_LoaderFound" />
+
+                    <Button
+                        android:text="Button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/button_90_NoLoader" />
 
                     <Button
                         android:id="@+id/button_9_Refresh"
@@ -1008,8 +1021,8 @@
 
                     <Button
                         android:id="@+id/button_9_Cancel"
-                        android:layout_width="match_parent"
-                        android:layout_height="89dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:text="отменить запрос"
                         android:textSize="30sp"
                         tools:ignore="HardcodedText"

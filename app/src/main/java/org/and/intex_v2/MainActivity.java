@@ -78,10 +78,10 @@ public class MainActivity extends AppCompatActivity {
             net;
     ServerFindControlClass
             sfc;
-    static SendMailToControlServer
+    SendMailToControlServer
             sendMailToControlServer;
-    static MailToSend
-            mailToSend;
+    //    static MailToSend
+//            mailToSend;
     TerminalCommunicator
             terminalCommunicator;
 
@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
             btn_7_Cancel, btn_7_Complete, btn_7_Start,
             btn_71_Cancel, btn_71_Complete, btn_71_Start,
             btn_8_OK,
-            btn_9_Cancel, btn_9_Accept, btn_9_Refresh, btn_9_Reject,
+            btn_9_Cancel, btn_9_Accept, btn_9_Refresh, btn_9_Reject, btn_90_LoaderFound, btn_90_NoLoader,
             btn_11_Next, btn_11_LoaderFound;
 
     /* Кнопки служебных экранов поиска */
@@ -168,8 +168,7 @@ public class MainActivity extends AppCompatActivity {
             b_1010_1;
 
     /* Кнопка сохранения параметров */
-    Button
-            b_ParamSave;
+    Button b_ParamSave;
 
     /* Какие-то параметры кнопок */
     boolean[] buttonStatus;
@@ -233,30 +232,22 @@ public class MainActivity extends AppCompatActivity {
             LAYOUT_00_CLEARING = 12;
 
     /* Текст экрана в лайауте */
-    TextView
-            textView[];
+    TextView textView[];
 
     /* Текст статусной строки */
-    TextView
-            textView_StatusLine;
+    TextView textView_StatusLine;
 
     /* Таймер переключения статусной строки */
-    Timer
-            statusLineOnOffTimer;
-    MyTimerTask_StatusLineOnOff
-            myTimerTask_statusLineOnOff;        // Задача таймера переключения статусной строки
+    Timer statusLineOnOffTimer;
+    MyTimerTask_StatusLineOnOff myTimerTask_statusLineOnOff;
 
     /* Таймер наблюдения за событиями вывода в статустную строку */
-    Timer
-            statusLineLookOnTimer;
-    MyTimerTask_LookAtStatusLine
-            myTimerTask_lookAtServerPingClass;  //
+    Timer statusLineLookOnTimer;
+    MyTimerTask_LookAtStatusLine myTimerTask_lookAtServerPingClass;
 
     /* Таймер задачи наблюдения за поиском сервера в сети */
-    ArrayList<Timer>
-            findServerTimer;
-    ArrayList<myTimerTask_WatchOnServerFind>
-            myTimerTask_watchOnServerFind;
+    ArrayList<Timer> findServerTimer;
+    ArrayList<myTimerTask_WatchOnServerFind> myTimerTask_watchOnServerFind;
 
     int
             statusLineIsVisible;
@@ -355,8 +346,8 @@ public class MainActivity extends AppCompatActivity {
                 = new ServerFindControlClass();
         sendMailToControlServer
                 = new SendMailToControlServer(this);
-        mailToSend
-                = new MailToSend(this, dbHelper.getWritableDatabase());
+//        mailToSend
+//                = new MailToSend(this, dbHelper.getWritableDatabase());
         terminalCommunicator
                 = new TerminalCommunicator(this);
 
@@ -402,10 +393,9 @@ public class MainActivity extends AppCompatActivity {
                 = (LinearLayout) findViewById(R.id.LL4_1_Buttons);
 
         /* Новый вариант формирования экранов */
-        L
-                = new LayoutClass[Integer.valueOf(getString(R.string.NUMBER_OF_LAYOUTS))];
+        L = new LayoutClass[Integer.valueOf(getString(R.string.NUMBER_OF_LAYOUTS))];
 
-        // Массив экранов. Объявляем только те, которые нам будут нужны, остальные - null
+        /* Массив экранов. Объявляем только те, которые нам будут нужны, остальные - null */
         L[LAYOUT_4_TASK_SELECT] =
                 new LayoutClass(
                         (LinearLayout) findViewById(R.id.LL1_Begin),
@@ -475,8 +465,9 @@ public class MainActivity extends AppCompatActivity {
                                 }
                 );
 
-        // Служебный экран - акивируется в момент выполнения поиска сервера в подсети
-        L1 = new LayoutClass(
+        /* Служебный экран - акивируется в момент выполнения поиска сервера в подсети */
+        L1
+                = new LayoutClass(
                 (LinearLayout) findViewById(R.id.layout_1000),
                 new Timer[]
                         {
@@ -526,7 +517,6 @@ public class MainActivity extends AppCompatActivity {
         /**************************************************
          * Переменные, управляющие поиском устройств в сети
          **************************************************/
-
         /* Проверка подключения к сети */
         conf.is_Connected_to_network
                 = net.terminalConnectedToNetwork();
@@ -534,7 +524,6 @@ public class MainActivity extends AppCompatActivity {
             conf.ipAddress = net.get_My_IP();
             conf.networkMask = net.get_Net_Mask_from_IP(conf.ipAddress);
         }
-
         /*******************************
          * TextViews
          *******************************/
@@ -657,9 +646,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        /*******************************
-         * Кнопка сохранения параметров
-         *******************************/
+        /* Кнопка сохранения параметров */
         b_ParamSave
                 = (Button) findViewById(R.id.button_0_2);
         b_ParamSave
@@ -669,10 +656,6 @@ public class MainActivity extends AppCompatActivity {
                         controller.controller(L0_BUTTON_PARAM_SAVE);
                     }
                 });
-
-        /*******************************
-         * Кнопки ВСЕ
-         *******************************/
 
         /* Очистка текущих данных */
         btn_ClearData
@@ -793,7 +776,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /**/
+        /* btn_0_DNS */
         btn_0_DNS = (Button) findViewById(R.id.button_0_DNS);
         btn_0_DNS.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -811,7 +794,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /* Кнопка "Печать таблицы TASK" */
+        /* Кнопка "Печать таблицы MAIL" */
         btn_0_Mail = (Button) findViewById(R.id.button_0_Task1);           // Response No
         btn_0_Mail.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -831,7 +814,6 @@ public class MainActivity extends AppCompatActivity {
 
         /* Кнопка btn_1_Begin (LL1) */
         btn_1_Begin = (Button) findViewById(R.id.button_1_BeginJob);
-
         btn_1_Begin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1022,6 +1004,25 @@ public class MainActivity extends AppCompatActivity {
                 controller.controller(L9_BUTTON_REFRESH);
             }
         });
+
+        /* btn_90_LoaderFound - погрузчик найден */
+        btn_90_LoaderFound = (Button) findViewById(R.id.button_9_Refresh);
+        btn_90_LoaderFound.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controller.controller(L9_BUTTON_REFRESH);
+            }
+        });
+
+        /* btn_90_NoLoader - погрузчик не найден */
+        btn_90_NoLoader = (Button) findViewById(R.id.button_9_Refresh);
+        btn_90_NoLoader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controller.controller(L9_BUTTON_REFRESH);
+            }
+        });
+
         /*******************************
          * Редактирование параметров
          *******************************/
@@ -2274,20 +2275,17 @@ public class MainActivity extends AppCompatActivity {
         layoutVisiblitySet(newLayout);                          // Установить видимость слоя
         toStatusLine("Layout=" + newLayout);
         switch (newLayout) {
+
             case LAYOUT_00_CLEARING:
-
+                /* Непонятно зачем... */
                 break;
-            case LAYOUT_11_EMPTY:
-                /**
-                 * "Пустой" слой для различных операций, связанных с длительным выполнением чего-нибудь
-                 */
 
+            case LAYOUT_11_EMPTY:
+                /* "Пустой" слой для различных операций, связанных с длительным выполнением чего-нибудь */
                 break;
 
             case LAYOUT_0_PARAMS:
-                /**
-                 *  Заполнение экранных значений параметров
-                 */
+                /* Заполнение экранных значений параметров */
                 paramInit();
                 et_MixerTermName
                         .setText(MixerTermName);
@@ -2304,26 +2302,21 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case LAYOUT_1_BEGIN:
-
-                /**
-                 * Непонятно, какого хрена вот так сделано, но надо будет потом разобраться...
-                 */
+                /* Непонятно, какого хрена вот так сделано, но надо будет потом разобраться... */
                 // Установка кнопок в 7 экране
                 btn_7_Start.setVisibility(VISIBLE);
                 btn_7_Complete.setVisibility(View.INVISIBLE);
-                // Остановить получение показаний весов
+                /* Остановить получение показаний весов */
 //                weightDataFromDeviceReader_Stop();
                 terminalCommunicator.readDataStop();
                 weightDataToLoaderSender_Stop();
-
-                // Запуск автонажатия кнопки
+//                /* Запуск автонажатия кнопки */
 //                Timer timer_Click_btn_1_Begin
 //                        = new Timer();
 //                ClickButton_btn_1_Begin clickButton_btn_1_begin
 //                        = new ClickButton_btn_1_Begin();
 //                timer_Click_btn_1_Begin
 //                        .schedule(clickButton_btn_1_begin,3000);
-
                 break;
 
             case LAYOUT_2_NO_TASK:
@@ -2375,7 +2368,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case LAYOUT_71_LOAD_OPER:
-                /*  */
+                /* ??? */
                 break;
 
             case LAYOUT_8_TASK_COMPLETE:
@@ -2392,7 +2385,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case LAYOUT_9_SERV_REQUEST:
-                // Проверяем наличие погрузчика в сети
+                /* Проверяем наличие погрузчика в сети */
 
 
                 // Посылаем погрузчику запрос на обслуживание

@@ -126,7 +126,6 @@ public class Controller {
     void controller(int btn) {
         switch (btn) {
             case L__BUTTON_START:
-
 //                startButtonPresser
 //                        .schedule(new TimerTask_PressStartButton(), 4000);
 //                startButtonPresser
@@ -169,8 +168,7 @@ public class Controller {
                 break;
             /* Отправка статистики по операциям */
             case L00_BUTTON_SENDMAIL:
-                /* Надо будет включить отправку почты обратно потом */
-                // mainActivity.server.sendMail();
+                /* Тут ничего не происходит, отправка почты выполняется демоном */
                 break;
             /**/
             case L0_BUTTON_BACK:
@@ -346,9 +344,9 @@ public class Controller {
                 mainActivity.currentOper
                         .setToActive();
 
-                // Если операция - "загрузка без погрузчика", то на экран ???, иначе - проверить "простая" погрузка
+                /* Если операция - "загрузка без погрузчика", то на экран ???, иначе - проверить "простая" погрузка */
                 if (mainActivity.currentOper.operIsLoadNoLoader() == true) {
-                    // Погрузка будет без испольщования погрузчика
+                    /* Погрузка будет без испольщования погрузчика */
                     mainActivity.currentOper.loadNoLoader = true;
 
                     /* Запускаем Получение показаний весов от терминала */
@@ -379,34 +377,41 @@ public class Controller {
                 /* Погрузка будет с использованием погрузчика */
                 mainActivity.currentOper.loadNoLoader = false;
 
-                // Если оперция - загрузка, то на экран 8, иначе - 6
+                /* Если оперция - загрузка, то на экран 8, иначе - 6 */
                 if (mainActivity.currentOper.operIsLoad() == true) {
-
                     /* Надо проверить подключние погрузчика */
-
                     Log.i("L5_BUTTON_ACCEPT",
                             "servern=" + mainActivity.currentOper.getParam("servern") +
                                     ", servera=" + mainActivity.currentOper.getParam("servera"));
                     Log.i("L5_BUTTON_ACCEPT", "==============================");
-
                     /**
                      * Попытаемся найти погрузчик в сети
                      * При успешной попытке переходим на LAYOUT_9_SERV_REQUEST
                      * Если устройство найти не удалось, перейти на экран ошибки
                      * (его надо сделать)
                      */
+//                    mainActivity.CheckConnection(
+//                            mainActivity.currentOper.getParam("servern"),
+//                            DEVICE_IS_LOADER,
+//                            null,
+//                            mainActivity.L[LAYOUT_9_SERV_REQUEST],
+//                            null);
+                    /* Эту операцию переносим в btn_90_LoaderFound.callOnClick()
+                     То есть переход в LAYOUT_9_SERV_REQUEST будет только после того, как погрузчик будет найден
+                     и будет нажата кнопка btn_90_LoaderFound
 
-                    mainActivity.CheckConnection(
-                            mainActivity.currentOper.getParam("servern"),
-                            DEVICE_IS_LOADER,
-                            null,
-                            mainActivity.L[LAYOUT_9_SERV_REQUEST],
-                            null);
+                     mainActivity.gotoLayout(LAYOUT_9_SERV_REQUEST, mainActivity.currentOper.getOperationInfoForView());
 
-                    mainActivity.gotoLayout(LAYOUT_9_SERV_REQUEST, mainActivity.currentOper.getOperationInfoForView());
+                     В btn_90_NoLoader.callOnClick() команда, котрая возвращает ошибку (можно длинным тостом)
+
+                    */
+
+                    mainActivity.NDLoader = new NetworkDevice(
+
+                    );
 
                 } else {
-                    // Если оперция - загрузка, то на экран 8, иначе - 6
+                    /*  Переходим на экран 6 */
                     mainActivity.gotoLayout(LAYOUT_6_SIMPLE_OPER, mainActivity.currentOper.getOperationInfoForView());
                 }
                 break;

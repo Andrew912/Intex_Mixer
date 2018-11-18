@@ -22,31 +22,23 @@ import static org.and.intex_v2.DBHelper.TABLE_MAIL;
 
 public class SendMailToControlServer {
 
-    MainActivity
-            mainActivity;
+    MainActivity mainActivity;
+    String logTAG = "SendMailToControlServer";
 
     /* Для простоты объявляем класс прямо здесь, хотя
        он объявлен как static в MainActivity.
        При желании можно работать с тем экземпляром */
+    MailToSend mailToSend;
 
-    MailToSend
-            mailToSend;
-
-    long
-            mailRecordsToSend;                      // Количество записей для отправки
-
-    String
-            logTAG = "SendMailToControlServer";
+    long mailRecordsToSend;                      // Количество записей для отправки
 
     /* Задержка выполнения потока - 1 минута */
-    static final int mailSendDelay
-            = 60000;
+    static final int mailSendDelay = 60000;
 
-    static final String eol
-            = "\r\n\r\n";
+    /* Маркер конца строки */
+    static final String eol = "\r\n\r\n";
 
-    ServerSendMailClass
-            serverSendMailClass;
+    ServerSendMailClass serverSendMailClass;
 
     /**
      * Конструктор
@@ -54,45 +46,29 @@ public class SendMailToControlServer {
      * @param activity
      */
     public SendMailToControlServer(MainActivity activity) {
-        mainActivity
-                = activity;
-        mailToSend
-                = new MailToSend(activity, mainActivity.dbHandler.database);
+        mainActivity = activity;
+        mailToSend = new MailToSend(activity, mainActivity.dbHandler.database);
     }
 
     /**
      * Отправка протокола на сервер управления - в отдельном потоке
      */
     public void sendMail() {
-        /**
-         * Подготовить таблицу с данными почты к отправке
-         */
-        if (mailToSend.prepareMail() == 0) {
-            return;
-        }
+        /* Подготовить таблицу с данными почты к отправке */
+        if (mailToSend.prepareMail() == 0) return;
 
-        /**
-         * Если сервер недоступен - выход
-         */
-        if (connectionToServerCheck() == false) {
-            return;
-        }
+        /* Если сервер недоступен - выход */
+        if (connectionToServerCheck() == false) return;
 
-        /**
-         * Подготовка к запуску в отдельном потоке
-         */
+        /* Подготовка к запуску в отдельном потоке */
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 /*  Тут типа происходит все действие */
                 while (true) {
-
                     /* Отправка */
-//                    send();
-                    serverSendMailClass
-                            = new ServerSendMailClass();
-                    serverSendMailClass
-                            .execute();
+                    serverSendMailClass = new ServerSendMailClass();
+                    serverSendMailClass.execute();
 //                    Log.i(
 //                            "****** sendMail ******",
 //                            "\nAddress=" + mainActivity.conf.controlServer.socketAddr +
@@ -121,26 +97,18 @@ public class SendMailToControlServer {
      * Передача сообщений на сервер (из таблицы MAIL)
      */
     public void send() {
-
         Log.i(logTAG, "SEND mail");
-
         mainActivity.dbHandler.printTableData("mail");
-
         /* Если отправлять нечего - выход */
 //        mailRecordsToSend = mailToSend.prepareMail();
-
         if (mailToSend.prepareMail() == 0) {
             return;
         }
-
         /* Если сервер недоступен - выход */
         if (connectionToServerCheck() == false) {
             return;
         }
-
-
 //        mailToSend.test_test();
-
         /* Если все в порядке - отправка */
         serverSendMailClass
                 = new ServerSendMailClass();
@@ -152,25 +120,19 @@ public class SendMailToControlServer {
      * Класс передачи сообщений на сервер
      */
     class ServerSendMailClass extends AsyncTask<Void, Void, Void> {
-        String[]
-                o;
+        String[] o;
 
         @Override
         protected Void doInBackground(Void... params) {
-            Log.i
-                    (logTAG, "ServerSendMailMessagesClass: run");
-            Socket
-                    socket;
-            InputStream
-                    is;
-            OutputStream
-                    os;
+            Log.i(logTAG, "=== Server SendMail MessagesClass: run ===");
+            Socket socket;
+            InputStream is;
+            OutputStream os;
 //            o
 //                    = params;
 //            int oSize
 //                    = o.length;
-            long oSize
-                    = mailToSend.recordsToSend;
+            long oSize = mailToSend.recordsToSend;
 //            Log.i(logTAG, "===========================================");
 //            for (int i = 0; i < oSize; i++) {
 //                Log.i(logTAG, "PARAMS(o)=" + o[i]);
@@ -296,13 +258,9 @@ public class SendMailToControlServer {
      * TEST
      */
     public void test() {
-
 //        Log.i("SendMailToControlServer", mainActivity.dbHandler.printTableData("mailtosend"));
-
         while (mailToSend.readable()) {
-
 //            Log.i("**** ***** ****", "Id=" + mailToSend.readID() + " Msg=" + mailToSend.readMessage());
-
             mailToSend.moveNext();
         }
 
