@@ -1,6 +1,5 @@
 package org.and.intex_v2;
 
-import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.media.Ringtone;
@@ -27,6 +26,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.StringTokenizer;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
@@ -761,9 +761,9 @@ public class MainActivity extends AppCompatActivity {
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        dbHandler.dbTableList_OBJECTS();
+                        dbHandler.printTableData_OBJECTS();
                         dbHandler.clearTableObjects();
-                        dbHandler.dbTableList_OBJECTS();
+                        dbHandler.printTableData_OBJECTS();
                     }
                 });
 
@@ -2517,16 +2517,12 @@ public class MainActivity extends AppCompatActivity {
      *
      */
     class myTimerTask_WatchOnServerFind extends TimerTask {
-        String
-                serverName;
-        int
-                serverType;
+        String serverName;
+        int serverType;
 
         public myTimerTask_WatchOnServerFind(String pServerName, int pServerType) {
-            serverName
-                    = pServerName;
-            serverType
-                    = pServerType;
+            serverName = pServerName;
+            serverType = pServerType;
         }
 
         @Override
@@ -2713,6 +2709,46 @@ public class MainActivity extends AppCompatActivity {
             rv = m.group();
         }
         return rv;
+    }
+
+    /**
+     * Получение сохраненного адреса устройства для заданной подсети
+     *
+     * @param devName
+     * @param netMask
+     * @return
+     */
+    public String readDeviceAddr(
+            String netMask,
+            String devName
+    ) {
+        String newAddr = dbHandler.readDevAddrfromDB(
+                netMask,
+                devName);
+        /* Если записи в БД не нашлось, то выставляем стартовый адрес для поиска устройства */
+        if (newAddr == null)
+            newAddr = netMask + conf.terminalStartAddress;
+        Log.i(logTAG, "readDeviceAddr: Address=" + newAddr);
+        return newAddr;
+    }
+
+    /**
+     * Сохраняет текущее значение адреса устрйоства для заданной подсети
+     *
+     * @param netMask
+     * @param devName
+     * @param devAddr
+     */
+    public void saveDeviceAddr(
+            String netMask,
+            String devName,
+            String devAddr
+    ) {
+        dbHandler.saveDevAddrToDB(
+                netMask,
+                devName,
+                devAddr
+        );
     }
 
 }

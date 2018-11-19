@@ -381,7 +381,6 @@ public class Storer {
      *
      * @return
      */
-
     public String[] takeCurrentTaskData() {
         /* А неплохо бы еще сразу проверить и на наличие текущей активной (приторможенной) операции */
         Cursor c = activity.dbHandler.database.query(
@@ -411,7 +410,6 @@ public class Storer {
      * @param taskId
      * @return
      */
-
     public String[] takeCurrentOperData(String taskId) {
         if (taskId == null) {
             return null;
@@ -481,7 +479,6 @@ public class Storer {
      * @param operId
      * @return
      */
-
     public String[] getOperData(String operId) {
         Cursor c = activity.dbHandler.database.query(
                 activity.dbHelper.TABLE_OPER,
@@ -523,7 +520,6 @@ public class Storer {
      * @param taskId
      * @return
      */
-
     public String getCurrentOperId(String taskId) {
         /*
          * Находит при наличии в БД запись о текущей операции.
@@ -550,7 +546,6 @@ public class Storer {
      *
      * @param taskId
      */
-
     public void setTaskProperty_Complete(String taskId) {
         ContentValues cv = new ContentValues();
         cv.put(KEY_TASK_COMPLETE, String.valueOf(1));
@@ -567,7 +562,6 @@ public class Storer {
      *
      * @param taskId
      */
-
     public void setTaskProperty_Delete(String taskId) {
         ContentValues cv = new ContentValues();
         cv.put(KEY_TASK_TO_DELETE, String.valueOf(1));
@@ -584,7 +578,6 @@ public class Storer {
      *
      * @param taskId
      */
-
     public void setTaskProperty_Reported(String taskId) {
         ContentValues cv = new ContentValues();
         cv.put(KEY_TASK_REPORTED, String.valueOf(1));
@@ -602,7 +595,6 @@ public class Storer {
      * @param taskId
      * @param value
      */
-
     public void setTaskProperty_Current(String taskId, int value) {
         ContentValues cv = new ContentValues();
         cv.put(KEY_TASK_IS_CURRENT, String.valueOf(value));
@@ -620,7 +612,6 @@ public class Storer {
      * @param taskId
      * @param status
      */
-
     public void setTaskProperty_Status(String taskId, String status) {
         ContentValues cv = new ContentValues();
         cv.put(KEY_TASK_STATUS, status);

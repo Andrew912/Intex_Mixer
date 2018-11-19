@@ -42,20 +42,13 @@ import static org.and.intex_v2.NetworkDevice.CommList.C9_SearchErrorReport;
 public class NetworkDevice {
 
     /* Разные служебные объекты */
-    MainActivity
-            mainActivity;
-    String
-            logTag = "NetworkDevice";
-    static long
-            timerPeriod = 500;
-    Thread
-            mainCycleThread;
-    Timer
-            mainCycleTimer;
-    MainCycleTimerTask
-            mainCycleTimerTask;
-    NetworkDeviceActionClass
-            networkDeviceActionClass;
+    MainActivity mainActivity;
+    String logTag = "NetworkDevice";
+    static long timerPeriod = 500;
+    Thread mainCycleThread;
+    Timer mainCycleTimer;
+    MainCycleTimerTask mainCycleTimerTask;
+    NetworkDeviceActionClass networkDeviceActionClass;
 
     /* Параметры запуска сетевого поиска */
     String netMask;
@@ -230,17 +223,14 @@ public class NetworkDevice {
     TransitionClass transition[];
 
     /* Массив кнопок-колбэков */
-    Button[]
-            btnCallback;
+    Button[] btnCallback;
 
     /* Массив тектовых полей статусной строки для вывода сообщений */
-    TextView[]
-            statusLine;
+    TextView[] statusLine;
 
     /* Итог всего - параметры (имя, адрес, порт) устройства, по которым к нему
     можно подключиться */
-    public String[]
-            realDeviceParam = {null, null, null};
+    public String[] realDeviceParam = {null, null, null};
 
     /**
      * ПЕРЕХОДЫ

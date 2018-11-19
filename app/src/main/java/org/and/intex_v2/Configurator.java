@@ -10,10 +10,8 @@ import static org.and.intex_v2.DBHandler.PARAMETER_VALUE;
 
 public class Configurator {
 
-    String
-            logTag = "Configurator";
-    MainActivity
-            mainActivity;
+    String logTag = "Configurator";
+    MainActivity mainActivity;
 
     /**
      * ============================================================
@@ -28,15 +26,15 @@ public class Configurator {
     String
             networkMask;                    //
     int
-            terminalPort = 18080;           // Порты подключения весовых терминалов
+            terminalPort = 18080;           // Порт подключения весовых терминалов
     int
             terminalFindAddr = 80;          // Адрес в сети, с которого будет начат поиск терминала
     int
-            mixerPort = 28080;              // Порты подключения миксеров
+            mixerPort = 28080;              // Порт подключения миксеров
     boolean
             is_Connected_to_network;        //
     int
-            terminalStartAddress = 35;      // Стартовый адрес для поиска терминала в сети
+            terminalStartAddress = 15;      // Стартовый адрес для поиска терминала в сети
     String
             deviceName = "mixer.001";       //
     String
@@ -44,8 +42,9 @@ public class Configurator {
     String
             terminalName = "mixerterm.001"; //
     int
-            dataLoadBufferSize = 1024;      // Размер буфера для получения даннфх с сервера управления
+            dataLoadBufferSize = 1024;      // Размер буфера для получения даннх с сервера управления
 
+    /* Параметры подключения к серверу управления */
     public static class ControlServer {
         String socketAddr
                 = "91.218.229.25";
@@ -55,6 +54,7 @@ public class Configurator {
                 = 1024;
     }
 
+    /* Класс, содержащий параметры сервера управления */
     ControlServer
             controlServer;
     /**============================================================
@@ -128,11 +128,15 @@ public class Configurator {
      * Обновить адрес весового терминала
      */
     public void termAddrRefresh() {
-        terminalAddress
-                = mainActivity.dbHandler.getDeviceAddrfromDB(
-                networkMask,
-                terminalName,
-                terminalAddress)[mainActivity.net.NET_DEVICE_ADDR];
+        terminalAddress =
+                mainActivity.readDeviceAddr(
+                        networkMask,
+                        terminalName);
+//        terminalAddress
+//                = mainActivity.dbHandler.getDeviceAddrfromDB(
+//                networkMask,
+//                terminalName,
+//                terminalAddress)[mainActivity.net.NET_DEVICE_ADDR];
 
         Toast.makeText(mainActivity.getApplicationContext(), "Терминал:" + terminalAddress, Toast.LENGTH_LONG).show();
     }

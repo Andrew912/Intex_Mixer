@@ -11,7 +11,6 @@ import java.util.regex.Pattern;
 
 import static org.and.intex_v2.DBHelper.KEY_MAIL_COMPLETE;
 import static org.and.intex_v2.DBHelper.TABLE_MAIL;
-import static org.and.intex_v2.MainActivity.DEVICE_IS_LOADER;
 import static org.and.intex_v2.MainActivity.L00_BUTTON_DNS;
 import static org.and.intex_v2.MainActivity.L00_BUTTON_BACK;
 import static org.and.intex_v2.MainActivity.L00_DATA_CLEAR;
@@ -59,7 +58,6 @@ import static org.and.intex_v2.MainActivity.LAYOUT_6_SIMPLE_OPER;
 import static org.and.intex_v2.MainActivity.LAYOUT_71_LOAD_OPER;
 import static org.and.intex_v2.MainActivity.LAYOUT_7_COMPLEX_OPER;
 import static org.and.intex_v2.MainActivity.LAYOUT_8_TASK_COMPLETE;
-import static org.and.intex_v2.MainActivity.LAYOUT_9_SERV_REQUEST;
 import static org.and.intex_v2.MainActivity.L__BUTTON_START;
 
 
@@ -138,7 +136,7 @@ public class Controller {
             /* Распечатка таблицы DNS */
             case L00_BUTTON_DNS:
 
-                mainActivity.dbHandler.dbTableList_OBJECTS();
+                mainActivity.dbHandler.printTableData_OBJECTS();
 
                 break;
 
@@ -407,8 +405,9 @@ public class Controller {
                     */
 
                     mainActivity.NDLoader = new NetworkDevice(
+                            mainActivity,
 
-                    );
+                            );
 
                 } else {
                     /*  Переходим на экран 6 */

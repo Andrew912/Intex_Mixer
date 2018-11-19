@@ -187,13 +187,13 @@ public class DBHandler {
         Log.i(logTag, "=====================================================================");
         Log.i(logTag, "getDeviceAddrfromDB: devNetMask=" + devNetMask + ", devName=" + devName + ", Start=" + devNameStartAddr);
 
-        String[] retVar
-                = {
-                devName,
-                devNetMask,
-                null,       // Указывает на наличие текущей записи в таблице OBJECT: null - нет, "found" - есть
-                null
-        };
+        String[] retVar =
+                {
+                        devName,
+                        devNetMask,
+                        null,       // Указывает на наличие текущей записи в таблице OBJECT: null - нет, "found" - есть
+                        null
+                };
 
         /* Если стартовый адрес не пустой */
         if (devNameStartAddr != null) {
@@ -256,6 +256,116 @@ public class DBHandler {
     }
 
     /**
+     * Получаем из БД последний сохраненный адрес устройства
+     * Добавлено: 19.11.2018
+     *
+     * @param devNetMask маска
+     * @param devName    имя устройства
+     * @return полный IP-адрес данного устройства для данной подсети
+     */
+    public String readDevAddrfromDB(
+            String devNetMask,
+            String devName) {
+
+        Log.i(logTag, "readDevAddrfromDB: devNetMask=" + devNetMask + ", devName=" + devName);
+        String retVar = null;
+
+        Cursor cursor = database.query(
+                table_OBJECTS.TABLE_NAME,
+                new String[]{
+                        table_OBJECTS.NAME,
+                        table_OBJECTS.NETMASK,
+                        table_OBJECTS.ADDRESS},
+                "(" + table_OBJECTS.NETMASK + "=?) AND (" + table_OBJECTS.NAME + "=?)",
+                new String[]{devNetMask, devName},
+                null, null, null);
+        if (cursor.moveToFirst()) {
+            retVar = cursor.getString(cursor.getColumnIndex(table_OBJECTS.ADDRESS));
+            Log.i(logTag, "Data " + devName + "@" + devNetMask + "=" + retVar);
+        } else {
+            Log.i(logTag, "Data for " + devName + "@" + devNetMask + " not found");
+        }
+        return retVar;
+    }
+
+    /**
+     * Сохраняет данные об адресе устройства в БД
+     *
+     * @param devNetMask
+     * @param devName
+     * @param devAddr
+     */
+    public void saveDevAddrToDB(
+            String devNetMask,
+            String devName,
+            String devAddr) {
+
+        Log.i(logTag, "SAVE: devNetMask=" + devNetMask + ", devName=" + devName + ", devAddr=" + devAddr);
+
+        /* Если адрес устройства в БД для данной подсети не совпадает с заданным, то перезаписать */
+        if (!readDevAddrfromDB(devNetMask, devName).equals(devAddr))
+            appendDevAddrToDB(devNetMask, devName, devAddr);
+        else
+            updateDevAddrInDB(devNetMask, devName, devAddr);
+
+        /* Распечатать таблицу OBJECTS */
+        printTableData_OBJECTS();
+    }
+
+    /**
+     * Добавляет данные об адресе в БД
+     *
+     * @param devNetMask
+     * @param devName
+     * @param devAddr
+     */
+    public void appendDevAddrToDB(
+            String devNetMask,
+            String devName,
+            String devAddr) {
+
+        Log.i(logTag, "APPEND: devNetMask=" + devNetMask + ", devName=" + devName + ", devAddr=" + devAddr);
+
+        ContentValues newValues = new ContentValues();
+        newValues.put(table_OBJECTS.NETMASK, devNetMask);
+        newValues.put(table_OBJECTS.NAME, devName);
+        newValues.put(table_OBJECTS.ADDRESS, devAddr);
+
+        database.insert(
+                table_OBJECTS.TABLE_NAME,
+                null,
+                newValues
+        );
+    }
+
+    /**
+     * Заменяет данные адреса в таблице БД
+     *
+     * @param devNetMask
+     * @param devName
+     * @param devAddr
+     */
+    public void updateDevAddrInDB(
+            String devNetMask,
+            String devName,
+            String devAddr) {
+
+        Log.i(logTag, "UPDATE: mask=" + devNetMask + ", devName=" + devName + "=" + devAddr);
+
+        ContentValues newValues = new ContentValues();
+        newValues.put(table_OBJECTS.ADDRESS, devAddr);
+
+        database.update(
+                table_OBJECTS.TABLE_NAME,
+                newValues,
+                "(" + table_OBJECTS.NETMASK + "=?) AND (" + table_OBJECTS.NAME + "=?)",
+                new String[]{devNetMask, devName}
+        );
+//         /* Надо подумать... */
+//        paramStore("MixerTermAddr", devAddr, null);
+    }
+
+    /**
      * Сохраняет адрес устройства (ключ: Имя + Маска сети -> Адрес)
      *
      * @param devNetMask
@@ -279,7 +389,7 @@ public class DBHandler {
         } else {
             append_Device_Addr_in_DB(devNetMask, devName, newAddr);
         }
-        dbTableList_OBJECTS();
+        printTableData_OBJECTS();
     }
 
     /**
@@ -634,7 +744,7 @@ public class DBHandler {
     /**
      * Распечатка таблицы OBJECTS
      */
-    void dbTableList_OBJECTS() {
+    void printTableData_OBJECTS() {
         Cursor cursor
                 = activity.dbHandler.database.query(
                 dbHelper.DBRecord[OBJECTS][TABLENAME][NONE][NONE],
@@ -660,7 +770,7 @@ public class DBHandler {
         }
         // Записей явно больше нуля
         Log.i("dbTableList_Objects", "===========================================================================");
-        Log.i("dbTableList_Objects", "dbTableList_OBJECTS");
+        Log.i("dbTableList_Objects", "printTableData_OBJECTS");
         Log.i("dbTableList_Objects", "===========================================================================");
         if (recCount > 0) {
             cursor.moveToFirst();
@@ -831,7 +941,7 @@ public class DBHandler {
      */
     public String printTableData(String tableName) {
 
-    Log.i("printTableData", "PREPARE to print table " + tableName);
+        Log.i("printTableData", "PREPARE to print table " + tableName);
 
         String delimiter
                 = "==============================";

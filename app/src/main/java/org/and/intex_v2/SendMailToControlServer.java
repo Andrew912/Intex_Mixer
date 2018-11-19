@@ -270,5 +270,4 @@ public class SendMailToControlServer {
         return true;
     }
 
-
 }
