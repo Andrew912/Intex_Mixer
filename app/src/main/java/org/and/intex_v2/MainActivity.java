@@ -2761,7 +2761,7 @@ public class MainActivity extends AppCompatActivity {
         /* Если записи в БД не нашлось, то выставляем стартовый адрес для поиска устройства */
         if (newAddr == null)
             newAddr = netMask + conf.terminalStartAddress;
-        Log.i(logTAG, "readDeviceAddr: Address=" + newAddr);
+        Log.i(logTAG, "readDeviceAddr: " + devName + ", Address=" + newAddr);
         return newAddr;
     }
 

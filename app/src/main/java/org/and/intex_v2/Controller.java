@@ -125,7 +125,7 @@ public class Controller {
 //                startButtonPresser
 //                        .schedule(new TimerTask_PressStartButton(), 9000);
 //
-                Log.i("controller", "L__BUTTON_START: Let's begin!");
+//                Log.i("controller", "L__BUTTON_START: Let's begin!");
                 mainActivity.gotoLayout(LAYOUT_1_BEGIN, "Терминал миксера");
                 break;
 
@@ -227,6 +227,7 @@ public class Controller {
                                         mainActivity.btn_11_NoTerminal
                                 }
                 );
+                mainActivity.ndTerminal.startProc();
 
 //                if (mainActivity.ifServerFound(mainActivity.conf.terminalName) == false) {
 //                    mainActivity.CheckConnection(
@@ -379,7 +380,7 @@ public class Controller {
                     // Вычислить конечный вес в погрузчике
                     mainActivity.storer.weightTarget
                             = mainActivity.currentOper.loadValue + mainActivity.storer.weightCurrent;
-                    Log.i(logTAG, "конечный вес в погрузчике = " + mainActivity.storer.weightTarget);
+//                    Log.i(logTAG, "конечный вес в погрузчике = " + mainActivity.storer.weightTarget);
                     // Толеранс +
                     mainActivity.storer.tolerancePlus
                             = (int) (mainActivity.currentOper.loadValue * Float.parseFloat(mainActivity.getString(R.string.LOADING_PERCENT_WEIGHT_TOLERANCE_UP)));
@@ -449,7 +450,7 @@ public class Controller {
                                             mainActivity.btn_90_NoLoader
                                     }
                     );
-
+                    mainActivity.ndLoader.startProc();
                 } else {
                     /*  Переходим на экран 6 */
                     mainActivity.gotoLayout(LAYOUT_6_SIMPLE_OPER, mainActivity.currentOper.getOperationInfoForView());
@@ -582,7 +583,7 @@ public class Controller {
                 // Вычислить конечный вес в погрузчике
                 mainActivity.storer.weightTarget
                         = mainActivity.currentOper.loadValue + mainActivity.storer.weightCurrent;
-                Log.i(logTAG, "конечный вес в погрузчике = " + mainActivity.storer.weightTarget);
+//                Log.i(logTAG, "конечный вес в погрузчике = " + mainActivity.storer.weightTarget);
                 // Толеранс +
                 mainActivity.storer.tolerancePlus
                         = (int) (mainActivity.currentOper.loadValue * Float.parseFloat(mainActivity.getString(R.string.LOADING_PERCENT_WEIGHT_TOLERANCE_UP)));
