@@ -594,7 +594,7 @@ public class NetworkDevice {
                     pingTimeoutTimer = new Timer();
                     pingTimeoutTimer.schedule(new PingTimeoutTimerTask(), 5000);
                     /* Запускаем ping устройства */
-                    Log.i(logTag, "\nPING:\n" + devName + "\n" + netMask + devAddr + "\n" + devPort + "\n");
+                    Log.i(logTag, "\nPING:\n" + devName + "\n" + netMask + "\n" + devAddr + "\n" + devPort + "\n");
                     pingDeviceThread = networkDeviceActionClass.pingDevice(
                             new String[]{
                                     netMask + devAddr,
@@ -603,7 +603,7 @@ public class NetworkDevice {
                     break;
                 case C3_StartSearch:
                     /* Запускаем поиск устройства */
-                    Log.i(logTag, "\nFIND:\n" + devName + "\n" + netMask + devAddr + "\n" + devPort + "\n");
+                    Log.i(logTag, "\nFIND:\n" + devName + "\n" + netMask + "\n" + devAddr + "\n" + devPort + "\n");
                     networkDeviceActionClass.findDevice(
                             new String[]{
                                     netMask,
@@ -847,12 +847,12 @@ public class NetworkDevice {
                         addressLimit = Integer.parseInt(params[3]);
                 while (whileContinue) {
 
-                    Log.i(logTag, name + ": " + ipAddress);
-                    Log.i(logTag, name + ": " + ipAddress);
-
                     ipAddress = params[0] + Integer.toString(addressCounter);
-                    final String finalIpAddress = ipAddress;
+                    Log.i(logTag, "FIND =========================");
+                    Log.i(logTag, "name=" + name + ", addr=" + ipAddress);
+                    Log.i(logTag, "==============================");
 
+                    final String finalIpAddress = ipAddress;
 
                     mainActivity.runOnUiThread(new Runnable() {
                         @Override
@@ -1174,42 +1174,6 @@ public class NetworkDevice {
         init();
 
         /* Объект существует и живет своей жизнью */
-        /* Теперь из MainActivity в нужный момент надо запустить startProc()... */
-    }
-
-    /**
-     * Конструктор 2 (старый вариант) - все параметры отдельно
-     *
-     * @param activity
-     * @param pNetMask
-     * @param pDevAddr
-     * @param pDevPort
-     * @param pDevName
-     * @param pAddrStart
-     * @param pAddrStop
-     */
-    public NetworkDevice(
-            MainActivity activity,
-            String pNetMask,
-            String pDevAddr,
-            String pDevPort,
-            String pDevName,
-            String pAddrStart,
-            String pAddrStop
-    ) {
-        mainActivity = activity;
-
-        /* Заполнение параметров поиска сетевых устройств */
-        netMask = pNetMask;
-        devAddr = pDevAddr;
-        devPort = pDevPort;
-        devName = pDevName;
-        addrBeg = pAddrStart;
-        addrEnd = pAddrStop;
-
-        /* Инициализация всего */
-        init();
-
         /* Теперь из MainActivity в нужный момент надо запустить startProc()... */
     }
 

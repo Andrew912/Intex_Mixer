@@ -214,6 +214,7 @@ public class Controller {
                                         ),
                                         Integer.toString(mainActivity.conf.terminalPort),
                                         Integer.toString(mainActivity.conf.terminalStartAddress),
+                                        mainActivity.conf.terminalName,
                                         null,
                                         null
                                 },
@@ -437,6 +438,7 @@ public class Controller {
                                             ),
                                             Integer.toString(mainActivity.conf.loaderPort),
                                             Integer.toString(mainActivity.conf.terminalStartAddress),
+                                            mainActivity.currentOper.getParam("servern"),
                                             null,
                                             null
                                     },
