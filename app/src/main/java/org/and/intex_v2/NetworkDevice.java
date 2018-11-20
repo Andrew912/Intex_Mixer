@@ -55,8 +55,8 @@ public class NetworkDevice {
     String devAddr;
     String devPort;
     String devName;
-    String addrStart;
-    String addrStop;
+    String addrBeg;
+    String addrEnd;
 
     /* Массив "Команды" */
     boolean Command[];
@@ -609,8 +609,8 @@ public class NetworkDevice {
                                     netMask,
                                     devPort,
                                     devName,
-                                    addrStart,
-                                    addrStop});
+                                    addrBeg,
+                                    addrEnd});
                     break;
                 case C4_DropWaitPingResult:
                     /* Останавливаем задачу PING */
@@ -1156,7 +1156,43 @@ public class NetworkDevice {
     }
 
     /**
-     * Конструктор 0 - все параметры отдельно
+     * Конструктор 1 - параметры передаются массивами (строк и других объектов)
+     *
+     * @param activity         - mainActivity
+     * @param devParam         - параметры поиска (mask, addr, port, name, start, stop)
+     * @param btnCallbackParam - кнопки возврата результата
+     */
+    public NetworkDevice(
+            MainActivity activity,
+            String[] devParam,          // Параметры поиска устройства: Маска, Адрес, Порт, Имя, Старт, Стоп
+            TextView[] pStatusLine,     // Вывод сообщений на главный экран
+            Button[] btnCallbackParam   // Кнопки команд на главном экране - самый простой колбэк
+    ) {
+        mainActivity = activity;
+
+        /* Заполнение параметров поиска сетевых устройств */
+        netMask = devParam[0];
+        devAddr = devParam[1];
+        devPort = devParam[2];
+        devName = devParam[3];
+        addrBeg = devParam[4] != null ? devParam[4] : "20";
+        addrEnd = devParam[5] != null ? devParam[5] : "2";
+
+        /* Инициализация массива кнопок-колбэков для возврата управления в вызывающий модуль */
+        btnCallback = btnCallbackParam;
+
+        /* Инициализация массива TextView для вывода на главный экран */
+        statusLine = pStatusLine;
+
+        /* Инициализация всего */
+        init();
+
+        /* Объект существует и живет своей жизнью */
+        /* Теперь из MainActivity в нужный момент надо запустить startProc()... */
+    }
+
+    /**
+     * Конструктор 2 (старый вариант) - все параметры отдельно
      *
      * @param activity
      * @param pNetMask
@@ -1186,56 +1222,14 @@ public class NetworkDevice {
                 = pDevPort;
         devName
                 = pDevName;
-        addrStart
+        addrBeg
                 = pAddrStart;
-        addrStop
+        addrEnd
                 = pAddrStop;
 
         /* Инициализация всего */
         init();
 
-        /* Теперь из MainActivity в нужный момент надо запустить startProc()... */
-    }
-
-    /**
-     * Конструктор 1 - параметры передаются массивами (строк и других объектов)
-     *
-     * @param activity         - mainActivity
-     * @param devParam         - параметры поиска (mask, addr, port, name, start, stop)
-     * @param btnCallbackParam - кнопки возврата результата
-     */
-    public NetworkDevice(
-            MainActivity activity,
-            String[] devParam,          // Параметры поиска устройства: Маска, Адрес, Порт, Имя, Старт, Стоп
-            TextView[] pStatusLine,     // Вывод сообщений на главный экран
-            Button[] btnCallbackParam   // Кнопки команд на главном экране - самый простой колбэк
-    ) {
-        mainActivity = activity;
-
-        /* Заполнение параметров поиска сетевых устройств */
-        netMask
-                = devParam[0];
-        devAddr
-                = devParam[1];
-        devPort
-                = devParam[2];
-        devName
-                = devParam[3];
-        addrStart
-                = devParam[4];
-        addrStop
-                = devParam[5];
-
-        /* Инициализация массива кнопок-колбэков для возврата управления в вызывающий модуль */
-        btnCallback = btnCallbackParam;
-
-        /* Инициализация массива TextView для вывода на главный экран */
-        statusLine = pStatusLine;
-
-        /* Инициализация всего */
-        init();
-
-        /* Объект существует и живет своей жизнью */
         /* Теперь из MainActivity в нужный момент надо запустить startProc()... */
     }
 

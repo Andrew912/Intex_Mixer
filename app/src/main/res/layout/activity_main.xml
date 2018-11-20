@@ -152,8 +152,38 @@
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="match_parent"
+                    android:layout_height="278dp">
+
+                    <ScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.83">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical" >
+
+                            <TextView
+                                android:id="@+id/text_0_Info"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1.83"
+                                android:textSize="@dimen/activity_horizontal_margin"
+                                tools:ignore="HardcodedText"
+                                android:scrollHorizontally="false"
+                                android:scrollbarAlwaysDrawVerticalTrack="false" />
+                        </LinearLayout>
+                    </ScrollView>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    android:gravity="bottom">
 
                     <Button
                         android:text="clear dns"
@@ -180,35 +210,6 @@
                         android:text="очистить задание и почту"
                         tools:ignore="InefficientWeight"
                         android:background="@android:color/holo_orange_dark" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="278dp">
-
-                    <ScrollView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1.83">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical" >
-
-                            <TextView
-                                android:id="@+id/text_0_Info"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:layout_weight="1.83"
-                                android:textSize="@dimen/activity_horizontal_margin"
-                                tools:ignore="HardcodedText"
-                                android:scrollHorizontally="false"
-                                android:scrollbarAlwaysDrawVerticalTrack="false" />
-                        </LinearLayout>
-                    </ScrollView>
-
                 </LinearLayout>
 
                 <LinearLayout
@@ -501,8 +502,8 @@
 
                     <Button
                         android:id="@+id/button_LoadDB"
-                        android:layout_width="150dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:text="Параметры"
                         tools:ignore="InefficientWeight,NestedWeights" />
@@ -511,7 +512,7 @@
                 <TextView
                     android:id="@+id/text_1_Info"
                     android:layout_width="match_parent"
-                    android:layout_height="235dp"
+                    android:layout_height="193dp"
                     android:text="Терминал оператора миксера"
                     android:textAlignment="center"
                     android:textSize="30sp"

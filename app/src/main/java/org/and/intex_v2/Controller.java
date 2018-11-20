@@ -67,23 +67,20 @@ import static org.and.intex_v2.MainActivity.L__BUTTON_START;
 
 public class Controller {
 
-    String
-            logTAG = "Controller";
-    MainActivity
-            mainActivity;
-    String
-            currentTask;
-    String
-            currentOper;
-    String[]
-            currentOperParam;
-    MessengerClass
-            messengerClass;
-    boolean
-            loadingMayBegin;
+    /* Стандартные параметры  */
+    String logTAG = "Controller";
+    MainActivity mainActivity;
 
-    Timer
-            startButtonPresser;
+    /* Задачи и операции */
+    String currentTask;
+    String currentOper;
+    String[] currentOperParam;
+    MessengerClass messengerClass;
+    Timer startButtonPresser;
+    boolean loadingMayBegin;
+
+    /* Автоматические переходы между экранами при работе */
+    boolean autoPressBtn = true;
 
     /**
      * Конструктор
@@ -91,14 +88,10 @@ public class Controller {
      * @param activity
      */
     public Controller(MainActivity activity) {
-        this.mainActivity
-                = activity;
-        messengerClass
-                = new MessengerClass(this.mainActivity);
-        loadingMayBegin
-                = false;
-//        startButtonPresser
-//                = new Timer();
+        this.mainActivity = activity;
+        messengerClass = new MessengerClass(this.mainActivity);
+        loadingMayBegin = false;
+        if (autoPressBtn) startButtonPresser = new Timer();
     }
 
     /**
@@ -124,8 +117,8 @@ public class Controller {
     void controller(int btn) {
         switch (btn) {
             case L__BUTTON_START:
-//                startButtonPresser
-//                        .schedule(new TimerTask_PressStartButton(), 4000);
+                if (autoPressBtn)
+                    startButtonPresser.schedule(new TimerTask_PressStartButton(), 4000);
 //                startButtonPresser
 //                        .schedule(new TimerTask_PressStartButton(), 9000);
 //
@@ -199,6 +192,14 @@ public class Controller {
 
             /* Начало работы самое что ни на есть */
             case L1_BUTTON_BEGIN_JOB:
+                /**
+                 * Щас надо понять, на какие экраны переходить при обнаружении терминала
+                 * и при его отсутствии.
+                 * btn_11_BeginJob - переход если терминал найден
+                 *
+                 */
+
+
                 /* Проверяем подключение весового терминала если он еще не подключен */
                 if (mainActivity.ifServerFound(mainActivity.conf.terminalName) == false) {
                     mainActivity.CheckConnection(
@@ -206,7 +207,7 @@ public class Controller {
                             0,
                             null,
                             mainActivity.L[LAYOUT_4_TASK_SELECT],
-                            mainActivity.btn_11_Next);
+                            mainActivity.btn_11_BeginJob);
                     mainActivity.conf.termAddrRefresh();
                     break;
                 } else {
@@ -324,23 +325,17 @@ public class Controller {
 
             /* Начать выполнение операций задачи */
             case L5_BUTTON_ACCEPT:
-                mainActivity.currentTask
-                        .setToActive();
-                currentOperParam
-                        = new String[4];
-                currentOperParam
-                        = mainActivity.storer.getFirstOperationForExecution();
-                mainActivity.currentOper
-                        .set(
-                                currentOperParam[0],
-                                currentOperParam[1],
-                                currentOperParam[2],
-                                mainActivity.storer.getOperData(currentOperParam[0])[4]
-                        );
-                mainActivity.currentOper
-                        .setCurrent();
-                mainActivity.currentOper
-                        .setToActive();
+                mainActivity.currentTask.setToActive();
+                currentOperParam = new String[4];
+                currentOperParam = mainActivity.storer.getFirstOperationForExecution();
+                mainActivity.currentOper.set(
+                        currentOperParam[0],
+                        currentOperParam[1],
+                        currentOperParam[2],
+                        mainActivity.storer.getOperData(currentOperParam[0])[4]
+                );
+                mainActivity.currentOper.setCurrent();
+                mainActivity.currentOper.setToActive();
 
                 /* Если операция - "загрузка без погрузчика", то на экран ???, иначе - проверить "простая" погрузка */
                 if (mainActivity.currentOper.operIsLoadNoLoader() == true) {

@@ -26,7 +26,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.StringTokenizer;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
@@ -158,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
             btn_71_Cancel, btn_71_Complete, btn_71_Start,
             btn_8_OK,
             btn_9_Cancel, btn_9_Accept, btn_9_Refresh, btn_9_Reject, btn_90_LoaderFound, btn_90_NoLoader,
-            btn_11_Next, btn_11_LoaderFound;
+            btn_11_BeginJob, btn_11_LoaderFound;
 
     /* Кнопки служебных экранов поиска */
     Button
@@ -245,21 +244,22 @@ public class MainActivity extends AppCompatActivity {
     Timer statusLineLookOnTimer;
     MyTimerTask_LookAtStatusLine myTimerTask_lookAtServerPingClass;
 
-    /* Таймер задачи наблюдения за поиском сервера в сети */
-    ArrayList<Timer> findServerTimer;
-    ArrayList<myTimerTask_WatchOnServerFind> myTimerTask_watchOnServerFind;
-
-    int
-            statusLineIsVisible;
+    /* Управление статусной строкой */
+    int statusLineIsVisible;
     public String
             toWriteInStatusLine;                // Для вывода в статусную строку
     public int
             numOfCallStatusLineBlink = 0;       // Кол-во вызовов мигания статусной строки
+
+
+    /* Таймер задачи наблюдения за поиском сервера в сети */
+    ArrayList<Timer> findServerTimer;
+    ArrayList<myTimerTask_WatchOnServerFind> myTimerTask_watchOnServerFind;
+
     public ArrayList<Integer>
             numOfServerPingClasses;             // Количество открытых в данный момент ServerPingClass
     int whatFindCurrent
             = 0;                                // Индекс открытых в данный момент ServerPingClass
-
     static int                                  // Предельное количество устройств для поиска в сети
             MAX_NUM_OF_DEVICES = 1;
 
@@ -274,15 +274,16 @@ public class MainActivity extends AppCompatActivity {
     public ArrayList<Boolean>
             endServerFindCondition;            // Условие выхода из цикла при поиске серверов
 
-    /* Дополнительный текст */
+    /* Дополнительный текст в экране 7 */
     TextView
-            text_7_target, text_71_target;
+            text_7_target,
+            text_71_target;
 
-    /* Таймеры */
+    /* Опрос весового терминала */
     private Timer
-            myTerminalDataReadTimer;        // Таймер опроса весового терминала
+            myTerminalDataReadTimer;            // Таймер опроса весового терминала
     private TerminalDataReadTimerTask
-            myTerminalDataReadTask;            // Задача для опроса весового терминала
+            myTerminalDataReadTask;             // Задача для опроса весового терминала
 
     /* Параметры конфигурации */
     String
@@ -292,7 +293,7 @@ public class MainActivity extends AppCompatActivity {
             MixerPass,              // Пароль миксера
             MixerTermName,          // имя весового терминала
             MixerTermAddr;          // стартовый адрес весового терминала (для быстрого поиска в сети)
-    /* Поля для редактирования */
+    /* Поля для редактирования параметров конфигурации */
     EditText
             et_WiFiNet,
             et_WiFiPass,
@@ -698,18 +699,18 @@ public class MainActivity extends AppCompatActivity {
                 = new boolean[NUMBER_OF_BUTTONS];
         buttonStatusDrop();
 
-        /* btn_11_Next */
-        btn_11_Next
+        /* btn_11_BeginJob */
+        btn_11_BeginJob
                 = (Button) findViewById(R.id.btn_11_00_Begin_job);
-        btn_11_Next.setOnClickListener(new View.OnClickListener() {
+        btn_11_BeginJob.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("btn_11_Next", "pressed");
+                Log.i("btn_11_BeginJob", "pressed");
                 controller.controller(L11_BUTTON_BEGIN_JOB_NEXT);
             }
         });
 
-        /* btn_11_Next */
+        /* btn_11_BeginJob */
         btn_11_LoaderFound
                 = (Button) findViewById(R.id.btn_11_00_Begin_job);
         btn_11_LoaderFound.setOnClickListener(new View.OnClickListener() {
@@ -1296,18 +1297,13 @@ public class MainActivity extends AppCompatActivity {
      * @param serverToFind - имя сервера
      */
     public boolean CheckConnection(
-            String
-                    serverToFind,
-            int
-                    serverType,
-            String
-                    serverStartAddress,
-            LayoutClass
-                    pLayoutToReturn,
-            Button
-                    btnToReturn) {
+            String serverToFind,
+            int serverType,
+            String serverStartAddress,
+            LayoutClass pLayoutToReturn,
+            Button btnToReturn) {
 
-        // Гасим тот экран, на который будем возвращаться
+        /* Гасим тот экран, на который будем возвращаться */
         pLayoutToReturn.myLayout.setVisibility(View.INVISIBLE);
 
         /**
@@ -1319,8 +1315,7 @@ public class MainActivity extends AppCompatActivity {
          * Если записи с указанным именем нет, то ее надо моздать и whatDeviceWeFind должно быть
          * равно номеру вновь созданной записи
          */
-        int
-                i;
+        int i;
         int
                 Result_Empty = 0,
                 Result_Found = 1,
