@@ -3,6 +3,8 @@ package org.and.intex_v2;
 import android.database.Cursor;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -59,6 +61,7 @@ import static org.and.intex_v2.MainActivity.LAYOUT_71_LOAD_OPER;
 import static org.and.intex_v2.MainActivity.LAYOUT_7_COMPLEX_OPER;
 import static org.and.intex_v2.MainActivity.LAYOUT_8_TASK_COMPLETE;
 import static org.and.intex_v2.MainActivity.L__BUTTON_START;
+import static org.and.intex_v2.MainActivity.dbFunctions;
 
 
 /**
@@ -195,24 +198,47 @@ public class Controller {
                 /**
                  * Щас надо понять, на какие экраны переходить при обнаружении терминала
                  * и при его отсутствии.
-                 * btn_11_BeginJob - переход если терминал найден
+                 * btn_11_NoTerminal - переход если терминал найден
                  *
                  */
 
-
                 /* Проверяем подключение весового терминала если он еще не подключен */
-                if (mainActivity.ifServerFound(mainActivity.conf.terminalName) == false) {
-                    mainActivity.CheckConnection(
-                            mainActivity.conf.terminalName,
-                            0,
-                            null,
-                            mainActivity.L[LAYOUT_4_TASK_SELECT],
-                            mainActivity.btn_11_BeginJob);
-                    mainActivity.conf.termAddrRefresh();
-                    break;
-                } else {
-                    mainActivity.printServerFound();
-                }
+                mainActivity.ndTerminal = new NetworkDevice(
+                        mainActivity,
+                        new String[]
+                                {
+                                        mainActivity.conf.networkMask,
+                                        mainActivity.readDeviceAddr(
+                                                mainActivity.conf.networkMask,
+                                                mainActivity.conf.terminalName
+                                        ),
+                                        Integer.toString(mainActivity.conf.terminalPort),
+                                        Integer.toString(mainActivity.conf.terminalStartAddress),
+                                        null
+                                },
+                        new TextView[]
+                                {
+                                        mainActivity.textView_StatusLine
+                                },
+                        new Button[]
+                                {
+                                        mainActivity.btn_11_TerminalFound,
+                                        mainActivity.btn_11_NoTerminal
+                                }
+                );
+
+//                if (mainActivity.ifServerFound(mainActivity.conf.terminalName) == false) {
+//                    mainActivity.CheckConnection(
+//                            mainActivity.conf.terminalName,
+//                            0,
+//                            null,
+//                            mainActivity.L[LAYOUT_4_TASK_SELECT],
+//                            mainActivity.btn_11_NoTerminal);
+//                    mainActivity.conf.termAddrRefresh();
+//                    break;
+//                } else {
+//                    mainActivity.printServerFound();
+//                }
 
             case L11_BUTTON_BEGIN_JOB_NEXT:
                 /* Если весовой терминал подключен, то работаем дальше как положено
@@ -302,13 +328,10 @@ public class Controller {
             /*  */
             case L4_BUTTON_ACCEPT:
                 // Задача выбрана
-                mainActivity.btn_4_Accept
-                        .setVisibility(View.INVISIBLE);
+                mainActivity.btn_4_Accept.setVisibility(View.INVISIBLE);
                 // Установить текущую задачу
-                mainActivity.storer
-                        .setTaskProperty_Current(getKeyTaskIdFromListView(), 1);
-                mainActivity.currentTask
-                        .setTaskData();
+                mainActivity.storer.setTaskProperty_Current(getKeyTaskIdFromListView(), 1);
+                mainActivity.currentTask.setTaskData();
                 // Переходим к выбору операции
                 mainActivity.gotoLayout(LAYOUT_5_OPER_SELECT, "");
                 break;
@@ -399,10 +422,29 @@ public class Controller {
 
                     */
 
-                    mainActivity.NDLoader = new NetworkDevice(
+                    mainActivity.ndLoader = new NetworkDevice(
                             mainActivity,
-
-                            );
+                            new String[]
+                                    {
+                                            mainActivity.conf.networkMask,
+                                            mainActivity.readDeviceAddr(
+                                                    mainActivity.conf.networkMask,
+                                                    mainActivity.currentOper.getParam("servern")
+                                            ),
+                                            Integer.toString(mainActivity.conf.loaderPort),
+                                            Integer.toString(mainActivity.conf.terminalStartAddress),
+                                            null
+                                    },
+                            new TextView[]
+                                    {
+                                            mainActivity.textView_StatusLine
+                                    },
+                            new Button[]
+                                    {
+                                            mainActivity.btn_90_LoaderFound,
+                                            mainActivity.btn_90_NoLoader
+                                    }
+                    );
 
                 } else {
                     /*  Переходим на экран 6 */

@@ -86,8 +86,8 @@ public class MainActivity extends AppCompatActivity {
 
     /* Классы поиска сетевого устройства */
     NetworkDevice
-            NDTerminal,     // Терминал
-            NDLoader;       // Погрузчик
+            ndTerminal,     // Терминал
+            ndLoader;       // Погрузчик
 
     /* Лайауты */
     FrameLayout             // Главный фрейм. Если его погасить, погаснет все
@@ -156,8 +156,9 @@ public class MainActivity extends AppCompatActivity {
             btn_7_Cancel, btn_7_Complete, btn_7_Start,
             btn_71_Cancel, btn_71_Complete, btn_71_Start,
             btn_8_OK,
-            btn_9_Cancel, btn_9_Accept, btn_9_Refresh, btn_9_Reject, btn_90_LoaderFound, btn_90_NoLoader,
-            btn_11_BeginJob, btn_11_LoaderFound;
+            btn_9_Cancel, btn_9_Accept, btn_9_Refresh, btn_9_Reject,
+            btn_90_LoaderFound, btn_90_NoLoader, btn_90_Ok,
+            btn_11_NoTerminal, btn_11_TerminalFound, btn_110_Ok;
 
     /* Кнопки служебных экранов поиска */
     Button
@@ -228,7 +229,9 @@ public class MainActivity extends AppCompatActivity {
             LAYOUT_9_SERV_REQUEST = 9,
             LAYOUT_71_LOAD_OPER = 10,
             LAYOUT_11_EMPTY = 11,
-            LAYOUT_00_CLEARING = 12;
+            LAYOUT_00_CLEARING = 12,
+            LAYOUT_90_NOLOADER = 13,
+            LAYOUT_110_NOTERM = 14;
 
     /* Текст экрана в лайауте */
     TextView textView[];
@@ -359,11 +362,12 @@ public class MainActivity extends AppCompatActivity {
         layoutStatus
                 = new LayoutStatusClass(Integer.valueOf(getString(R.string.NUMBER_OF_LAYOUTS)));
         /* Старый вариант формирования экранов */
-        mainFrame
-                = (FrameLayout) findViewById(R.id.FrameMain);
+        mainFrame = (FrameLayout) findViewById(R.id.FrameMain);
 
-        layout
-                = new LinearLayout[layoutStatus.numberOfLayouts];
+        /* Объявляем массив экранов */
+        layout = new LinearLayout[layoutStatus.numberOfLayouts];
+
+        /* Заполняем массив экранов */
         layout[LAYOUT_11_EMPTY]
                 = (LinearLayout) findViewById(R.id.LL11_Empty);
         layout[LAYOUT_00_CLEARING]
@@ -390,6 +394,11 @@ public class MainActivity extends AppCompatActivity {
                 = (LinearLayout) findViewById(R.id.LL9_ServiceRequest);
         layout[LAYOUT_71_LOAD_OPER]
                 = (LinearLayout) findViewById(R.id.LL71_Load_Task);
+        /* Ошибка поиска погрузчика */
+        layout[LAYOUT_90_NOLOADER] = (LinearLayout) findViewById(R.id.layout_90_NoLoader);
+        /* Ошибка поиска терминала */
+        layout[LAYOUT_110_NOTERM] = (LinearLayout) findViewById(R.id.layout_110_NoTerminal);
+
         layout_4_1
                 = (LinearLayout) findViewById(R.id.LL4_1_Buttons);
 
@@ -556,6 +565,14 @@ public class MainActivity extends AppCompatActivity {
                 = null;
         textView[LAYOUT_00_CLEARING]
                 = (TextView) findViewById(R.id.text_0_Info);
+        /* Отчет об ошибке поиска погрузчика */
+        textView[LAYOUT_90_NOLOADER]
+                = (TextView) findViewById(R.id.textView_Header_901);
+        /* Отчет об ошибке поиска терминала */
+        textView[LAYOUT_110_NOTERM]
+                = (TextView) findViewById(R.id.textView_Header_1101);
+
+
         text_7_target
                 = (TextView) findViewById(R.id.text_7_target);
         text_71_target
@@ -698,28 +715,6 @@ public class MainActivity extends AppCompatActivity {
         buttonStatus
                 = new boolean[NUMBER_OF_BUTTONS];
         buttonStatusDrop();
-
-        /* btn_11_BeginJob */
-        btn_11_BeginJob
-                = (Button) findViewById(R.id.btn_11_00_Begin_job);
-        btn_11_BeginJob.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i("btn_11_BeginJob", "pressed");
-                controller.controller(L11_BUTTON_BEGIN_JOB_NEXT);
-            }
-        });
-
-        /* btn_11_BeginJob */
-        btn_11_LoaderFound
-                = (Button) findViewById(R.id.btn_11_00_Begin_job);
-        btn_11_LoaderFound.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i("btn_11_LoaderFound", "pressed");
-                controller.controller(L5_BUTTON_ACCEPT);
-            }
-        });
 
         /* btn_0_SendMail */
         btn_0_SendMail
@@ -1006,21 +1001,53 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /* btn_90_LoaderFound - погрузчик найден */
-        btn_90_LoaderFound = (Button) findViewById(R.id.button_9_Refresh);
+        /* btn_90_LoaderFound - погрузчик найден, можно что-то делать дальше с ним */
+        btn_90_LoaderFound = (Button) findViewById(R.id.button_90_LoaderFound);
         btn_90_LoaderFound.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gotoLayout(LAYOUT_9_SERV_REQUEST, currentOper.getOperationInfoForView());
+            }
+        });
+
+        /* btn_90_NoLoader - погрузчик не найден */
+        btn_90_NoLoader = (Button) findViewById(R.id.button_90_NoLoader);
+        btn_90_NoLoader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                layoutActivate(LAYOUT_90_NOLOADER, null);
+            }
+        });
+
+        /* btn_90_Ok - погрузчик не найден, продолжить */
+        btn_90_Ok = (Button) findViewById(R.id.b_90_OK);
+        btn_90_Ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 controller.controller(L9_BUTTON_REFRESH);
             }
         });
 
-        /* btn_90_NoLoader - погрузчик не найден */
-        btn_90_NoLoader = (Button) findViewById(R.id.button_9_Refresh);
-        btn_90_NoLoader.setOnClickListener(new View.OnClickListener() {
+        /* btn_11_TerminalFound - терминал найден */
+        btn_11_TerminalFound
+                = (Button) findViewById(R.id.btn_11_TerminalFound);
+        btn_11_TerminalFound.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                controller.controller(L9_BUTTON_REFRESH);
+                Log.i("btn_11_TerminalFound", "pressed");
+                controller.controller(L5_BUTTON_ACCEPT);
+            }
+        });
+
+        /* btn_11_NoTerminal - терминал не найден */
+        btn_11_NoTerminal
+                = (Button) findViewById(R.id.btn_11_NoTerminal);
+        btn_11_NoTerminal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("btn_11_NoTerminal", "pressed");
+                controller.controller(L11_BUTTON_BEGIN_JOB_NEXT);
             }
         });
 
@@ -2260,6 +2287,17 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Активирует экран без перехода в подпрограмму.
+     * И заплняет текстовое поле.
+     *
+     * @param newLayout
+     */
+    void layoutActivate(int newLayout, String text) {
+        layoutVisiblitySet(newLayout);                          // Установить видимость слоя
+        textView[newLayout].setText(text != null ? text : null);
     }
 
     /**

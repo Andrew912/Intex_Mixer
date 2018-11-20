@@ -29,20 +29,122 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:id="@+id/layout_90_NoLoader"
+                android:weightSum="1"
+                android:visibility="invisible">
+
+                <TextView
+                    android:text="Поиск погрузчика"
+                    android:layout_width="match_parent"
+                    android:layout_height="127dp"
+                    android:id="@+id/textView_Header_901"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textSize="24sp" />
+
+                <TextView
+                    android:text="Погрузчик не найден"
+                    android:layout_width="match_parent"
+                    android:layout_height="127dp"
+                    android:id="@+id/textView_Header_902"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textSize="24sp" />
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="129dp">
+
+                    <Button
+                        android:text="No"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/b_90_0"
+                        android:layout_weight="1"
+                        android:visibility="invisible" />
+
+                    <Button
+                        android:text="Ок"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/b_90_OK"
+                        android:layout_weight="1" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/layout_110_NoTerminal"
+                android:weightSum="1"
+                android:visibility="invisible">
+
+                <TextView
+                    android:text="Поиск весового терминала"
+                    android:layout_width="match_parent"
+                    android:layout_height="127dp"
+                    android:id="@+id/textView_Header_1101"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textSize="24sp" />
+
+                <TextView
+                    android:text="Терминал не найден"
+                    android:layout_width="match_parent"
+                    android:layout_height="127dp"
+                    android:id="@+id/textView_Header_1102"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textSize="24sp" />
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="129dp">
+
+                    <Button
+                        android:text="No"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/b_110_0"
+                        android:layout_weight="1"
+                        android:visibility="invisible" />
+
+                    <Button
+                        android:text="Ок"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/b_110_OK"
+                        android:layout_weight="1" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:id="@+id/LL11_Empty"
                 android:visibility="invisible">
 
                 <Button
-                    android:text="loader found"
+                    android:text="no terminal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/btn_11_01_Loader_Found" />
+                    android:id="@+id/btn_11_NoTerminal" />
 
                 <Button
-                    android:text="to begin job"
+                    android:text="terminal found"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/btn_11_00_Begin_job" />
+                    android:id="@+id/btn_11_TerminalFound" />
+
+                <Button
+                    android:text="begin job"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btn_11_BeginJob" />
             </LinearLayout>
 
             <LinearLayout
@@ -72,19 +174,19 @@
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="129dp">
 
                     <Button
                         android:text="No"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:id="@+id/b_1000_0"
                         android:layout_weight="1"
                         android:visibility="invisible" />
 
                     <Button
                         android:text="Yes"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:id="@+id/b_1000_1"
                         android:layout_weight="1" />
@@ -120,11 +222,11 @@
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="130dp">
 
                     <Button
                         android:text="No"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:id="@+id/b_1010_0"
                         android:layout_weight="1"
@@ -132,7 +234,7 @@
 
                     <Button
                         android:text="Yes"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:id="@+id/b_1010_1"
                         android:layout_weight="1"
@@ -965,7 +1067,7 @@
                     android:id="@+id/text_9_Header"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Запрос на обслуживание"
+                    android:text="Поиск погрузчика"
                     android:textAlignment="center"
                     android:textSize="30sp" />
 
@@ -982,16 +1084,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.05"
-                    android:visibility="invisible">
+                    android:visibility="visible">
 
                     <Button
-                        android:text="Button"
+                        android:text="LoaderFound"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/button_90_LoaderFound" />
 
                     <Button
-                        android:text="Button"
+                        android:text="NoLoader"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/button_90_NoLoader" />
@@ -1001,7 +1103,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="освежить"
-                        android:visibility="invisible"
                         tools:ignore="HardcodedText" />
 
                     <Button
@@ -1009,7 +1110,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="отклонен"
-                        android:visibility="invisible"
                         tools:ignore="HardcodedText" />
 
                     <Button
@@ -1017,7 +1117,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="принят"
-                        android:visibility="invisible"
                         tools:ignore="HardcodedText" />
 
                     <Button

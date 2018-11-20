@@ -30,7 +30,7 @@ public class Configurator {
     int
             terminalFindAddr = 80;          // Адрес в сети, с которого будет начат поиск терминала
     int
-            mixerPort = 28080;              // Порт подключения миксеров
+            loaderPort = 28080;              // Порт подключения миксеров
     boolean
             is_Connected_to_network;        //
     int
