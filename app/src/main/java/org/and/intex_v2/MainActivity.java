@@ -90,14 +90,10 @@ public class MainActivity extends AppCompatActivity {
             ndLoader;       // Погрузчик
 
     /* Лайауты */
-    FrameLayout             // Главный фрейм. Если его погасить, погаснет все
-            mainFrame;
-    LinearLayout[]
-            layout;
-    LayoutStatusClass
-            layoutStatus;
-    LayoutClass
-            L[], L0, L1;
+    FrameLayout mainFrame;
+    LinearLayout[] layout;
+    LayoutStatusClass layoutStatus;
+    LayoutClass L[], L0, L1;
 
     /* Блок кнопок (L4.1) */
     LinearLayout

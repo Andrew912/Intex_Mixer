@@ -840,21 +840,19 @@ public class NetworkDevice {
                         whileContinue = true;
                 String                          // Текущий адрес, по которому ведем поиск
                         ipAddress;
-                /* Блок с поиском "вверх" */
-//            int                             // Счетчик адресов при поиске, задаем из параметра 3
-//                    addressCounter = Integer.parseInt(params[3]);
-//            int                             // До какого адреса смотреть, задаем из параметра 4
-//                    addressLimit = Integer.parseInt(params[4]);
                 /* Блок с поиском "вниз" */
                 int                             // Счетчик адресов при поиске, задаем из параметра 4
                         addressCounter = Integer.parseInt(params[4]);
                 int                             // До какого адреса смотреть, задаем из параметра 3
                         addressLimit = Integer.parseInt(params[3]);
                 while (whileContinue) {
+
+                    Log.i(logTag, name + ": " + ipAddress);
+                    Log.i(logTag, name + ": " + ipAddress);
+
                     ipAddress = params[0] + Integer.toString(addressCounter);
                     final String finalIpAddress = ipAddress;
 
-                    Log.i(logTag, name + ": " + ipAddress);
 
                     mainActivity.runOnUiThread(new Runnable() {
                         @Override
@@ -993,7 +991,7 @@ public class NetworkDevice {
                     setEvent(NetworkDevice.EventList.E0_PingNow);
                 else
                     setEvent(NetworkDevice.EventList.E1_PingTimeout);
-                Log.i("*****", "name= " + name);
+                Log.i("DeviceSinglePingTask", "name= " + name);
             }
         }
 
@@ -1163,8 +1161,8 @@ public class NetworkDevice {
         devAddr = devParam[1];
         devPort = devParam[2];
         devName = devParam[3];
-        addrBeg = devParam[4] != null ? devParam[4] : "20";
-        addrEnd = devParam[5] != null ? devParam[5] : "3";
+        addrBeg = devParam[4] != null ? devParam[4] : "3";
+        addrEnd = devParam[5] != null ? devParam[5] : "20";
 
         /* Инициализация массива кнопок-колбэков для возврата управления в вызывающий модуль */
         btnCallback = btnCallbackParam;
