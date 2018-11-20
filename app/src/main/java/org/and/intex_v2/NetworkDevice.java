@@ -724,30 +724,18 @@ public class NetworkDevice {
      */
     public class NetworkDeviceActionClass {
         /* Параметры */
-        String logTag
-                = "Device Ping Class";
-        MainActivity
-                mainActivity;
-        LinearLayout
-                mainSwitch;
+        String logTag = "Device Ping Class";
+        MainActivity mainActivity;
+        LinearLayout mainSwitch;
 
-        //        /* Тип сообщения - неизвестен, ответ устройства на пинг и пр. */
-//        enum MsgType {
-//            unknown,
-//            devicePingResponse
-//        }
-//
         /* Имя найденного устройства */
-        public String
-                name;
+        public String name;
 
         /* Адрес устройства */
-        public String
-                address;
+        public String address;
 
         /*  */
-        MyMessageReader
-                myMsgReader;
+        MyMessageReader myMsgReader;
 
         /**
          * Конструктор класса NetworkDeviceActionClass
@@ -865,6 +853,9 @@ public class NetworkDevice {
                 while (whileContinue) {
                     ipAddress = params[0] + Integer.toString(addressCounter);
                     final String finalIpAddress = ipAddress;
+
+                    Log.i(logTag, name + ": " + ipAddress);
+
                     mainActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -874,12 +865,9 @@ public class NetworkDevice {
                     });
                     /* Пытаемся открыть соединение и провести обмен строками */
                     try {
-                        socket
-                                = new Socket(ipAddress, Integer.parseInt(params[1]));
-                        inputStream
-                                = socket.getInputStream();
-                        outputStream
-                                = socket.getOutputStream();
+                        socket = new Socket(ipAddress, Integer.parseInt(params[1]));
+                        inputStream = socket.getInputStream();
+                        outputStream = socket.getOutputStream();
                         /* Отправка строки байт. Строку берем прямо из MessageMakerLocal */
                         byte[] buffer = ping().getBytes();
                         outputStream.write(buffer);
@@ -1176,7 +1164,7 @@ public class NetworkDevice {
         devPort = devParam[2];
         devName = devParam[3];
         addrBeg = devParam[4] != null ? devParam[4] : "20";
-        addrEnd = devParam[5] != null ? devParam[5] : "2";
+        addrEnd = devParam[5] != null ? devParam[5] : "3";
 
         /* Инициализация массива кнопок-колбэков для возврата управления в вызывающий модуль */
         btnCallback = btnCallbackParam;
@@ -1214,18 +1202,12 @@ public class NetworkDevice {
         mainActivity = activity;
 
         /* Заполнение параметров поиска сетевых устройств */
-        netMask
-                = pNetMask;
-        devAddr
-                = pDevAddr;
-        devPort
-                = pDevPort;
-        devName
-                = pDevName;
-        addrBeg
-                = pAddrStart;
-        addrEnd
-                = pAddrStop;
+        netMask = pNetMask;
+        devAddr = pDevAddr;
+        devPort = pDevPort;
+        devName = pDevName;
+        addrBeg = pAddrStart;
+        addrEnd = pAddrStop;
 
         /* Инициализация всего */
         init();

@@ -214,6 +214,7 @@ public class Controller {
                                         ),
                                         Integer.toString(mainActivity.conf.terminalPort),
                                         Integer.toString(mainActivity.conf.terminalStartAddress),
+                                        null,
                                         null
                                 },
                         new TextView[]
@@ -396,9 +397,11 @@ public class Controller {
                 /* Если оперция - загрузка, то на экран 8, иначе - 6 */
                 if (mainActivity.currentOper.operIsLoad() == true) {
                     /* Надо проверить подключние погрузчика */
+                    Log.i("L5_BUTTON_ACCEPT", "==============================");
                     Log.i("L5_BUTTON_ACCEPT",
                             "servern=" + mainActivity.currentOper.getParam("servern") +
-                                    ", servera=" + mainActivity.currentOper.getParam("servera"));
+                                    ", servera=" + mainActivity.currentOper.getParam("servera") +
+                                    ", port=" + mainActivity.conf.loaderPort);
                     Log.i("L5_BUTTON_ACCEPT", "==============================");
                     /**
                      * Попытаемся найти погрузчик в сети
@@ -433,6 +436,7 @@ public class Controller {
                                             ),
                                             Integer.toString(mainActivity.conf.loaderPort),
                                             Integer.toString(mainActivity.conf.terminalStartAddress),
+                                            null,
                                             null
                                     },
                             new TextView[]

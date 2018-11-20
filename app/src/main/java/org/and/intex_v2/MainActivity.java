@@ -1194,7 +1194,7 @@ public class MainActivity extends AppCompatActivity {
      * Или класса, в котором будет все */
 
     void paramSave() {
-        Log.i(logTAG, "SAVE params");
+//        Log.i(logTAG, "SAVE params");
         if (MixerTermName.equals(et_MixerTermName.getText()) == false) {
             MixerTermName
                     = et_MixerTermName.getText().toString();
