@@ -244,7 +244,8 @@ public class DBHandler {
 
         /* Отрезаем лишнее у IP-адреса */
         retVar[activity.net.NET_DEVICE_ADDR]
-                = activity.extractPatternFromString(retVar[activity.net.NET_DEVICE_ADDR], "\\d+.\\d+.\\d+.\\d+$");
+                = activity.extractPatternFromString(retVar[activity.net.NET_DEVICE_ADDR], "" +
+                "");
 
         Log.i(logTag, "getDeviceAddrfromDB: retVar[0]=" + retVar[activity.net.NET_DEVICE_NAME]);
         Log.i(logTag, "getDeviceAddrfromDB: retVar[1]=" + retVar[activity.net.NET_DEVICE_ADDR]);
@@ -303,10 +304,12 @@ public class DBHandler {
         Log.i(logTag, "SAVE: devNetMask=" + devNetMask + ", devName=" + devName + ", devAddr=" + devAddr);
 
         /* Если адрес устройства в БД для данной подсети не совпадает с заданным, то перезаписать */
-        if (!readDevAddrfromDB(devNetMask, devName).equals(devAddr))
+        String tryReadAddress = readDevAddrfromDB(devNetMask, devName);
+        if (tryReadAddress != null) {
+            if (!tryReadAddress.equals(devAddr))
+                updateDevAddrInDB(devNetMask, devName, devAddr);
+        } else
             appendDevAddrToDB(devNetMask, devName, devAddr);
-        else
-            updateDevAddrInDB(devNetMask, devName, devAddr);
 
         /* Распечатать таблицу OBJECTS */
         printTableData_OBJECTS();
@@ -389,7 +392,8 @@ public class DBHandler {
         } else {
             append_Device_Addr_in_DB(devNetMask, devName, newAddr);
         }
-        printTableData_OBJECTS();
+//        printTableData_OBJECTS();
+        printTableData("OBJECTS");
     }
 
     /**
@@ -943,16 +947,14 @@ public class DBHandler {
 
         Log.i("printTableData", "PREPARE to print table " + tableName);
 
-        String delimiter
-                = "==============================";
-        String retVar
-                = "\n" + delimiter + "\nTable: " + tableName + "\n" + delimiter + "\n";
-        String[] tableColumns
-                = getTableColumns(tableName);
-        String query
-                = "select * from " + tableName;
-        Cursor cursor
-                = database.rawQuery(query, null);
+        String delimiter = "==============================";
+
+        String retVar = "\n" + delimiter + "\nTable: " + tableName + "\n" + delimiter + "\n";
+
+        String[] tableColumns = getTableColumns(tableName);
+
+        String query = "select * from " + tableName;
+        Cursor cursor = database.rawQuery(query, null);
 //        Log.i("getTableColumns", "\n==================");
 //        Log.i("getTableColumns", "\nTable: " + tableName);
 //        Log.i("getTableColumns", "\n==================");
@@ -968,8 +970,12 @@ public class DBHandler {
                 i = 0;
                 while (i < tableColumns.length) {
 //                    Log.i("printTableData", "tableColumns[i]=" + tableColumns[i]);
-                    retVar = retVar +
-                            tableColumns[i] + "=[" + cursor.getString(cursor.getColumnIndex(tableColumns[i])) + "] ";
+                    retVar =
+                            retVar +
+                            tableColumns[i] +
+                                    "=[" +
+                                    cursor.getString(cursor.getColumnIndex(tableColumns[i])) +
+                                    "] ";
                     i++;
                 }
                 j++;

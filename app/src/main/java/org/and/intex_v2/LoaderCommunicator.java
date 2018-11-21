@@ -69,28 +69,25 @@ public class LoaderCommunicator {
             msgSendWeight,              // Данные об остатке для погрузки
             msgLoadingStop;             // Сообщение об окончании обслуживания
 
+    /**
+     * Конструктор
+     *
+     * @param mainActivity
+     * @param loaderAddr
+     */
+    public LoaderCommunicator(
+            MainActivity mainActivity,
+            String loaderAddr
+    ) {
+        this.activity = mainActivity;
+        socketAddr = loaderAddr;
+        socketPort = 28080;
+        buffSize = activity.conf.dataLoadBufferSize;
+        deviceName = activity.conf.deviceName;
 
-    public LoaderCommunicator(MainActivity mainActivity) {
-        this.activity
-                = mainActivity;
-        // Адрес терминала берем из конфигуратора
-        // А вот как он там оказался, надо смотреть в конфигураторе
-        socketAddr
-                = "192.168.1.44";
-        socketPort
-                = activity.conf.terminalPort;
-        buffSize
-                = activity.conf.dataLoadBufferSize;
-        deviceName
-                = activity.conf.deviceName;
-
-        //
-        tryServiceRequest
-                = false;
-        continueSendWeight
-                = false;
-        channelFree
-                = true;
+        tryServiceRequest = false;
+        continueSendWeight = false;
+        channelFree = true;
         deviceWaitAnswerStatus = DeviceWaitAnswerStatus.NONE;
     }
 
@@ -148,13 +145,10 @@ public class LoaderCommunicator {
         continueSendWeight = true;
         if (timerServerSendWeight == null) {
             // Процедура, вызываемая по таймеру
-            SendWeightData sendWeightData
-                    = new SendWeightData();
+            SendWeightData sendWeightData = new SendWeightData();
             // Запуcк таймера 0.5 с + 0.5 с
-            timerServerSendWeight
-                    = new Timer();
-            timerServerSendWeight
-                    .schedule(sendWeightData, 500, 500);
+            timerServerSendWeight = new Timer();
+            timerServerSendWeight.schedule(sendWeightData, 500, 500);
         }
     }
 
@@ -165,8 +159,7 @@ public class LoaderCommunicator {
 
         @Override
         public void run() {
-            msgSendWeight
-                    = activity.messengerClass.msg_ToLoader_SendWeight();
+            msgSendWeight = activity.messengerClass.msg_ToLoader_SendWeight();
             /* Если можно продолжать попытки отправки запроса, то */
             if (continueSendWeight == true) {
                 /* Отправить */

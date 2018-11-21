@@ -446,11 +446,10 @@ public class NetworkDevice {
         void calc(int tName) {
             if (statesAreOk() && messagesAreOk(tName) && eventsAreOk() && ingibitorStatesAreOk()) {
 
-                if (tName == T1_GetBeginCommand) {
-                    Log.i("Calc", "== T1 ==");
-                }
-
-                Log.i("CALC", "Transiton=" + transitionNames[tName]);
+//                if (tName == T1_GetBeginCommand) {
+//                    Log.i("Calc", "== T1 ==");
+//                }
+//                Log.i("CALC", "Transiton=" + transitionNames[tName]);
 
                 /* Установить состояния */
                 setTargetStates();
@@ -467,7 +466,7 @@ public class NetworkDevice {
                 /* Очистить события и сообщения */
                 clearEventsNMessages();
             }
-            Log.i("CALC", "\n");
+//            Log.i("CALC", "\n");
         }
 
         /**
@@ -597,7 +596,9 @@ public class NetworkDevice {
                     Log.i(logTag, "\nPING:\n" + devName + "\n" + netMask + "\n" + devAddr + "\n" + devPort + "\n");
                     pingDeviceThread = networkDeviceActionClass.pingDevice(
                             new String[]{
-                                    netMask + devAddr,
+                                    mainActivity.extractPatternFromString(
+                                            netMask + devAddr,
+                                            "\\d+.\\d+.\\d+.\\d+$"),
                                     devPort,
                                     devName});
                     break;
@@ -650,10 +651,10 @@ public class NetworkDevice {
                 threadToKill = null;
                 dummy.interrupt();
             }
-            if (threadToKill == null) {
-                Log.i(logTag, "=== Thread killed ===");
-            } else
-                Log.i(logTag, "=== Thread LIVE ===");
+//            if (threadToKill == null) {
+//                Log.i(logTag, "=== Thread killed ===");
+//            } else
+//                Log.i(logTag, "=== Thread LIVE ===");
         }
 
         /* Действия по таймауту PING */
@@ -748,31 +749,6 @@ public class NetworkDevice {
         }
 
         /**
-         * Делает один пинг устройства с заданным адресом и портом.
-         * Параметры:
-         * 1. IP-адрес
-         * 2. Порт
-         * 3. Имя устройства
-         *
-         * @param deviceParams
-         * @return DeviceSinglePingTaskClass - чтобы можно было его остановить
-         */
-        public Thread pingDevice(
-                final String[] deviceParams) {
-            Thread thread;
-            Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
-                    /* Вызов того, что надо вызвать */
-                    new DeviceSinglePingTaskClass().execute(deviceParams);
-                }
-            };
-            thread = new Thread(runnable);
-            thread.start();
-            return thread;
-        }
-
-        /**
          * Делает поиск устройства с заданным адресом и портом.
          * Параметры:
          * 1. IP-адрес
@@ -848,9 +824,9 @@ public class NetworkDevice {
                 while (whileContinue) {
 
                     ipAddress = params[0] + Integer.toString(addressCounter);
-                    Log.i(logTag, "FIND =========================");
-                    Log.i(logTag, "name=" + name + ", addr=" + ipAddress);
-                    Log.i(logTag, "==============================");
+//                    Log.i(logTag, "FIND =========================");
+//                    Log.i(logTag, "name=" + name + ", addr=" + ipAddress);
+//                    Log.i(logTag, "==============================");
 
                     final String finalIpAddress = ipAddress;
 
@@ -879,7 +855,7 @@ public class NetworkDevice {
                         myMsgReader.readMsg(new String(b));
                         Log.i(logTag, "myMsgReader.name=" + myMsgReader.name + ", params[2]=" + params[2]);
                         /* Если имя устройства совпало с тем, которое ищем, то запишем адрес устройства */
-                        if (myMsgReader.name.equals(params[2].toString())) {
+                        if (myMsgReader.name.equals(params[2])) {
                             /* И тут сразу записываем данные для возврата */
                             realDeviceParam[0] = name = myMsgReader.name;
                             realDeviceParam[1] = address = ipAddress;
@@ -924,6 +900,31 @@ public class NetworkDevice {
         }
 
         /**
+         * Делает один пинг устройства с заданным адресом и портом.
+         * Параметры:
+         * 1. IP-адрес
+         * 2. Порт
+         * 3. Имя устройства
+         *
+         * @param deviceParams
+         * @return DeviceSinglePingTaskClass - чтобы можно было его остановить
+         */
+        public Thread pingDevice(
+                final String[] deviceParams) {
+            Thread thread;
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    /* Вызов того, что надо вызвать */
+                    new DeviceSinglePingTaskClass().execute(deviceParams);
+                }
+            };
+            thread = new Thread(runnable);
+            thread.start();
+            return thread;
+        }
+
+        /**
          * Непосредственно выполняет одиночный пинг
          */
         class DeviceSinglePingTaskClass extends AsyncTask<String, Void, String> {
@@ -937,20 +938,17 @@ public class NetworkDevice {
              */
             @Override
             protected String doInBackground(String... params) {
-                Socket
-                        socket;
-                InputStream
-                        inputStream;
-                OutputStream
-                        outputStream;
+
+                Log.i(logTag, "*************** params[0]=" + params[0]);
+
+                Socket socket;
+                InputStream inputStream;
+                OutputStream outputStream;
                 /* Пытаемся открыть соединение и провести обмен строками */
                 try {
-                    socket
-                            = new Socket(params[0], Integer.parseInt(params[1]));
-                    inputStream
-                            = socket.getInputStream();
-                    outputStream
-                            = socket.getOutputStream();
+                    socket = new Socket(params[0], Integer.parseInt(params[1]));
+                    inputStream = socket.getInputStream();
+                    outputStream = socket.getOutputStream();
                     /* Отправка строки байт. Строку берем прямо из MessageMakerLocal */
                     byte[] buffer = ping().getBytes();
                     outputStream.write(buffer);
@@ -964,7 +962,7 @@ public class NetworkDevice {
                     myMsgReader.readMsg(new String(b));
                     Log.i(logTag, "myMsgReader.name=" + myMsgReader.name + ", params[2]=" + params[2]);
                     /* Если имя устройства совпало с тем, которое ищем, то запишем адрес устройства */
-                    if (myMsgReader.name.equals(params[2].toString())) {
+                    if (myMsgReader.name.equals(params[2])) {
                         /* Данные для возврата */
                         realDeviceParam[0] = name = myMsgReader.name;
                         realDeviceParam[1] = address = params[0];
@@ -1162,7 +1160,7 @@ public class NetworkDevice {
         devPort = devParam[2];
         devName = devParam[3];
         addrBeg = devParam[4] != null ? devParam[4] : "3";
-        addrEnd = devParam[5] != null ? devParam[5] : "20";
+        addrEnd = devParam[5] != null ? devParam[5] : "10";
 
         /* Инициализация массива кнопок-колбэков для возврата управления в вызывающий модуль */
         btnCallback = btnCallbackParam;
@@ -1275,11 +1273,8 @@ public class NetworkDevice {
      * Главная вызываемая процедура - Вызывается из задачи таймера главного цикла
      */
     void main() {
-
-        Log.i("MAIN", "*** STEP ***");
-
+//        Log.i("MAIN", "*** STEP ***");
         setMessage(MessageList.M10_TimerSignal);
-
         for (int i = 0; i < transitionsNumber; i++) {
             transition[i].calc(i);
         }
@@ -1691,7 +1686,6 @@ public class NetworkDevice {
      */
     void sort() {
         TransitionClass mediator;
-
         for (int i = 0; i < transition.length - 1; i++) {
             for (int j = i + 1; j < transition.length; j++) {
                 if (transition[i].priority < transition[j].priority) {
@@ -1763,8 +1757,7 @@ public class NetworkDevice {
      * @return
      */
     String[] getRealDeviceParam() {
-        return
-                realDeviceParam;
+        return realDeviceParam;
     }
 
     /**

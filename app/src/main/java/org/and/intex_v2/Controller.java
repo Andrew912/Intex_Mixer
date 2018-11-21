@@ -51,6 +51,7 @@ import static org.and.intex_v2.MainActivity.L9_BUTTON_REFRESH;
 import static org.and.intex_v2.MainActivity.L9_BUTTON_REJECT;
 import static org.and.intex_v2.MainActivity.LAYOUT_00_CLEARING;
 import static org.and.intex_v2.MainActivity.LAYOUT_0_PARAMS;
+import static org.and.intex_v2.MainActivity.LAYOUT_111_FINDTERM;
 import static org.and.intex_v2.MainActivity.LAYOUT_1_BEGIN;
 import static org.and.intex_v2.MainActivity.LAYOUT_2_NO_TASK;
 import static org.and.intex_v2.MainActivity.LAYOUT_3_DO_TASK;
@@ -131,9 +132,12 @@ public class Controller {
 
             /* Распечатка таблицы DNS */
             case L00_BUTTON_DNS:
-
-                mainActivity.dbHandler.printTableData_OBJECTS();
-
+                mainActivity.setTextInLayout(
+                        LAYOUT_00_CLEARING,
+                        mainActivity.dbHandler.printTableData("OBJECTS"));
+                Log.i(
+                        logTAG,
+                        mainActivity.dbHandler.printTableData("OBJECTS"));
                 break;
 
             /* Очистка данных */
@@ -183,8 +187,12 @@ public class Controller {
 
             /* Сообщения для передачи на сервер */
             case L00_BUTTON_MAIL:
-                mainActivity
-                        .setTextInLayout(LAYOUT_00_CLEARING, mainActivity.dbHandler.printTableData("mail"));
+                mainActivity.setTextInLayout(
+                        LAYOUT_00_CLEARING,
+                        mainActivity.dbHandler.printTableData("mail"));
+                Log.i(
+                        logTAG,
+                        mainActivity.dbHandler.printTableData("mail"));
                 break;
 
             /* На экран БД */
@@ -202,6 +210,11 @@ public class Controller {
                  *
                  */
 
+                mainActivity.layoutActivate(
+                        LAYOUT_111_FINDTERM,
+                        "Поиск терминала"
+                );
+
                 /* Проверяем подключение весового терминала если он еще не подключен */
                 mainActivity.ndTerminal = new NetworkDevice(
                         mainActivity,
@@ -213,7 +226,6 @@ public class Controller {
                                                 mainActivity.conf.terminalName
                                         ),
                                         Integer.toString(mainActivity.conf.terminalPort),
-                                        Integer.toString(mainActivity.conf.terminalStartAddress),
                                         mainActivity.conf.terminalName,
                                         null,
                                         null
@@ -229,7 +241,6 @@ public class Controller {
                                 }
                 );
                 mainActivity.ndTerminal.startProc();
-
 //                if (mainActivity.ifServerFound(mainActivity.conf.terminalName) == false) {
 //                    mainActivity.CheckConnection(
 //                            mainActivity.conf.terminalName,
@@ -242,7 +253,6 @@ public class Controller {
 //                } else {
 //                    mainActivity.printServerFound();
 //                }
-
             case L11_BUTTON_BEGIN_JOB_NEXT:
                 /* Если весовой терминал подключен, то работаем дальше как положено
                 *
@@ -253,7 +263,8 @@ public class Controller {
                 * */
 
                 /* Запускаем Получение показаний весов от терминала */
-                mainActivity.terminalCommunicator.readDataStart();
+                if (mainActivity.terminalCommunicator != null)
+                    mainActivity.terminalCommunicator.readDataStart();
 
                 /* Параметры - на экран */
                 mainActivity.displayWeightParameters();
@@ -437,7 +448,6 @@ public class Controller {
                                                     mainActivity.currentOper.getParam("servern")
                                             ),
                                             Integer.toString(mainActivity.conf.loaderPort),
-                                            Integer.toString(mainActivity.conf.terminalStartAddress),
                                             mainActivity.currentOper.getParam("servern"),
                                             null,
                                             null
@@ -500,9 +510,11 @@ public class Controller {
             /* Погрузка - Завершено */
             case L7_BUTTON_COMPLETE:
                 mainActivity.weightDataToLoaderSender_Stop();
-//                mainActivity.weightDataFromDeviceReader_Stop();  // Остановить получение показаний весов
-                mainActivity.terminalCommunicator.readDataStop();
-                mainActivity.loader.send(mainActivity.loader.msg_LoadStop(mainActivity.currentOper.operId));
+                mainActivity.weightDataFromDeviceReader_Stop();  // Остановить получение показаний весов
+                if (mainActivity.terminalCommunicator != null)
+                    mainActivity.terminalCommunicator.readDataStop();
+                if (mainActivity.loader != null)
+                    mainActivity.loader.send(mainActivity.loader.msg_LoadStop(mainActivity.currentOper.operId));
                 // Отчет о выполнении операции
                 mainActivity.currentOper.setToComplete();
                 // Проверить оставшиеся операции текущей задачи
@@ -516,7 +528,7 @@ public class Controller {
                      * обращении к погрузчику он не слышит запрос на обслуживание.
                      * Надо будет найти причину и тогда можно будет этот выход убрать.
                      */
-                    System.exit(0);
+//                    System.exit(0);
                 }
                 break;
 

@@ -177,7 +177,7 @@ public class TerminalCommunicator {
 
     public boolean weightDataFromDeviceReader_Start() {
 
-        if (mainActivity.ifServerFound(mainActivity.conf.terminalName)==false) return false;
+//        if (mainActivity.ifServerFound(mainActivity.conf.terminalName)==false) return false;
 
         final int dataReadPeriod
                 = 2000;

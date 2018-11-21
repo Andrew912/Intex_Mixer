@@ -55,18 +55,42 @@
                     android:layout_height="129dp">
 
                     <Button
-                        android:text="No"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:id="@+id/b_90_0"
-                        android:layout_weight="1"
-                        android:visibility="invisible" />
-
-                    <Button
                         android:text="Ок"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:id="@+id/b_90_OK"
+                        android:layout_weight="1" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/layout_91_FindLoader"
+                android:weightSum="1"
+                android:visibility="invisible">
+
+                <TextView
+                    android:text="Поиск погрузчика"
+                    android:layout_width="match_parent"
+                    android:layout_height="127dp"
+                    android:id="@+id/textView_Header_911"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textSize="24sp" />
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="129dp">
+
+                    <Button
+                        android:text="отменить"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/b_91_Cancel"
                         android:layout_weight="1" />
 
                 </LinearLayout>
@@ -103,18 +127,42 @@
                     android:layout_height="129dp">
 
                     <Button
-                        android:text="No"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:id="@+id/b_110_0"
-                        android:layout_weight="1"
-                        android:visibility="invisible" />
-
-                    <Button
                         android:text="Ок"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:id="@+id/b_110_OK"
+                        android:layout_weight="1" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/layout_111_FindTerminal"
+                android:weightSum="1"
+                android:visibility="invisible">
+
+                <TextView
+                    android:text="Поиск весового терминала"
+                    android:layout_width="match_parent"
+                    android:layout_height="127dp"
+                    android:id="@+id/textView_Header_1111"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textSize="24sp" />
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="129dp">
+
+                    <Button
+                        android:text="отменить"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/b_111_Cancel"
                         android:layout_weight="1" />
 
                 </LinearLayout>

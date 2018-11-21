@@ -118,21 +118,19 @@ public class LayoutClass {
      * @param pBtnText
      */
     void setText(
-            String[]
-                    pTextText,
-            String[]
-                    pBtnText
+            String[] pTextText,
+            String[] pBtnText
     ) {
-        if (pTextText != null) {
+        if (pTextText != null)
             for (int i = 0; i < text_size; i++)
                 if (pTextText[i] != null)
                     text[i].setText(pTextText[i]);
-        }
-        if (pBtnText != null) {
+
+        if (pBtnText != null)
             for (int i = 0; i < btn_size; i++)
                 if (pBtnText[i] != null)
                     btn[i].setText(pBtnText[i]);
-        }
+
     }
 
     /**
@@ -142,16 +140,11 @@ public class LayoutClass {
      * @param pBtnText
      */
     public void Activate(
-            String[]
-                    pTextText,
-            String[]
-                    pBtnText,
-            LinearLayout[]
-                    layouts,
-            LayoutClass
-                    pLayoutToReturn,
-            Button
-                    pButtonToClick      // "Нажать" кнопку при возврате управления
+            String[] pTextText,
+            String[] pBtnText,
+            LinearLayout[] layouts,
+            LayoutClass pLayoutToReturn,
+            Button pButtonToClick      // "Нажать" кнопку при возврате управления
     ) {
         // Сохраняем номер текущего активного (видимого) экрана
         currentActiveLayout

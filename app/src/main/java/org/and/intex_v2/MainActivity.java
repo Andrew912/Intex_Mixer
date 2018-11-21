@@ -46,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
             logTAG = "MAIN",
             logMessage;
 
+    MainActivity
+            mainActivity;
+
     /* Классы */
     Context
             context;
@@ -227,7 +230,9 @@ public class MainActivity extends AppCompatActivity {
             LAYOUT_11_EMPTY = 11,
             LAYOUT_00_CLEARING = 12,
             LAYOUT_90_NOLOADER = 13,
-            LAYOUT_110_NOTERM = 14;
+            LAYOUT_110_NOTERM = 14,
+            LAYOUT_91_FINDLOADER = 15,
+            LAYOUT_111_FINDTERM = 16;
 
     /* Текст экрана в лайауте */
     TextView textView[];
@@ -310,6 +315,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mainActivity = this;
         /********************************
          * Объявление объектов - классов
          ********************************/
@@ -338,8 +344,6 @@ public class MainActivity extends AppCompatActivity {
                 = new DBFunctions(this, dbHelper.getWritableDatabase());
         server
                 = new ServerCommincator(this);
-        loader
-                = new LoaderCommunicator(this);
         net
                 = new NetworkHandler(this);
         sfc
@@ -348,8 +352,8 @@ public class MainActivity extends AppCompatActivity {
                 = new SendMailToControlServer(this);
 //        mailToSend
 //                = new MailToSend(this, dbHelper.getWritableDatabase());
-        terminalCommunicator
-                = new TerminalCommunicator(this);
+//        terminalCommunicator
+//                = new TerminalCommunicator(this);
 
         /***********************
          * Объявление Лайауты
@@ -390,6 +394,10 @@ public class MainActivity extends AppCompatActivity {
                 = (LinearLayout) findViewById(R.id.LL9_ServiceRequest);
         layout[LAYOUT_71_LOAD_OPER]
                 = (LinearLayout) findViewById(R.id.LL71_Load_Task);
+        /* Поиск погрузчика */
+        layout[LAYOUT_91_FINDLOADER] = (LinearLayout) findViewById(R.id.layout_91_FindLoader);
+        /* Поиск терминала */
+        layout[LAYOUT_111_FINDTERM] = (LinearLayout) findViewById(R.id.layout_111_FindTerminal);
         /* Ошибка поиска погрузчика */
         layout[LAYOUT_90_NOLOADER] = (LinearLayout) findViewById(R.id.layout_90_NoLoader);
         /* Ошибка поиска терминала */
@@ -567,6 +575,12 @@ public class MainActivity extends AppCompatActivity {
         /* Отчет об ошибке поиска терминала */
         textView[LAYOUT_110_NOTERM]
                 = (TextView) findViewById(R.id.textView_Header_1101);
+        /* Поиск погрузчика */
+        textView[LAYOUT_91_FINDLOADER]
+                = (TextView) findViewById(R.id.textView_Header_911);
+        /* Поиск терминала */
+        textView[LAYOUT_111_FINDTERM]
+                = (TextView) findViewById(R.id.textView_Header_1111);
 
 
         text_7_target
@@ -1002,7 +1016,12 @@ public class MainActivity extends AppCompatActivity {
         btn_90_LoaderFound.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                gotoLayout(LAYOUT_9_SERV_REQUEST, currentOper.getOperationInfoForView());
+                String[] realDevParams = ndLoader.getRealDeviceParam();
+                saveDeviceAddr(
+                        realDevParams[0],
+                        realDevParams[1]
+                );
+                gotoLayout(LAYOUT_9_SERV_REQUEST, "");
             }
         });
 
@@ -1031,8 +1050,14 @@ public class MainActivity extends AppCompatActivity {
         btn_11_TerminalFound.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("btn_11_TerminalFound", "pressed");
-                controller.controller(L5_BUTTON_ACCEPT);
+                String[] realDevParams = ndTerminal.getRealDeviceParam();
+                saveDeviceAddr(
+                        realDevParams[0],
+                        realDevParams[1]
+                );
+//                terminalCommunicator = new TerminalCommunicator(mainActivity);
+                dbHandler.paramStore("MixerTermAddr", realDevParams[1], null);
+//                controller.controller(L5_BUTTON_ACCEPT);
             }
         });
 
@@ -1979,8 +2004,7 @@ public class MainActivity extends AppCompatActivity {
      */
     public void weightDataToLoaderSender_Stop() {
         Log.i(logTAG + ": weightData: ", "stop");
-        loader
-                .serverSendWeightStop();
+        if (loader != null) loader.serverSendWeightStop();
     }
 
     /**
@@ -2113,6 +2137,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Получает данные из строки - ответа от сервера
+     *
+     * @param srcString
+     * @return
+     */
     public String extractData(String srcString) {
         String r = "0";
         Pattern pattern
@@ -2159,23 +2189,23 @@ public class MainActivity extends AppCompatActivity {
     void displayWeightParameters() {
 
 //        /* Вычислить оставщийся вес */
-//        storer.weightRemain = storer.weightTarget - storer.weightCurrent;
+        storer.weightRemain = storer.weightTarget - storer.weightCurrent;
 
         // ПОказания весов
         text_7_target.setText(String.valueOf(storer.weightCurrent));
         // Остаток для погрузки
-//        textView[LAYOUT_7_COMPLEX_OPER].setText(String.valueOf(storer.weightRemain));
+        textView[LAYOUT_7_COMPLEX_OPER].setText(String.valueOf(storer.weightRemain));
     }
 
     void displayWeightParameters1() {
 
         // Вычислить отставщийся вес
-//        storer.weightRemain = storer.weightTarget - storer.weightCurrent;
+        storer.weightRemain = storer.weightTarget - storer.weightCurrent;
 
         // ПОказания весов
         text_71_target.setText(String.valueOf(storer.weightCurrent));
         // Остаток для погрузки
-//        textView[LAYOUT_71_LOAD_OPER].setText(String.valueOf(storer.weightRemain));
+        textView[LAYOUT_71_LOAD_OPER].setText(String.valueOf(storer.weightRemain));
     }
 
     public void log(boolean needLog, String toLog) {
@@ -2250,7 +2280,7 @@ public class MainActivity extends AppCompatActivity {
                 btn_7_Complete.setVisibility(View.INVISIBLE);
                 /* Остановить получение показаний весов */
 //                weightDataFromDeviceReader_Stop();
-                terminalCommunicator.readDataStop();
+                if (terminalCommunicator != null) terminalCommunicator.readDataStop();
                 weightDataToLoaderSender_Stop();
 //                /* Запуск автонажатия кнопки */
 //                Timer timer_Click_btn_1_Begin
@@ -2327,12 +2357,21 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case LAYOUT_9_SERV_REQUEST:
+
                 /* Проверяем наличие погрузчика в сети */
+                loader
+                        = new LoaderCommunicator(
+                        this,
+                        readDeviceAddr(
+                                mainActivity.conf.networkMask,
+                                mainActivity.currentOper.getParam("servern")
+                        )
+                );
 
+                /* Запускаем Получение показаний весов от терминала */
+                weightDataFromDeviceReader_Start();
 
-                // Посылаем погрузчику запрос на обслуживание
-                // Запускаем Получение показаний весов от терминала
-//                weightDataFromDeviceReader_Start();
+                /* Посылаем погрузчику запрос на обслуживание */
                 loader.serverServiceRequest();
                 break;
 
@@ -2620,25 +2659,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Проверяет в serverFound есть ли в числе найденных указанный сервер
-     *
-     * @param serverName
-     * @return
-     */
-    boolean ifServerFound(String serverName) {
-        Log.i("ifServerFound", "serverFound.size()=" + sfc.serverFound.length);
-        if (sfc.serverFound.length > 0) {
-            for (int i = 0; i < sfc.serverFound.length; i++) {
-                if (sfc.serverFound[0] != null && sfc.serverFound[NET_DEVICE_NAME].equals(serverName)) {
-                    Log.i("ifServerFound", "serverFound[" + i + "]=" + sfc.serverFound[NET_DEVICE_NAME]);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
      * Выделяет из строки подстроку по паттерну
      *
      * @return
@@ -2677,17 +2697,15 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Сохраняет текущее значение адреса устрйоства для заданной подсети
      *
-     * @param netMask
      * @param devName
      * @param devAddr
      */
     public void saveDeviceAddr(
-            String netMask,
             String devName,
             String devAddr
     ) {
         dbHandler.saveDevAddrToDB(
-                netMask,
+                extractPatternFromString(devAddr, "\\d+.\\d+.\\d+."),
                 devName,
                 devAddr
         );

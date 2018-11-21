@@ -2,7 +2,7 @@
     <string name="app_name">Intex Mixer v.2</string>
     <string name="copyright_intex_ltd">(C)Intex, Ltd.</string>
 
-    <string name="NUMBER_OF_LAYOUTS">15</string>
+    <string name="NUMBER_OF_LAYOUTS">17</string>
     <string name="STATUS_LINE_TEXT_INITIAL">Терминал оператора v 1.0</string>
 
     <!-- Идентификатор устройства в системе -->
