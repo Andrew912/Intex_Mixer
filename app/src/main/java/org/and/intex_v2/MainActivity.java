@@ -2118,7 +2118,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.i(logTAG, "FROM DEVICE=" + res);
                     socket.close();
                     /* Пытаемся сохранить показания терминала в протокол, как - см. описание функции */
-                    storer.storeCurrentWeightToProtocol(extractData(res));
+//                    storer.storeCurrentWeightToProtocol(extractData(res));
 //                    storer.setWeightIndicatorData(res);
                 }
             } catch (Exception e) {
