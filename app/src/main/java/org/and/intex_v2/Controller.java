@@ -241,6 +241,7 @@ public class Controller {
                                 }
                 );
                 mainActivity.ndTerminal.startProc();
+                break;
 //                if (mainActivity.ifServerFound(mainActivity.conf.terminalName) == false) {
 //                    mainActivity.CheckConnection(
 //                            mainActivity.conf.terminalName,
