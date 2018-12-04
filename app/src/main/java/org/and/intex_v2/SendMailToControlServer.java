@@ -54,8 +54,8 @@ public class SendMailToControlServer {
      * Отправка протокола на сервер управления - в отдельном потоке
      */
     public void sendMail() {
-        /* Подготовить таблицу с данными почты к отправке */
-        if (mailToSend.prepareMail() == 0) return;
+//        /* Подготовить таблицу с данными почты к отправке */
+//        if (mailToSend.prepareMail() == 0) return;
 
         /* Если сервер недоступен - выход */
         if (connectionToServerCheck() == false) return;

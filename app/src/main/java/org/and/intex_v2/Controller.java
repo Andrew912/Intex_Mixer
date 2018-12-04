@@ -269,8 +269,12 @@ public class Controller {
                 /* Параметры - на экран */
                 mainActivity.displayWeightParameters();
                 mainActivity.displayWeightParameters1();
-
                 mainActivity.gotoLayout(LAYOUT_71_LOAD_OPER, "Миксер");
+
+                /* Запуск демона отправки почты */
+                mainActivity.sendMailToControlServer
+                        = new SendMailToControlServer(mainActivity);
+                mainActivity.sendMailToControlServer.sendMail();
 
                 mainActivity.currentTask.setTaskData();
 
@@ -555,7 +559,9 @@ public class Controller {
                 mainActivity.weightDataToLoaderSender_Stop();
 //                mainActivity.weightDataFromDeviceReader_Stop();  // Остановить получение показаний весов
                 /* Остановить получение показаний весов */
-                mainActivity.terminalCommunicator.readDataStop();
+//                mainActivity.terminalCommunicator.readDataStop();
+                if (mainActivity.terminalCommunicator != null)
+                    mainActivity.terminalCommunicator.weightDataFromDeviceReader_Stop();
 
                 mainActivity.loader.send(mainActivity.loader.msg_LoadStop(mainActivity.currentOper.operId));
 
@@ -588,23 +594,48 @@ public class Controller {
 
             /* Сервер подтвердил */
             case L9_BUTTON_ACCEPT:
-                // Загруженный вес
-                mainActivity.storer.weightLoaded
-                        = 0;
-                // Стартовый вес в миксере
-                mainActivity.storer.weightStart
-                        = mainActivity.storer.weightCurrent;
-                // Вычислить конечный вес в погрузчике
-                mainActivity.storer.weightTarget
-                        = mainActivity.currentOper.loadValue + mainActivity.storer.weightCurrent;
-//                Log.i(logTAG, "конечный вес в погрузчике = " + mainActivity.storer.weightTarget);
-                // Толеранс +
-                mainActivity.storer.tolerancePlus
-                        = (int) (mainActivity.currentOper.loadValue * Float.parseFloat(mainActivity.getString(R.string.LOADING_PERCENT_WEIGHT_TOLERANCE_UP)));
-                // Параметры - на экран
+//                // Загруженный вес
+//                mainActivity.storer.weightLoaded = 0;
+//                // Стартовый вес в миксере
+//                mainActivity.storer.weightStart
+//                        = mainActivity.storer.weightCurrent;
+//                // Вычислить конечный вес в погрузчике
+//                mainActivity.storer.weightTarget
+//                        = mainActivity.currentOper.loadValue + mainActivity.storer.weightCurrent;
+////                Log.i(logTAG, "конечный вес в погрузчике = " + mainActivity.storer.weightTarget);
+//
+//                // Толеранс +
+//                mainActivity.storer.tolerancePlus
+//                        = (int) (mainActivity.currentOper.loadValue * Float.parseFloat(mainActivity.getString(R.string.LOADING_PERCENT_WEIGHT_TOLERANCE_UP)));
+//                // Параметры - на экран
+//                mainActivity.displayWeightParameters();
+//                mainActivity.displayWeightParameters1();
+//                //
+//                if (mainActivity.currentOper.loadNoLoader == true) {
+//                    mainActivity.gotoLayout(LAYOUT_71_LOAD_OPER, "");
+//                } else {
+//                    mainActivity.gotoLayout(LAYOUT_7_COMPLEX_OPER, "");
+//                }
+//                break;
+                /* Загруженный вес */
+                mainActivity.storer.weightLoaded = 0;
+
+                /* Стартовый вес в миксере */
+                mainActivity.storer.weightStart = mainActivity.storer.weightCurrent;
+
+                /* Вычислить конечный вес в погрузчике */
+                mainActivity.storer.weightTarget =
+                        mainActivity.currentOper.loadValue + mainActivity.storer.weightCurrent;
+
+                /* Толеранс + */
+                mainActivity.storer.tolerancePlus =
+                        (int) (mainActivity.currentOper.loadValue * Float.parseFloat(mainActivity.getString(R.string.LOADING_PERCENT_WEIGHT_TOLERANCE_UP)));
+
+                /* Параметры - на экран */
                 mainActivity.displayWeightParameters();
                 mainActivity.displayWeightParameters1();
-                //
+
+                /*  */
                 if (mainActivity.currentOper.loadNoLoader == true) {
                     mainActivity.gotoLayout(LAYOUT_71_LOAD_OPER, "");
                 } else {
