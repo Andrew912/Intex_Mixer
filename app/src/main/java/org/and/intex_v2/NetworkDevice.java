@@ -146,6 +146,7 @@ public class NetworkDevice {
             D6_AbortSearch = 18,
             T8_AbortRequest = 19;
 
+
     /* Наименования переходов для всяких там логов и пр. */
     public static final String[] transitionNames = {
             "T6_RunCheck",
@@ -169,6 +170,7 @@ public class NetworkDevice {
             "D6_AbortSearch",
             "T8_AbortRequest"
     };
+
 
     /* Последнее значение Индекса переходов используется для определения размерности
     массива индексов переходов */

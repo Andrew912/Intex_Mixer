@@ -56,7 +56,7 @@ public class DBFunctions {
         activity =
                 mainActivity;
 //        dbHelper =
-//                new DBHelper(activity);
+//                new DBHelper(mainActivity);
 //        dbHandler =
 //                dbHelper.getWritableDatabase();
         db = pDB;
@@ -155,7 +155,7 @@ public class DBFunctions {
             } while (c.moveToNext() == true);
 
             activity.log(s);
-//            activity.textView[0].setText(s);
+//            mainActivity.textView[0].setText(s);
         }
         return s;
     }
@@ -191,7 +191,7 @@ public class DBFunctions {
                         + "\n\n";
             } while (c.moveToNext() == true);
             activity.log(s);
-//            activity.textView[0].setText(s);
+//            mainActivity.textView[0].setText(s);
             c.close();
         }
         return s;

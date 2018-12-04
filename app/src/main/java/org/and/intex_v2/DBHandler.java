@@ -11,10 +11,10 @@ import java.util.regex.Pattern;
 
 import static org.and.intex_v2.DBHelper.FIELDINFO;
 import static org.and.intex_v2.DBHelper.FIELD_IS_ID;
-import static org.and.intex_v2.DBHelper.FIELD_IS_TYPE;
-import static org.and.intex_v2.DBHelper.FIELD_PROP_NAME;
 import static org.and.intex_v2.DBHelper.FIELD_IS_NAME;
+import static org.and.intex_v2.DBHelper.FIELD_IS_TYPE;
 import static org.and.intex_v2.DBHelper.FIELD_IS_VALUE;
+import static org.and.intex_v2.DBHelper.FIELD_PROP_NAME;
 import static org.and.intex_v2.DBHelper.NONE;
 import static org.and.intex_v2.DBHelper.OBJECTS;
 import static org.and.intex_v2.DBHelper.PARAMETERS;
@@ -104,6 +104,7 @@ public class DBHandler {
                 new Column_PARAMETERS();
         cPtype =
                 new Column_PARAMTYPES();
+
         database.execSQL(
                 "PRAGMA temp_store = 2;" +
                         "PRAGMA synchronous = OFF;");
@@ -313,9 +314,8 @@ public class DBHandler {
                 updateDevAddrInDB(devNetMask, devName, devAddr);
         } else
             appendDevAddrToDB(devNetMask, devName, devAddr);
-
-        /* Распечатать таблицу OBJECTS */
-        printTableData_OBJECTS();
+//        /* Распечатать таблицу OBJECTS */
+//        printTableData_OBJECTS();
     }
 
     /**
@@ -386,12 +386,17 @@ public class DBHandler {
                 newAddr;
         newAddr
                 = extractLastDigitGroup(devAddr);
+
+//        newAddr = devAddr;
+//        Log.i("store_Device_Addr_to_DB", "getDevAddrFrimDB = " + getDeviceAddrfromDB(devNetMask, devName, mainActivity.conf.terminalAddress)[1]);
+
         if (deviceDataNowInDB(devName, devNetMask) > 0) {
             update_Device_Addr_in_DB(devNetMask, devName, newAddr);
         } else {
             append_Device_Addr_in_DB(devNetMask, devName, newAddr);
         }
-        printTableData("OBJECTS");
+//        printTableData_OBJECTS();
+//        printTableData("OBJECTS");
     }
 
     /**
@@ -568,11 +573,13 @@ public class DBHandler {
      * @param devAddr
      */
     public void update_Device_Addr_in_DB(String devNetMask, String devName, String devAddr) {
+//
         int
                 records;
 
         /* Попа */
         Log.i(logTag, "update_Device_Addr_in_DB: " + devName + "=" + devAddr + ", mask=" + devNetMask);
+//
         ContentValues newValues
                 = new ContentValues();
         newValues
@@ -917,6 +924,7 @@ public class DBHandler {
             nonStop = true;
         }
         retVar = new String[catCursor.getCount()];
+//        Log.i("getTableColumns", "catCursor.getCount() = " + catCursor.getCount() );
         int i = 0;
 
 //        Log.i("getTableColumns", "Columns of table " + tableName);
@@ -925,6 +933,7 @@ public class DBHandler {
         while (nonStop) {
             retVar[i] = catCursor.getString(catCursor.getColumnIndex("name"));
             nonStop = catCursor.moveToNext();
+//            Log.i("", retVar[i] + " nonStop=" + nonStop);
             i++;
         }
 //        Log.i("getTableColumns", "==================");
@@ -966,7 +975,6 @@ public class DBHandler {
         return retVar;
     }
 
-    /*  */
     public String printTableData(final String tableName) {
         final String[] resultat = {""};
         Thread thread;

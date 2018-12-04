@@ -134,10 +134,10 @@ public class Controller {
             case L00_BUTTON_DNS:
                 mainActivity.setTextInLayout(
                         LAYOUT_00_CLEARING,
-                        mainActivity.dbHandler.printTableData("OBJECTS"));
+                        mainActivity.dbHandler.tableDataPrint("OBJECTS"));
                 Log.i(
                         logTAG,
-                        mainActivity.dbHandler.printTableData("OBJECTS"));
+                        mainActivity.dbHandler.tableDataPrint("OBJECTS"));
                 break;
 
             /* Очистка данных */
@@ -189,10 +189,10 @@ public class Controller {
             case L00_BUTTON_MAIL:
                 mainActivity.setTextInLayout(
                         LAYOUT_00_CLEARING,
-                        mainActivity.dbHandler.printTableData("mail"));
+                        mainActivity.dbHandler.tableDataPrint("mail"));
                 Log.i(
                         logTAG,
-                        mainActivity.dbHandler.printTableData("mail"));
+                        mainActivity.dbHandler.tableDataPrint("mail"));
                 break;
 
             /* На экран БД */
