@@ -104,6 +104,9 @@ public class DBHandler {
                 new Column_PARAMETERS();
         cPtype =
                 new Column_PARAMTYPES();
+        database.execSQL(
+                "PRAGMA temp_store = 2;" +
+                        "PRAGMA synchronous = OFF;");
     }
 
     /**
@@ -383,16 +386,11 @@ public class DBHandler {
                 newAddr;
         newAddr
                 = extractLastDigitGroup(devAddr);
-
-//        newAddr = devAddr;
-//        Log.i("store_Device_Addr_to_DB", "getDevAddrFrimDB = " + getDeviceAddrfromDB(devNetMask, devName, activity.conf.terminalAddress)[1]);
-
         if (deviceDataNowInDB(devName, devNetMask) > 0) {
             update_Device_Addr_in_DB(devNetMask, devName, newAddr);
         } else {
             append_Device_Addr_in_DB(devNetMask, devName, newAddr);
         }
-//        printTableData_OBJECTS();
         printTableData("OBJECTS");
     }
 
@@ -570,13 +568,11 @@ public class DBHandler {
      * @param devAddr
      */
     public void update_Device_Addr_in_DB(String devNetMask, String devName, String devAddr) {
-//
         int
                 records;
 
         /* Попа */
         Log.i(logTag, "update_Device_Addr_in_DB: " + devName + "=" + devAddr + ", mask=" + devNetMask);
-//
         ContentValues newValues
                 = new ContentValues();
         newValues
@@ -921,7 +917,6 @@ public class DBHandler {
             nonStop = true;
         }
         retVar = new String[catCursor.getCount()];
-//        Log.i("getTableColumns", "catCursor.getCount() = " + catCursor.getCount() );
         int i = 0;
 
 //        Log.i("getTableColumns", "Columns of table " + tableName);
@@ -930,7 +925,6 @@ public class DBHandler {
         while (nonStop) {
             retVar[i] = catCursor.getString(catCursor.getColumnIndex("name"));
             nonStop = catCursor.moveToNext();
-//            Log.i("", retVar[i] + " nonStop=" + nonStop);
             i++;
         }
 //        Log.i("getTableColumns", "==================");
@@ -943,25 +937,14 @@ public class DBHandler {
      *
      * @param tableName
      */
-    public String printTableData(String tableName) {
-
-        Log.i("printTableData", "PREPARE to print table " + tableName);
-
+    public String tableDataPrint(String tableName) {
+        Log.i("printTableData", "** PREPARE to print table " + tableName);
         String delimiter = "==============================";
-
         String retVar = "\n" + delimiter + "\nTable: " + tableName + "\n" + delimiter + "\n";
-
         String[] tableColumns = getTableColumns(tableName);
 
         String query = "select * from " + tableName;
         Cursor cursor = database.rawQuery(query, null);
-//        Log.i("getTableColumns", "\n==================");
-//        Log.i("getTableColumns", "\nTable: " + tableName);
-//        Log.i("getTableColumns", "\n==================");
-//        Log.i("getTableColumns", "\nColumns (" + tableColumns.length + ")");
-//        for (int a = 0; a < tableColumns.length; a++) {
-//            Log.i("getTableColumns", (a + 1) + ". " + tableColumns[a]);
-//        }
         if (cursor.moveToFirst()) {
             int i, j;
             j = 1;
@@ -969,13 +952,9 @@ public class DBHandler {
                 retVar = retVar + j + ". ";
                 i = 0;
                 while (i < tableColumns.length) {
-//                    Log.i("printTableData", "tableColumns[i]=" + tableColumns[i]);
-                    retVar =
-                            retVar +
-                            tableColumns[i] +
-                                    "=[" +
-                                    cursor.getString(cursor.getColumnIndex(tableColumns[i])) +
-                                    "] ";
+                    retVar = retVar +
+                            tableColumns[i] + "=[" +
+                            cursor.getString(cursor.getColumnIndex(tableColumns[i])) + "] ";
                     i++;
                 }
                 j++;
@@ -984,8 +963,22 @@ public class DBHandler {
         }
         retVar = retVar +
                 delimiter + "\nTotal " + cursor.getCount() + " records" + "\n" + delimiter;
-
         return retVar;
+    }
+
+    /*  */
+    public String printTableData(final String tableName) {
+        final String[] resultat = {""};
+        Thread thread;
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                resultat[0] = tableDataPrint(tableName);
+            }
+        };
+        thread = new Thread(runnable);
+        thread.start();
+        return resultat[0];
     }
 
 }

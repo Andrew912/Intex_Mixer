@@ -214,7 +214,6 @@ public class Controller {
                         LAYOUT_111_FINDTERM,
                         "Поиск терминала"
                 );
-
                 /* Проверяем подключение весового терминала если он еще не подключен */
                 mainActivity.ndTerminal = new NetworkDevice(
                         mainActivity,

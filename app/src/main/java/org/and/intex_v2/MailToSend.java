@@ -12,20 +12,13 @@ import android.util.Log;
 
 public class MailToSend {
 
-    MainActivity
-            mainActivity;
-    SQLiteDatabase
-            database;
-    Cursor
-            cursor;
-    boolean
-            cursorReadable;
-    long
-            cursorPosition;
-    long
-            recordsToSend;
-    String
-            currentId;
+    MainActivity mainActivity;
+    SQLiteDatabase database;
+    Cursor cursor;
+    boolean cursorReadable;
+    long cursorPosition;
+    long recordsToSend;
+    String currentId;
 
     /**
      * Индексы полей курсора (для скорости, чтобы без преобразований туда-сюда)
@@ -39,8 +32,7 @@ public class MailToSend {
      * Необходимо для ограничения объема памяти, выделяемой для параметра - массива строк,
      * передаваемого в асинхронную процедуру.
      */
-    final String
-            mailTableReadLimit = "50";
+    final String mailTableReadLimit = "100";
 
     /**
      * Конструктор
@@ -49,10 +41,8 @@ public class MailToSend {
      * @param pDatabase
      */
     public MailToSend(MainActivity activity, SQLiteDatabase pDatabase) {
-        mainActivity
-                = activity;
-        database
-                = pDatabase;
+        mainActivity = activity;
+        database = pDatabase;
     }
 
     /**
@@ -61,12 +51,20 @@ public class MailToSend {
      * @return количество доступных для обработки записей
      */
     public long prepareMail() {
-        database
-                .execSQL("delete from mailtosend");
-        database
-                .execSQL("insert into mailtosend (mailid,message) select _id as mailid,message from mail where to_delete=0");
-        cursor
-                = database.rawQuery("select mailid,message from mailtosend limit ?", new String[]{mailTableReadLimit});
+
+        database.execSQL(
+                "delete from mailtosend");
+
+        database.execSQL(
+                "insert into mailtosend (mailid,message) " +
+                        "select _id as mailid,message from mail where to_delete=0");
+
+        mainActivity.dbHandler.printTableData("mail");
+        mainActivity.dbHandler.printTableData("mailtosend");
+
+        cursor = database.rawQuery(
+                "select mailid,message " +
+                        "from mailtosend limit ?", new String[]{mailTableReadLimit});
 
         if (cursor.moveToFirst()) {
             cursorReadable = true;
@@ -80,13 +78,43 @@ public class MailToSend {
             currentId = null;
             return 0;
         }
+//        database
+//                .execSQL("delete from mailtosend");
+//        database
+//                .execSQL("insert into mailtosend (mailid,message) select _id as mailid,message from mail where to_delete=0");
+//        cursor
+//                = database.rawQuery("select mailid,message from mailtosend limit ?", new String[]{mailTableReadLimit});
+//
+//        if (cursor.moveToFirst()) {
+//            cursorReadable = true;
+//            cursorPosition = cursor.getPosition();
+//            recordsToSend = cursor.getCount();
+//            currentId = cursor.getString(CURSOR_FIELDKEY_ID);
+//            return recordsToSend;
+//        } else {
+//            cursorReadable = false;
+//            cursorPosition = 0;
+//            currentId = null;
+//            return 0;
+//        }
     }
 
     /**
      * Удаление из MAIL записей уже отправленных (MAILTOSEND.TO_DELETE=1)
      */
     public void deleteSent() {
-        database.execSQL("delete from mail where _id in (select mailid from mailtosend where to_delete=1)");
+        Thread thread;
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                database.execSQL(
+                        "delete from mail " +
+                                "where _id in (select mailid from mailtosend where to_delete=1)");
+            }
+        };
+        thread = new Thread(runnable);
+        thread.start();
+//        database.execSQL("delete from mail where _id in (select mailid from mailtosend where to_delete=1)");
     }
 
     /**
@@ -163,38 +191,5 @@ public class MailToSend {
     public boolean readable() {
         if (cursorReadable) return true;
         return false;
-    }
-
-    /**
-     * Закрывает курсор
-     */
-    public void cursorClose() {
-        cursor.close();
-        cursorReadable = false;
-        cursorPosition = 0;
-        currentId = null;
-        recordsToSend = 0;
-    }
-
-    /**
-     * Тестирование индекса столбца ДБ
-     */
-    public void test_test() {
-        long i;
-        if (moveFirst()) {
-            for (i = 0; i < recordsToSend; i++) {
-                Log.i("****", "MailId=" + readID() + ", Message=[" + readMessage() + "]");
-                moveNext();
-            }
-        } else {
-            Log.i("****", "Нет данных в MAILTOSEND");
-        }
-    }
-
-    /**
-     * Тестирование индекса столбца ДБ
-     */
-    public void test_Column_Index() {
-        Log.i("****", "MailId index = " + cursor.getColumnIndex("mailid"));
     }
 }

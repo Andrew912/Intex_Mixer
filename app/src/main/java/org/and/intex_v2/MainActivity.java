@@ -2183,28 +2183,29 @@ public class MainActivity extends AppCompatActivity {
         return r;
     }
 
-    /**
-     *
-     */
+    /*  */
     void displayWeightParameters() {
 
-//        /* Вычислить оставщийся вес */
+        /* Вычислить оставщийся вес */
         storer.weightRemain = storer.weightTarget - storer.weightCurrent;
 
-        // ПОказания весов
+        /* ПОказания весов */
         text_7_target.setText(String.valueOf(storer.weightCurrent));
-        // Остаток для погрузки
+
+        /* Остаток для погрузки */
         textView[LAYOUT_7_COMPLEX_OPER].setText(String.valueOf(storer.weightRemain));
     }
 
+    /*  */
     void displayWeightParameters1() {
 
-        // Вычислить отставщийся вес
+        /* Вычислить отставщийся вес */
         storer.weightRemain = storer.weightTarget - storer.weightCurrent;
 
-        // ПОказания весов
+        /* ПОказания весов */
         text_71_target.setText(String.valueOf(storer.weightCurrent));
-        // Остаток для погрузки
+
+        /* Остаток для погрузки */
         textView[LAYOUT_71_LOAD_OPER].setText(String.valueOf(storer.weightRemain));
     }
 
