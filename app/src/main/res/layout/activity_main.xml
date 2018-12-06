@@ -26,6 +26,36 @@
             android:layout_height="433dp">
 
             <LinearLayout
+                android:id="@+id/LL11_No_TerminalFound"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="bottom"
+                android:orientation="vertical"
+                android:visibility="invisible"
+                android:weightSum="1">
+
+                <TextView
+                    android:id="@+id/text_LL1_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Весовой терминал не найден"
+                    android:textAlignment="center"
+                    android:textSize="30sp"
+                    tools:ignore="HardcodedText" />
+
+                <Button
+                    android:id="@+id/button_LL11_Ok"
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp"
+                    android:layout_weight="0.12"
+                    android:text="продолжить"
+                    android:textSize="30sp"
+                    tools:ignore="HardcodedText" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

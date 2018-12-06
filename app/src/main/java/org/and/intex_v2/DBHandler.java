@@ -574,8 +574,7 @@ public class DBHandler {
      */
     public void update_Device_Addr_in_DB(String devNetMask, String devName, String devAddr) {
 //
-        int
-                records;
+        int records;
 
         /* Попа */
         Log.i(logTag, "update_Device_Addr_in_DB: " + devName + "=" + devAddr + ", mask=" + devNetMask);

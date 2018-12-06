@@ -24,6 +24,7 @@ import static org.and.intex_v2.MainActivity.L00_BUTTON_TASK;
 import static org.and.intex_v2.MainActivity.L00_BUTTON_MAIL;
 import static org.and.intex_v2.MainActivity.L0_TO_CLEARING;
 import static org.and.intex_v2.MainActivity.L11_BUTTON_BEGIN_JOB_NEXT;
+import static org.and.intex_v2.MainActivity.L11_NO_TERMINAL_FOUND;
 import static org.and.intex_v2.MainActivity.L1_BUTTON_BEGIN_JOB;
 import static org.and.intex_v2.MainActivity.L1_BUTTON_TO_PARAMS;
 import static org.and.intex_v2.MainActivity.L2_BUTTON_CANCEL;
@@ -51,6 +52,7 @@ import static org.and.intex_v2.MainActivity.L9_BUTTON_REFRESH;
 import static org.and.intex_v2.MainActivity.L9_BUTTON_REJECT;
 import static org.and.intex_v2.MainActivity.LAYOUT_00_CLEARING;
 import static org.and.intex_v2.MainActivity.LAYOUT_0_PARAMS;
+import static org.and.intex_v2.MainActivity.LAYOUT_110_NOTERM;
 import static org.and.intex_v2.MainActivity.LAYOUT_111_FINDTERM;
 import static org.and.intex_v2.MainActivity.LAYOUT_1_BEGIN;
 import static org.and.intex_v2.MainActivity.LAYOUT_2_NO_TASK;
@@ -253,6 +255,12 @@ public class Controller {
 //                } else {
 //                    mainActivity.printServerFound();
 //                }
+
+            case LAYOUT_110_NOTERM:
+                /* Весовой терминал не найден */
+                mainActivity.layoutActivate(LAYOUT_110_NOTERM,"Весовой терминал не найден");
+                break;
+
             case L11_BUTTON_BEGIN_JOB_NEXT:
                 /* Если весовой терминал подключен, то работаем дальше как положено
                 *

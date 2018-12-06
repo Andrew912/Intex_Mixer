@@ -50,42 +50,25 @@ public class MainActivity extends AppCompatActivity {
             mainActivity;
 
     /* Классы */
-    Context
-            context;
-    DBHelper
-            dbHelper;
-    static DBHandler
-            dbHandler;
-    Controller
-            controller;
-    Configurator
-            conf;
-    StatusLine
-            statusLine;
-    static DBFunctions
-            dbFunctions;
-    CurrentTask
-            currentTask;
-    CurrentOper
-            currentOper;
-    Storer
-            storer;
-    MessengerClass
-            messengerClass;
-    ServerCommincator
-            server;
-    LoaderCommunicator
-            loader;
-    NetworkHandler
-            net;
-    ServerFindControlClass
-            sfc;
-    SendMailToControlServer
-            sendMailToControlServer;
+    Context context;
+    DBHelper dbHelper;
+    static DBHandler dbHandler;
+    Controller controller;
+    Configurator conf;
+    StatusLine statusLine;
+    static DBFunctions dbFunctions;
+    CurrentTask currentTask;
+    CurrentOper currentOper;
+    Storer storer;
+    MessengerClass messengerClass;
+    ServerCommincator server;
+    LoaderCommunicator loader;
+    NetworkHandler net;
+    ServerFindControlClass sfc;
+    SendMailToControlServer sendMailToControlServer;
     //    static MailToSend
 //            mailToSend;
-    TerminalCommunicator
-            terminalCommunicator;
+    TerminalCommunicator terminalCommunicator;
 
     /* Классы поиска сетевого устройства */
     NetworkDevice
@@ -107,28 +90,18 @@ public class MainActivity extends AppCompatActivity {
             savedCurrentLayout = 0;             // Сохраненный номер экрана
 
     /* ListView: Выбор задачи из списка: Task Select */
-    ListView
-            taskSelect_ListView;
-    String[]
-            taskSelect_ListItems;
-    ArrayAdapter<String>
-            taskSelect_ListAdapter;
-    String
-            taskSelect_SelectedValue;                                    // Значение списка при выборе
-    TextView
-            textView1;
+    ListView taskSelect_ListView;
+    String[] taskSelect_ListItems;
+    ArrayAdapter<String> taskSelect_ListAdapter;
+    String taskSelect_SelectedValue;                                    // Значение списка при выборе
+    TextView textView1;
 
     /* ListView: Выбор задачи из списка: CurrentOper Select */
-    ListView
-            operSelect_ListView;
-    String[]
-            operSelect_ListItems;
-    ArrayAdapter<String>
-            operSelect_ListAdapter;
-    String
-            operSelect_SelectedValue;                                    // Значение списка при выборе
-    TextView
-            textView2;
+    ListView operSelect_ListView;
+    String[] operSelect_ListItems;
+    ArrayAdapter<String> operSelect_ListAdapter;
+    String operSelect_SelectedValue;                                    // Значение списка при выборе
+    TextView textView2;
 
     /* Кнопки */
     Button
@@ -157,7 +130,8 @@ public class MainActivity extends AppCompatActivity {
             btn_8_OK,
             btn_9_Cancel, btn_9_Accept, btn_9_Refresh, btn_9_Reject,
             btn_90_LoaderFound, btn_90_NoLoader, btn_90_Ok,
-            btn_11_NoTerminal, btn_11_TerminalFound, btn_110_Ok;
+            btn_11_NoTerminal, btn_11_TerminalFound, btn_110_Ok,
+            btn_LL11_Ok;    // "Продолжить" на экране сообщения о том, что терминал не найден
 
     /* Кнопки служебных экранов поиска */
     Button
@@ -189,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
             L1_BUTTON_TO_PARAMS = 100,
             L1_BUTTON_BEGIN_JOB = 101,
             L11_BUTTON_BEGIN_JOB_NEXT = 102,
+            L11_NO_TERMINAL_FOUND = 103,
             L2_BUTTON_TASK_SELECT = 200,
             L2_BUTTON_CANCEL = 201,
             L3_BUTTON_TASK_CONTINUE = 300,
@@ -360,7 +335,7 @@ public class MainActivity extends AppCompatActivity {
          ***********************/
         /* Лайоут статусной строки */
         layoutStatus
-                = new LayoutStatusClass(Integer.valueOf(getString(R.string.NUMBER_OF_LAYOUTS)));
+                = new LayoutStatusClass(17);
         /* Старый вариант формирования экранов */
         mainFrame = (FrameLayout) findViewById(R.id.FrameMain);
 
@@ -1057,7 +1032,13 @@ public class MainActivity extends AppCompatActivity {
                 );
 //                terminalCommunicator = new TerminalCommunicator(mainActivity);
                 dbHandler.paramStore("MixerTermAddr", realDevParams[1], null);
-//                controller.controller(L5_BUTTON_ACCEPT);
+
+                /**
+                 *
+                 * Здесь надо вставить переход куда-то
+                 *
+                 */
+                controller.controller(L11_BUTTON_BEGIN_JOB_NEXT);
             }
         });
 
@@ -1068,9 +1049,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.i("btn_11_NoTerminal", "pressed");
-                controller.controller(L11_BUTTON_BEGIN_JOB_NEXT);
+                controller.controller(LAYOUT_110_NOTERM);
             }
         });
+
+        /* btn_LL11_Ok */
+        btn_LL11_Ok = (Button) findViewById(R.id.button_LL11_Ok);
+        btn_LL11_Ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                controller.controller(LAYOUT_1_BEGIN);
+            }
+        });
+
 
         /*******************************
          * Редактирование параметров
